@@ -1,27 +1,27 @@
 /* jshint indent: 2 */
 
 module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('ASSIGN_TO', {
-    Eid: {
-      type: DataTypes.INTEGER(11),
-      allowNull: false,
-      primaryKey: true,
-      references: {
-        model: 'USER',
-        key: 'sID'
-      }
-    },
+  return sequelize.define('Is_inst_of', {
     Pid: {
       type: DataTypes.INTEGER(11),
       allowNull: false,
       primaryKey: true,
       references: {
-        model: 'PARSING_DATA',
+        model: 'parsing_data',
         key: 'Pid'
+      }
+    },
+    Did: {
+      type: DataTypes.INTEGER(11),
+      allowNull: false,
+      primaryKey: true,
+      references: {
+        model: 'og_data_type',
+        key: 'Did'
       }
     }
   }, {
     sequelize,
-    tableName: 'ASSIGN_TO'
+    tableName: 'Is_inst_of'
     });
 };

@@ -20,6 +20,7 @@ import CardContent from '@material-ui/core/CardContent';
 const styles = (theme) => ({
   paper: {
     marginTop: theme.spacing(8),
+    marginBottom: theme.spacing(8),
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',

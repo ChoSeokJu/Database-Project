@@ -1,13 +1,13 @@
 /* jshint indent: 2 */
 
 module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('GATHER', {
+  return sequelize.define('gather', {
     TaskName: {
       type: DataTypes.STRING(255),
       allowNull: false,
       primaryKey: true,
       references: {
-        model: 'TASK',
+        model: 'task',
         key: 'TaskName'
       }
     },
@@ -16,12 +16,12 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: false,
       primaryKey: true,
       references: {
-        model: 'OG_DATA_TYPE',
+        model: 'og_data_type',
         key: 'Did'
       }
     }
   }, {
     sequelize,
-    tableName: 'GATHER'
+    tableName: 'gather'
     });
 };

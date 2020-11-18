@@ -1,7 +1,7 @@
 /* jshint indent: 2 */
 
 module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('PARSING_DATA', {
+  return sequelize.define('parsing_data', {
     Pid: {
       type: DataTypes.INTEGER(11),
       allowNull: false,
@@ -46,6 +46,6 @@ module.exports = function(sequelize, DataTypes) {
     }
   }, {
     sequelize,
-    tableName: 'PARSING_DATA'
+    tableName: 'parsing_data'
     });
 };

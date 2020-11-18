@@ -1,10 +1,8 @@
 const express = require('express');
+const account = require('./account');
 
 const router = express.Router();
 
-/* GET home page. */
-router.get('/', (req, res, next) => {
-  res.end('Hello World!');
-});
+router.use('/account', account);
 
 module.exports = router;

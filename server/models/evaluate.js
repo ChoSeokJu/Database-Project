@@ -1,27 +1,35 @@
 /* jshint indent: 2 */
 
 module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('IS_INST_OF', {
+  return sequelize.define('evaluate', {
+    Eid: {
+      type: DataTypes.INTEGER(11),
+      allowNull: false,
+      primaryKey: true,
+      references: {
+        model: 'user',
+        key: 'Uid'
+      }
+    },
     Pid: {
       type: DataTypes.INTEGER(11),
       allowNull: false,
       primaryKey: true,
       references: {
-        model: 'PARSING_DATA',
+        model: 'parsing_data',
         key: 'Pid'
       }
     },
-    Did: {
+    Score: {
       type: DataTypes.INTEGER(11),
-      allowNull: false,
-      primaryKey: true,
-      references: {
-        model: 'OG_DATA_TYPE',
-        key: 'Did'
-      }
+      allowNull: false
+    },
+    Pass: {
+      type: DataTypes.INTEGER(4),
+      allowNull: false
     }
   }, {
     sequelize,
-    tableName: 'IS_INST_OF'
+    tableName: 'evaluate'
     });
 };

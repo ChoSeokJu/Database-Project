@@ -1,23 +1,32 @@
 {
   "development": {
     "username": "root",
-    "password": null,
-    "database": "db",
-    "host": "34.82.229.163",
-    "dialect": "mysql"
+    "password": "epdlxjqpdltm11!",
+    "database": "Freeswot",
+    "host": "34.105.109.90",
+    "dialect": "mysql",
+    "define": {
+      "timestamps": false
+    }
   },
   "test": {
     "username": "root",
     "password": null,
     "database": "database_test",
     "host": "34.82.229.163",
-    "dialect": "mysql"
+    "dialect": "mysql",
+    "define": {
+      "timestamps": false
+    }
   },
   "production": {
     "username": "root",
     "password": null,
     "database": "database_production",
     "host": "34.105.109.90",
-    "dialect": "mysql"
+    "dialect": "mysql",
+    "define": {
+      "timestamps": false
+    }
   }
 }

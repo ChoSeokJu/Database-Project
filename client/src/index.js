@@ -7,7 +7,7 @@ import { Provider } from 'react-redux';
 import { createStore, applyMiddleware } from 'redux';
 import thunk from 'redux-thunk';
 import reducers from './reducers';
-import { Register, Login } from './containers';
+import { Register, Login, Admin, User } from './containers';
 
 const store = createStore(reducers, applyMiddleware(thunk));
 
@@ -17,6 +17,7 @@ ReactDOM.render(
       <div>
         <Route path="/register" component={Register} />
         <Route path="/login" component={Login} />
+        <Route path="/user" component={User} />
       </div>
     </Router>
   </Provider>,

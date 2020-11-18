@@ -10,8 +10,9 @@ const initialState = {
   },
   status: {
     valid: false,
-    isLoggedIn: false,
+    isLoggedIn: true,
     currentUser: '',
+    userType: 'admin',
   },
 };
 

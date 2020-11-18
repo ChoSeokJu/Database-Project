@@ -1,31 +1,27 @@
 /* jshint indent: 2 */
 
 module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('WORKS_ON', {
+  return sequelize.define('submit', {
     Sid: {
       type: DataTypes.INTEGER(11),
       allowNull: false,
       primaryKey: true,
       references: {
-        model: 'USER',
-        key: 'sID'
+        model: 'user',
+        key: 'Uid'
       }
     },
-    TaskName: {
-      type: DataTypes.STRING(255),
+    Pid: {
+      type: DataTypes.INTEGER(11),
       allowNull: false,
       primaryKey: true,
       references: {
-        model: 'TASK',
-        key: 'TaskName'
+        model: 'parsing_data',
+        key: 'Pid'
       }
-    },
-    Permit: {
-      type: DataTypes.INTEGER(4),
-      allowNull: true
     }
   }, {
     sequelize,
-    tableName: 'WORKS_ON'
+    tableName: 'submit'
     });
 };

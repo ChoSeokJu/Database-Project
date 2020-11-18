@@ -1,14 +1,14 @@
 /* jshint indent: 2 */
 
 module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('EVALUATE', {
+  return sequelize.define('assign_to', {
     Eid: {
       type: DataTypes.INTEGER(11),
       allowNull: false,
       primaryKey: true,
       references: {
-        model: 'USER',
-        key: 'sID'
+        model: 'user',
+        key: 'Uid'
       }
     },
     Pid: {
@@ -16,20 +16,12 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: false,
       primaryKey: true,
       references: {
-        model: 'PARSING_DATA',
+        model: 'parsing_data',
         key: 'Pid'
       }
-    },
-    Score: {
-      type: DataTypes.INTEGER(11),
-      allowNull: false
-    },
-    Pass: {
-      type: DataTypes.INTEGER(4),
-      allowNull: false
     }
   }, {
     sequelize,
-    tableName: 'EVALUATE'
+    tableName: 'assign_to'
     });
 };

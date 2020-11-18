@@ -1,7 +1,7 @@
 /* jshint indent: 2 */
 
 module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('TASK', {
+  return sequelize.define('task', {
     TaskName: {
       type: DataTypes.STRING(255),
       allowNull: false,
@@ -38,6 +38,6 @@ module.exports = function(sequelize, DataTypes) {
     }
   }, {
     sequelize,
-    tableName: 'TASK'
+    tableName: 'task'
     });
 };
