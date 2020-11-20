@@ -5,11 +5,11 @@ import { makeStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import IconButton from '@material-ui/core/IconButton';
+import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
 import AccountCircle from '@material-ui/icons/AccountCircle';
-import Link from '@material-ui/core/Link';
 
 import { useHistory } from 'react-router-dom';
 import { logout } from '../actions/authentication';
@@ -59,6 +59,10 @@ export default function TopBar(props) {
     setAnchorEl(null);
   };
 
+  const onLogoClick = () => {
+    history.push('/');
+  };
+
   const onMypageClick = () => {
     setAnchorEl(null);
     history.push('/profile');
@@ -90,24 +94,31 @@ export default function TopBar(props) {
     </Menu>
   );
 
-  const adminBoard = <p>Admin</p>;
+  const adminBoard = (
+    <>
+      <p>Admin</p>
+    </>
+  );
 
-  const evalBoard = <p>Eval</p>;
+  const evalBoard = (
+    <>
+      <p>Eval</p>
+    </>
+  );
 
-  const submitBoard = <p>Submit</p>;
+  const submitBoard = (
+    <>
+      <p>Submit</p>
+    </>
+  );
 
   return (
     <div className={classes.grow}>
       <AppBar position="fixed" color="primary">
         <Toolbar>
-          <Link
-            component="button"
-            variant="h6"
-            color="inherit"
-            onClick={props.onLogoClick}
-          >
+          <Button size="large" color="inherit" onClick={onLogoClick}>
             FREESWOT
-          </Link>
+          </Button>
           <div className={classes.grow} />
           <div>
             {showAdminBoard && adminBoard}

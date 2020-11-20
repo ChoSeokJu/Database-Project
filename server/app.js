@@ -4,12 +4,38 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const cors = require('cors');
-const { sequelize } = require('./models/index');
+const bcrypt = require('bcryptjs');
+const db = require('./models/index');
 
 const app = express();
-sequelize
+
+const initial = () => {
+  const { user } = db;
+  const userInfo = {
+    ID: 'admin',
+    Gender: 'undeclared',
+    Name: '관리자',
+    Password: bcrypt.hashSync('admin'),
+    UType: 'admin',
+  };
+
+  user
+    .findOne({
+      where: {
+        ID: 'admin',
+      },
+    })
+    .then((result) => {
+      if (!result) {
+        user.create(userInfo);
+      }
+    });
+};
+
+db.sequelize
   .sync()
   .then(() => {
+    initial();
     console.log('✓ DB connection success.');
     console.log('  Press CTRL-C to stop\n');
   })
