@@ -1,17 +1,17 @@
 import React from 'react';
+import { Redirect } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 
-class Submit extends React.Component {
-  constructor(props) {
-    super(props);
+export default function Submit(props) {
+  const { user: currentUser } = useSelector((state) => state.authentication);
+
+  if (!currentUser || currentUser.role !== 'submit') {
+    return <Redirect to="/" />;
   }
 
-  render() {
-    return (
-      <div>
-        <p>Submit</p>
-      </div>
-    );
-  }
+  return (
+    <>
+      <p>Submit</p>
+    </>
+  );
 }
-
-export default Submit;

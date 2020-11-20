@@ -11,6 +11,7 @@ import Menu from '@material-ui/core/Menu';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import Link from '@material-ui/core/Link';
 
+import { useHistory } from 'react-router-dom';
 import { logout } from '../actions/authentication';
 
 const useStyles = makeStyles((theme) => ({
@@ -38,6 +39,7 @@ export default function TopBar(props) {
 
   const { user: currentUser } = useSelector((state) => state.authentication);
   const dispatch = useDispatch();
+  const history = useHistory();
 
   const isMenuOpen = Boolean(anchorEl);
 
@@ -59,12 +61,13 @@ export default function TopBar(props) {
 
   const onMypageClick = () => {
     setAnchorEl(null);
-    props.history.push('/profile');
+    history.push('/profile');
   };
 
   const onLogoutClick = () => {
     setAnchorEl(null);
     dispatch(logout());
+    history.push('/');
   };
 
   const menuId = 'primary-search-account-menu';
@@ -87,17 +90,11 @@ export default function TopBar(props) {
     </Menu>
   );
 
-  const adminBoard = (
-    <p>Admin</p>
-  );
+  const adminBoard = <p>Admin</p>;
 
-  const evalBoard = (
-    <p>Eval</p>
-  );
+  const evalBoard = <p>Eval</p>;
 
-  const submitBoard = (
-    <p>Submit</p>
-  );
+  const submitBoard = <p>Submit</p>;
 
   return (
     <div className={classes.grow}>

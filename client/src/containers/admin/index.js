@@ -1,22 +1,22 @@
 import React from 'react';
 import Container from '@material-ui/core/Container';
 import Box from '@material-ui/core/Box';
+import { Redirect } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 import { TaskTableAdmin } from '../../components';
 
-class Admin extends React.Component {
-  constructor(props) {
-    super(props);
+export default function Admin(props) {
+  const { user: currentUser } = useSelector((state) => state.authentication);
+
+  if (!currentUser || currentUser.role !== 'admin') {
+    return <Redirect to="/" />;
   }
 
-  render() {
-    return (
-      <Box>
-        <Container component="main" maxWidth="md">
-          <TaskTableAdmin />
-        </Container>
-      </Box>
-    );
-  }
+  return (
+    <>
+      <Container component="main" maxWidth="md">
+        <TaskTableAdmin />
+      </Container>
+    </>
+  );
 }
-
-export default Admin;

@@ -13,7 +13,7 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import MuiAlert from '@material-ui/lab/Alert';
 
 import { useDispatch, useSelector } from 'react-redux';
-import { Redirect, Link } from 'react-router-dom';
+import { Redirect, Link, useHistory } from 'react-router-dom';
 import { Backdrop } from '@material-ui/core';
 import { login } from '../actions/authentication';
 
@@ -54,6 +54,7 @@ function Login(props) {
   const classes = useStyles();
 
   const dispatch = useDispatch();
+  const history = useHistory();
 
   const onUsernameChange = (e) => {
     setUsername(e.target.value);
@@ -70,10 +71,11 @@ function Login(props) {
 
     dispatch(login(username, password))
       .then(() => {
-        props.history.push('/user');
+        history.push('/');
         window.location.reload();
       })
       .catch(() => {
+        setOpen(true);
         setLoading(false);
       });
   };
@@ -87,7 +89,7 @@ function Login(props) {
   };
 
   if (isLoggedIn) {
-    return <Redirect to="/user" />;
+    return <Redirect to="/" />;
   }
 
   return (
@@ -97,11 +99,7 @@ function Login(props) {
         <Typography component="h1" variant="h4">
           FREESWOT
         </Typography>
-        <form
-          className={classes.form}
-          noValidate
-          onSubmit={handleSubmit}
-        >
+        <form className={classes.form} noValidate onSubmit={handleSubmit}>
           <TextField
             variant="outlined"
             margin="normal"
@@ -140,15 +138,18 @@ function Login(props) {
           <Grid container>
             <Grid item>
               계정이 없으십니까?&nbsp;
-              <Link to="/register">
-                회원가입
-              </Link>
+              <Link to="/register">회원가입</Link>
             </Grid>
           </Grid>
         </form>
         {message && (
           <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
-            <MuiAlert elevation={6} variant="filled" onClose={handleClose} severity="error">
+            <MuiAlert
+              elevation={6}
+              variant="filled"
+              onClose={handleClose}
+              severity="error"
+            >
               {message}
             </MuiAlert>
           </Snackbar>

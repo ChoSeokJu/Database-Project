@@ -19,7 +19,7 @@ import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
 
 import { useDispatch, useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { Redirect, Link } from 'react-router-dom';
 import { register } from '../actions/authentication';
 
 const useStyles = makeStyles((theme) => ({
@@ -88,11 +88,17 @@ function Register(props) {
   const [userType, setUserType] = useState('eval');
 
   const [successful, setSuccessful] = useState(false);
+
   const [open, setOpen] = useState(false);
+
+  const [alertOpen, setAlertOpen] = useState(false);
+  const [alert, setAlert] = useState('');
 
   const classes = useStyles();
 
+  const { isLoggedIn } = useSelector((state) => state.authentication);
   const { message } = useSelector((state) => state.message);
+
   const dispatch = useDispatch();
 
   const onNameChange = (e) => setName(e.target.value);
@@ -106,20 +112,31 @@ function Register(props) {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (gender === 'undeclared') {
-      window.alert('성별을 선택해주세요');
+      setAlert('성별을 선택해주세요');
+      setAlertOpen(true);
+      return;
     }
 
     const data = {
-      name, birthday, gender, username, password, address, phone, userType,
+      name,
+      birthday,
+      gender,
+      username,
+      password,
+      address,
+      phone,
+      userType,
     };
 
     setSuccessful(false);
 
     dispatch(register(data))
       .then(() => {
+        setOpen(true);
         setSuccessful(true);
       })
       .catch(() => {
+        setOpen(true);
         setSuccessful(false);
       });
   };
@@ -132,9 +149,19 @@ function Register(props) {
     if (reason === 'clickaway') {
       return;
     }
-
     setOpen(false);
   };
+
+  const handleAlertClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setAlertOpen(false);
+  };
+
+  if (isLoggedIn) {
+    return <Redirect to="/" />;
+  }
 
   return (
     <Container component="main" maxWidth="xs">
@@ -309,19 +336,36 @@ function Register(props) {
           <Grid container>
             <Grid item>
               계정이 이미 있습니까?&nbsp;
-              <Link to="/login">
-                로그인
-              </Link>
+              <Link to="/login">로그인</Link>
             </Grid>
           </Grid>
         </form>
         {message && (
           <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
-            <MuiAlert elevation={6} variant="filled" onClose={handleClose} severity={(successful) ? "success" : "error"}>
+            <MuiAlert
+              elevation={6}
+              variant="filled"
+              onClose={handleClose}
+              severity={successful ? 'success' : 'error'}
+            >
               {message}
             </MuiAlert>
           </Snackbar>
         )}
+        <Snackbar
+          open={alertOpen}
+          autoHideDuration={6000}
+          onClose={handleAlertClose}
+        >
+          <MuiAlert
+            elevation={6}
+            variant="filled"
+            onClose={handleAlertClose}
+            severity="error"
+          >
+            {alert}
+          </MuiAlert>
+        </Snackbar>
       </div>
     </Container>
   );

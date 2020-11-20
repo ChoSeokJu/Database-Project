@@ -1,13 +1,17 @@
 /* eslint-disable react/jsx-filename-extension */
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import {
-  Router, Switch, Route, Link,
-} from 'react-router-dom';
+import { Router, Switch, Route, Link } from 'react-router-dom';
 
 import { createBrowserHistory } from 'history';
 import {
-  Admin, Eval, Submit, Profile, Home, Login, Register,
+  Admin,
+  Eval,
+  Submit,
+  Profile,
+  Home,
+  Login,
+  Register,
 } from './containers';
 
 import { clearMessage } from './actions/message';
@@ -28,9 +32,7 @@ const App = () => {
   return (
     <Router history={history}>
       <div>
-        {currentUser && (
-          <TopBar />
-        )}
+        {currentUser && <TopBar />}
         <Switch>
           <Route exact path="/" component={Home} />
           <Route exact path="/login" component={Login} />

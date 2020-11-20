@@ -4,17 +4,16 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const cors = require('cors');
-const sequelize = require('./models/index').sequelize;
-
-const indexRouter = require('./routes/index');
+const { sequelize } = require('./models/index');
 
 const app = express();
-sequelize.sync()
+sequelize
+  .sync()
   .then(() => {
     console.log('✓ DB connection success.');
     console.log('  Press CTRL-C to stop\n');
   })
-  .catch(err => {
+  .catch((err) => {
     console.error(err);
     console.log('✗ DB connection error. Please make sure DB is running.');
     process.exit();
@@ -22,12 +21,14 @@ sequelize.sync()
 
 app.use(logger('dev'));
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+
 app.use(cors());
 
-app.use('/api', indexRouter);
+require('./routes/account')(app);
+require('./routes/user')(app);
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {

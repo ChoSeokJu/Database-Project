@@ -1,18 +1,17 @@
 import React from 'react';
-import { TopBar } from '../../components';
+import { Redirect } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 
-class Eval extends React.Component {
-  constructor(props) {
-    super(props);
+export default function Eval(props) {
+  const { user: currentUser } = useSelector((state) => state.authentication);
+
+  if (!currentUser || currentUser.role !== 'eval') {
+    return <Redirect to="/" />;
   }
 
-  render() {
-    return (
-      <div>
-        <TopBar />
-      </div>
-    );
-  }
+  return (
+    <>
+      <p>평가자</p>
+    </>
+  );
 }
-
-export default Eval;
