@@ -1,8 +1,6 @@
-import RegisterComp from './RegisterComp';
-import LoginComp from './LoginComp';
 import TaskTableAdmin from './TaskTableAdmin';
-import TopBarComp from './TopBarComp';
+import TopBar from './TopBar';
 
 export {
-  RegisterComp, LoginComp, TaskTableAdmin, TopBarComp,
+  TaskTableAdmin, TopBar,
 };

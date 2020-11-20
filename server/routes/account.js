@@ -24,7 +24,7 @@ router.post('/signup', (req, res) => {
 
   if (!usernameRegex.test(username)) {
     return res.status(400).json({
-      error: 'BAD USERNAME',
+      error: `BAD USERNAME ${username}`,
       code: 1,
     });
   }
@@ -68,6 +68,42 @@ router.post('/signup', (req, res) => {
 
 router.post('/signin', (req, res) => {
   res.json({ success: true });
+  if (typeof req.body.password !== 'string') {
+    return res.status(401).json({
+      error: "PASSWORD IS NOT STRING",
+      code: 1,
+    });
+  }
+
+  user.findOne({ username: req.body.username }, (err, account) => {
+    if (err) throw err;
+
+    if (!account) {
+      return res.status(401).json({
+        error: "THERE IS NO USER",
+        code: 2,
+      });
+    }
+    const validate = hasher({ password: req.body.password, salt: account.salt }, function (err, pass, salt, hash) {
+      if (hash == account.password) {
+        let session = req.session;
+        session.loginInfo = {
+          _id: account.Uid,
+          username: account.ID,
+        };
+
+        return res.json({
+          success: true,
+        });
+
+      } else {
+        return res.status(401).json({
+          error: "PASSWORD IS NOT CORRECT",
+          code: 3,
+        });
+      }
+    });
+  });
 });
 
 router.post('/getinfo', (req, res) => {

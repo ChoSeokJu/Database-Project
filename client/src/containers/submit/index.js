@@ -1,5 +1,4 @@
 import React from 'react';
-import { TopBarComp } from '../../components';
 
 class Submit extends React.Component {
   constructor(props) {
@@ -9,7 +8,7 @@ class Submit extends React.Component {
   render() {
     return (
       <div>
-        <TopBarComp />
+        <p>Submit</p>
       </div>
     );
   }

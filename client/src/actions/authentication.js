@@ -1,41 +1,80 @@
-/* eslint-disable no-use-before-define */
-import axios from 'axios';
 import {
-  AUTH_REGISTER,
-  AUTH_REGISTER_SUCCESS,
-  AUTH_REGISTER_FAILURE,
+  REGISTER_SUCCESS,
+  REGISTER_FAIL,
+  LOGIN_SUCCESS,
+  LOGIN_FAIL,
+  LOGOUT,
+  SET_MESSAGE,
 } from './ActionTypes';
 
-export function registerRequest(req) {
-  return (dispatch) => {
-    dispatch(register());
+import AuthService from '../services/auth.service';
 
-    return axios
-      .post('/api/account/signup', req)
-      .then(() => {
-        dispatch(registerSuccess());
-      })
-      .catch((error) => {
-        dispatch(registerFailure(error.response.data.code));
-      });
-  };
-}
+export const register = (req) => (dispatch) => AuthService.register(req).then(
+  (response) => {
+    dispatch({
+      type: REGISTER_SUCCESS,
+    });
 
-export function register() {
-  return {
-    type: AUTH_REGISTER,
-  };
-}
+    dispatch({
+      type: SET_MESSAGE,
+      payload: response.data.message,
+    });
 
-export function registerSuccess() {
-  return {
-    type: AUTH_REGISTER_SUCCESS,
-  };
-}
+    return Promise.resolve();
+  },
+  (error) => {
+    const message = (error.response
+      && error.response.data
+      && error.response.data.message)
+      || error.message
+      || error.toString();
 
-export function registerFailure(error) {
-  return {
-    type: AUTH_REGISTER_FAILURE,
-    error,
-  };
-}
+    dispatch({
+      type: REGISTER_FAIL,
+    });
+
+    dispatch({
+      type: SET_MESSAGE,
+      payload: message,
+    });
+
+    return Promise.reject();
+  },
+);
+
+export const login = (username, password) => (dispatch) => AuthService.login(username, password).then(
+  (data) => {
+    dispatch({
+      type: LOGIN_SUCCESS,
+      payload: { user: data },
+    });
+
+    return Promise.resolve();
+  },
+  (error) => {
+    const message = (error.response
+      && error.response.data
+      && error.response.data.message)
+      || error.message
+      || error.toString();
+
+    dispatch({
+      type: LOGIN_FAIL,
+    });
+
+    dispatch({
+      type: SET_MESSAGE,
+      payload: message,
+    });
+
+    return Promise.reject();
+  },
+);
+
+export const logout = () => (dispatch) => {
+  AuthService.logout();
+
+  dispatch({
+    type: LOGOUT,
+  });
+};

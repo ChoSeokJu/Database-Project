@@ -1,7 +1,9 @@
-import Register from './Register';
+import Admin from './admin';
+import Eval from './eval';
+import Submit from './submit';
+import Profile from './Profile';
+import Home from './Home';
 import Login from './Login';
-import Admin from './admin'; // 임시로 놔둠. state 안정되면 지울것.
-import User from './User';
-import UserInfo from './UserInfo';
+import Register from './Register';
 
-export { Register, Login, Admin, User };
+export { Admin, Eval, Submit, Profile, Home, Login, Register };

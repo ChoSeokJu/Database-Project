@@ -1,5 +1,6 @@
 /* eslint-disable react/jsx-filename-extension */
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -9,6 +10,8 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import Link from '@material-ui/core/Link';
+
+import { logout } from '../actions/authentication';
 
 const useStyles = makeStyles((theme) => ({
   grow: {
@@ -25,11 +28,26 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function TopBarComp(props) {
+export default function TopBar(props) {
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = React.useState(null);
 
+  const [showAdminBoard, setShowAdminBoard] = useState(false);
+  const [showEvalBoard, setShowEvalBoard] = useState(false);
+  const [showSubmitBoard, setShowSubmitBoard] = useState(false);
+
+  const { user: currentUser } = useSelector((state) => state.authentication);
+  const dispatch = useDispatch();
+
   const isMenuOpen = Boolean(anchorEl);
+
+  useEffect(() => {
+    if (currentUser) {
+      setShowAdminBoard(currentUser.role === 'admin');
+      setShowEvalBoard(currentUser.role === 'eval');
+      setShowSubmitBoard(currentUser.role === 'submit');
+    }
+  }, [currentUser]);
 
   const handleProfileMenuOpen = (event) => {
     setAnchorEl(event.currentTarget);
@@ -41,12 +59,12 @@ export default function TopBarComp(props) {
 
   const onMypageClick = () => {
     setAnchorEl(null);
-    props.onMyPageClick();
+    props.history.push('/profile');
   };
 
   const onLogoutClick = () => {
     setAnchorEl(null);
-    props.onLogoutClick();
+    dispatch(logout());
   };
 
   const menuId = 'primary-search-account-menu';
@@ -69,6 +87,18 @@ export default function TopBarComp(props) {
     </Menu>
   );
 
+  const adminBoard = (
+    <p>Admin</p>
+  );
+
+  const evalBoard = (
+    <p>Eval</p>
+  );
+
+  const submitBoard = (
+    <p>Submit</p>
+  );
+
   return (
     <div className={classes.grow}>
       <AppBar position="fixed" color="primary">
@@ -82,6 +112,11 @@ export default function TopBarComp(props) {
             FREESWOT
           </Link>
           <div className={classes.grow} />
+          <div>
+            {showAdminBoard && adminBoard}
+            {showEvalBoard && evalBoard}
+            {showSubmitBoard && submitBoard}
+          </div>
           <div>
             <IconButton
               edge="end"
