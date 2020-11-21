@@ -21,7 +21,6 @@ const verifyToken = (req, res, next) => {
     }
     req.Uid = decoded.Uid;
     req.username = decoded.username;
-    console.log(req.Uid);
     next();
   });
 };
@@ -29,6 +28,7 @@ const verifyToken = (req, res, next) => {
 const isAdmin = (req, res, next) => {
   User.findByPk(req.Uid).then((user) => {
     if (user && user.get('UType') === 'admin') {
+      console.log(`Admin user ${req.username} sent a request`);
       next();
       return;
     }
@@ -42,6 +42,7 @@ const isAdmin = (req, res, next) => {
 const isEval = (req, res, next) => {
   User.findByPk(req.Uid).then((user) => {
     if (user && user.get('UType') === 'eval') {
+      console.log(`Submit user ${req.username} sent a request`);
       next();
       return;
     }
@@ -55,6 +56,7 @@ const isEval = (req, res, next) => {
 const isSubmit = (req, res, next) => {
   User.findByPk(req.Uid).then((user) => {
     if (user && user.get('UType') === 'submit') {
+      console.log(`Submit user ${req.username} sent a request`);
       next();
       return;
     }
