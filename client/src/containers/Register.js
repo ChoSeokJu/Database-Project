@@ -75,9 +75,6 @@ function Register(props) {
     },
   ];
 
-  const months = ['월'];
-  for (let i = 1; i <= 12; i++) months.push(i);
-
   const [name, setName] = useState('');
   const [birthday, setBirthday] = useState(formatDate(Date()));
   const [gender, setGender] = useState('undeclared');

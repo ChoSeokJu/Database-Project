@@ -10,7 +10,7 @@ const getUser = (url, params = {}) =>
   });
 
 const postUser = (url, data) =>
-  axios.post(`${API_URL}all${url}`, { headers: authHeader(), data });
+  axios.post(`${API_URL}all${url}`, data, { headers: authHeader() });
 // only for Mypage. Don't use this for other purpose.
 
 const getAdmin = (url, params = {}) =>
@@ -32,13 +32,13 @@ const getSubmit = (url, params = {}) =>
   });
 
 const postAdmin = (url, data) =>
-  axios.post(`${API_URL}admin${url}`, { headers: authHeader(), data });
+  axios.post(`${API_URL}admin${url}`, data, { headers: authHeader() });
 
 const postEval = (url, data) =>
-  axios.post(`${API_URL}eval${url}`, { headers: authHeader(), data });
+  axios.post(`${API_URL}eval${url}`, data, { headers: authHeader() });
 
 const postSubmit = (url, data) =>
-  axios.post(`${API_URL}submit${url}`, { headers: authHeader(), data });
+  axios.post(`${API_URL}submit${url}`, data, { headers: authHeader() });
 
 export {
   getUser,

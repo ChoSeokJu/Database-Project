@@ -6,6 +6,7 @@ const logger = require('morgan');
 const cors = require('cors');
 const bcrypt = require('bcryptjs');
 const db = require('./models/index');
+const routes = require('./routes');
 
 const app = express();
 
@@ -51,10 +52,13 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use(cors());
+const corsOptions = {
+  exposedHeaders: ['Authorization'],
+};
 
-require('./routes/account')(app);
-require('./routes/user')(app);
+app.use(cors(corsOptions));
+
+routes(app);
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {

@@ -1,32 +1,16 @@
+const express = require('express');
 const { authJwt } = require('../utils');
-const controller = require('../controllers/user.controller');
+const userController = require('../controllers/user.controller');
 
-module.exports = function (app) {
-  app.use((req, res, next) => {
-    res.header(
-      'Access-Control-Allow-Headers',
-      'x-access-token, Origin, Content-Type, Accept'
-    );
-    next();
-  });
+const router = express.Router();
 
-  app.get('/api/user/all', [authJwt.verifyToken], controller.userContent);
+router.get('/info', [authJwt.verifyToken], userController.getUserInfo);
+router.post('/modify', [authJwt.verifyToken], userController.changeUserInfo);
+router.get(
+  '/withdrawal',
+  [authJwt.verifyToken],
+  userController.handleWithdrawal
+);
+router.post('/password', [authJwt.verifyToken], userController.changePassword);
 
-  app.get(
-    '/api/user/admin',
-    [authJwt.verifyToken, authJwt.isAdmin],
-    controller.adminContent
-  );
-
-  app.get(
-    '/api/user/eval',
-    [authJwt.verifyToken, authJwt.isEval],
-    controller.evalContent
-  );
-
-  app.get(
-    '/api/user/submit',
-    [authJwt.verifyToken, authJwt.isSubmit],
-    controller.submitContent
-  );
-};
+module.exports = router;
