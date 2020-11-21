@@ -19,17 +19,16 @@ const verifyToken = (req, res, next) => {
         message: 'Unauthorized',
       });
     }
-    req.userType = decoded.id;
+    req.Uid = decoded.Uid;
+    req.username = decoded.username;
+    console.log(req.Uid);
     next();
   });
 };
 
 const isAdmin = (req, res, next) => {
-  User.findOne({
-    where: req.userType,
-  }).then((user) => {
-    const role = user.get('UType');
-    if (role === 'admin') {
+  User.findByPk(req.Uid).then((user) => {
+    if (user && user.get('UType') === 'admin') {
       next();
       return;
     }
@@ -41,11 +40,8 @@ const isAdmin = (req, res, next) => {
 };
 
 const isEval = (req, res, next) => {
-  User.findOne({
-    where: req.userType,
-  }).then((user) => {
-    const role = user.get('UType');
-    if (role === 'eval') {
+  User.findByPk(req.Uid).then((user) => {
+    if (user && user.get('UType') === 'eval') {
       next();
       return;
     }
@@ -57,17 +53,14 @@ const isEval = (req, res, next) => {
 };
 
 const isSubmit = (req, res, next) => {
-  User.findOne({
-    where: req.userType,
-  }).then((user) => {
-    const role = user.get('UType');
-    if (role === 'eval') {
+  User.findByPk(req.Uid).then((user) => {
+    if (user && user.get('UType') === 'submit') {
       next();
       return;
     }
 
     res.status(403).send({
-      message: 'Require Eval User Type',
+      message: 'Require Submit User Type',
     });
   });
 };

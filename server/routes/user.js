@@ -10,6 +10,8 @@ module.exports = function (app) {
     next();
   });
 
+  app.get('/api/user/all', [authJwt.verifyToken], controller.userContent);
+
   app.get(
     '/api/user/admin',
     [authJwt.verifyToken, authJwt.isAdmin],

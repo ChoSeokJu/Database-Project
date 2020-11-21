@@ -31,21 +31,20 @@ exports.signup = (req, res) => {
 };
 
 exports.signin = (req, res) => {
+  const { username, password } = req.body;
+
   User.findOne({
     where: {
-      ID: req.body.username,
+      ID: username,
     },
   }).then((user) => {
     if (!user) {
       return res.status(404).json({
-        message: '없는 아이디 입니다',
+        message: '없는 아이디입니다',
       });
     }
 
-    const passwordIsValid = bcrypt.compareSync(
-      req.body.password,
-      user.get('Password')
-    );
+    const passwordIsValid = bcrypt.compareSync(password, user.get('Password'));
 
     if (!passwordIsValid) {
       return res.status(401).send({
@@ -54,7 +53,7 @@ exports.signin = (req, res) => {
       });
     }
 
-    const token = jwt.sign({ id: user.get('UType') }, config.secret, {
+    const token = jwt.sign({ Uid: user.get('Uid'), username }, config.secret, {
       expiresIn: 86400,
     });
 
