@@ -17,6 +17,7 @@ export default function Submit(props) {
         console.log(error);
       });
   }, [currentUser]);
+  // only getSubmit(), postSubmit() are valid when user type is submit.
 
   if (!currentUser || currentUser.role !== 'submit') {
     return <Redirect to="/" />;
