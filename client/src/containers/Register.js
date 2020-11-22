@@ -17,10 +17,14 @@ import CardActionArea from '@material-ui/core/CardActionArea';
 import CardContent from '@material-ui/core/CardContent';
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogTitle from '@material-ui/core/DialogTitle';
 
 import { useDispatch, useSelector } from 'react-redux';
-import { Redirect, Link } from 'react-router-dom';
+import { Redirect, Link, useHistory } from 'react-router-dom';
 import { register } from '../actions/authentication';
+import { setMessage } from '../actions/message';
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -88,15 +92,13 @@ function Register(props) {
 
   const [open, setOpen] = useState(false);
 
-  const [alertOpen, setAlertOpen] = useState(false);
-  const [alert, setAlert] = useState('');
-
   const classes = useStyles();
 
   const { isLoggedIn } = useSelector((state) => state.authentication);
   const { message } = useSelector((state) => state.message);
 
   const dispatch = useDispatch();
+  const history = useHistory();
 
   const onNameChange = (e) => setName(e.target.value);
   const onBirthdayChange = (e) => setBirthday(e.target.value);
@@ -109,8 +111,8 @@ function Register(props) {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (gender === 'undeclared') {
-      setAlert('성별을 선택해주세요');
-      setAlertOpen(true);
+      dispatch(setMessage('성별을 선택해주세요'));
+      setOpen(true);
       return;
     }
 
@@ -129,13 +131,16 @@ function Register(props) {
 
     dispatch(register(data))
       .then(() => {
-        setOpen(true);
         setSuccessful(true);
       })
       .catch(() => {
         setOpen(true);
         setSuccessful(false);
       });
+  };
+
+  const onRegisterSuccess = () => {
+    history.push('/login');
   };
 
   const handleUserType = (ut) => () => {
@@ -147,13 +152,6 @@ function Register(props) {
       return;
     }
     setOpen(false);
-  };
-
-  const handleAlertClose = (event, reason) => {
-    if (reason === 'clickaway') {
-      return;
-    }
-    setAlertOpen(false);
   };
 
   if (isLoggedIn) {
@@ -343,26 +341,26 @@ function Register(props) {
               elevation={6}
               variant="filled"
               onClose={handleClose}
-              severity={successful ? 'success' : 'error'}
+              severity="error"
             >
               {message}
             </MuiAlert>
           </Snackbar>
         )}
-        <Snackbar
-          open={alertOpen}
-          autoHideDuration={6000}
-          onClose={handleAlertClose}
+        <Dialog
+          open={successful}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
         >
-          <MuiAlert
-            elevation={6}
-            variant="filled"
-            onClose={handleAlertClose}
-            severity="error"
-          >
-            {alert}
-          </MuiAlert>
-        </Snackbar>
+          <DialogTitle id="alert-dialog-title">
+            회원가입이 성공적으로 이루어졌습니다
+          </DialogTitle>
+          <DialogActions>
+            <Button onClick={onRegisterSuccess} color="primary" autoFocus>
+              확인
+            </Button>
+          </DialogActions>
+        </Dialog>
       </div>
     </Container>
   );
