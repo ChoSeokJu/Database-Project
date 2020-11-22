@@ -1,9 +1,12 @@
 /* eslint-disable react/jsx-filename-extension */
-import React, { createRef } from 'react';
+import React, { createRef, useState } from 'react';
 import MaterialTable from 'material-table';
 import Paper from '@material-ui/core/Paper';
+import UserInfo from './UserInfo';
 
 export default function TaskTableAdmin({ taskName }) {
+  const [openUserInfo, setOpenUserInfo] = useState({ open: false, Uid: 0 });
+
   const pendingTableRef = createRef();
   const approvedTableRef = createRef();
 
@@ -19,8 +22,13 @@ export default function TaskTableAdmin({ taskName }) {
     approvedTableRef.current && approvedTableRef.current.onQueryChange();
     // 리콜 마지막에 호출해야한다
   };
-  const handleInfo = (event, rowData) => {
-    alert(`회원 ${rowData.name}의 정보`);
+
+  const handleUserInfo = (event, rowData) => {
+    setOpenUserInfo({ open: true, Uid: rowData.Uid });
+  };
+
+  const handleClose = () => {
+    setOpenUserInfo({ open: false, Uid: 0 });
   };
 
   const getPendingUserList = (query) => new Promise((resolve, reject) => {
@@ -66,8 +74,17 @@ export default function TaskTableAdmin({ taskName }) {
         },
       }}
       columns={[
-        { title: '아이디', field: 'ID' },
-        { title: '이름', field: 'Name' }]}
+        {
+          title: '아이디',
+          field: 'ID',
+          sorting: false,
+        },
+        {
+          title: '이름',
+          field: 'Name',
+          sorting: false,
+        },
+      ]}
     />
   );
 
@@ -91,7 +108,7 @@ export default function TaskTableAdmin({ taskName }) {
             {
               icon: 'info',
               tooltip: '회원 정보',
-              onClick: handleInfo,
+              onClick: handleUserInfo,
             },
           ]
         }
@@ -105,12 +122,13 @@ export default function TaskTableAdmin({ taskName }) {
             {
               icon: 'info',
               tooltip: '회원 정보',
-              onClick: handleInfo,
+              onClick: handleUserInfo,
             },
           ]
         }
         data={getApprovedUserList}
       />
+      <UserInfo open={openUserInfo.open} handleClose={handleClose} Uid={openUserInfo.Uid} />
     </>
   );
 }

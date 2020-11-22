@@ -17,18 +17,19 @@ export default function TaskTableAdmin(props) {
     setOpenTaskUserList({ open: false, taskName: '' });
     setOpenTaskInfo({ open: false, taskName: '' });
   };
+
   const handleUserList = (rowData) => () => {
     setOpenTaskUserList({ open: true, taskName: rowData.taskName });
   };
   const handleTaskInfo = (rowData) => () => {
     setOpenTaskInfo({ open: true, taskName: rowData.taskName });
   };
+  const handleAppendSchema = (rowData) => () => {
+    alert(`${rowData.taskName}에 스키마를 추가`);
+  };
 
   const handleAppendTask = (event) => {
     alert('태스크 추가');
-  };
-  const handleAppendScheme = (event, rowData) => {
-    alert(`${rowData.taskName}에 스키마를 추가`);
   };
 
   const getTask = (query) => new Promise((resolve, reject) => {
@@ -64,33 +65,48 @@ export default function TaskTableAdmin(props) {
             actions: '스키마',
           },
         }}
-        columns={[{ title: '이름', field: 'taskName' },
-        {
-          title: '회원목록 조회',
-          sorting: false,
-          render: (rowData) => (
-            <Button variant="primary" onClick={handleUserList(rowData)} endIcon={<GroupIcon />}>
-              회원목록
-            </Button>
-          ),
-        },
-        {
-          title: '정보 조회',
-          sorting: false,
-          render: (rowData) => (
-            <Button variant="primary" onClick={handleTaskInfo(rowData)} endIcon={<InfoIcon />}>
-              태스크 정보
-            </Button>
-          ),
-        }]}
+        columns={[
+          {
+            title: '이름',
+            field: 'taskName',
+            sorting: false,
+          },
+          {
+            title: '회원목록',
+            cellStyle: { width: '10%' },
+            sorting: false,
+            align: 'center',
+            render: (rowData) => (
+              <IconButton onClick={handleUserList(rowData)}>
+                <GroupIcon />
+              </IconButton>
+            ),
+          },
+          {
+            title: '정보',
+            cellStyle: { width: '10%' },
+            sorting: false,
+            align: 'center',
+            render: (rowData) => (
+              <IconButton onClick={handleTaskInfo(rowData)}>
+                <InfoIcon />
+              </IconButton>
+            ),
+          },
+          {
+            title: '스키마',
+            cellStyle: { width: '10%' },
+            sorting: false,
+            align: 'center',
+            render: (rowData) => (
+              <IconButton onClick={handleAppendSchema(rowData)}>
+                <AddIcon />
+              </IconButton>
+            ),
+          }]}
         data={getTask}
         actions={
           [
-            {
-              icon: 'add',
-              tooltip: '원본 데이터 스키마 추가',
-              onClick: handleAppendScheme,
-            },
             {
               icon: 'add',
               tooltip: '태스크 추가',
