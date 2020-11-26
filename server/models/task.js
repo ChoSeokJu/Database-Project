@@ -1,5 +1,6 @@
 /* jshint indent: 2 */
 
+const Sequelize = require('sequelize');
 module.exports = function(sequelize, DataTypes) {
   return sequelize.define('task', {
     TaskName: {
@@ -8,7 +9,7 @@ module.exports = function(sequelize, DataTypes) {
       primaryKey: true
     },
     Desc: {
-      type: "LONGTEXT",
+      type: DataTypes.TEXT,
       allowNull: false
     },
     MinTerm: {
@@ -38,6 +39,33 @@ module.exports = function(sequelize, DataTypes) {
     }
   }, {
     sequelize,
-    tableName: 'task'
-    });
+    tableName: 'task',
+    timestamps: false,
+    indexes: [
+      {
+        name: "PRIMARY",
+        unique: true,
+        using: "BTREE",
+        fields: [
+          { name: "TaskName" },
+        ]
+      },
+      {
+        name: "TableName_UNIQUE",
+        unique: true,
+        using: "BTREE",
+        fields: [
+          { name: "TableName" },
+        ]
+      },
+      {
+        name: "TableRef_UNIQUE",
+        unique: true,
+        using: "BTREE",
+        fields: [
+          { name: "TableRef" },
+        ]
+      },
+    ]
+  });
 };
