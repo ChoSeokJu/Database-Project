@@ -1,0 +1,146 @@
+/* eslint-disable react/jsx-filename-extension */
+import React, { useState } from 'react';
+import MaterialTable from 'material-table';
+import Paper from '@material-ui/core/Paper';
+import { useDispatch, useSelector } from 'react-redux';
+
+import Grid from '@material-ui/core/Grid';
+import Typography from '@material-ui/core/Typography';
+import TextField from '@material-ui/core/TextField';
+import Divider from '@material-ui/core/Divider';
+import { makeStyles } from '@material-ui/core/styles';
+import { openAlert, setAlertType, setMessage } from '../../actions/message';
+import {
+  setTaskData,
+  setTaskName,
+  setMinPeriod,
+  setPassCriteria,
+  setDescription,
+} from '../../actions/taskData';
+
+const useStyles = makeStyles((theme) => ({
+  divider: {
+    marginTop: theme.spacing(3),
+  },
+}));
+
+export default function AppendTaskForm() {
+  const dispatch = useDispatch();
+  const classes = useStyles();
+
+  const { data, taskName, minPeriod, passCriteria, description } = useSelector(
+    (state) => state.taskData
+  );
+
+  const isDuplicated = (newData) =>
+    data.some(({ columnName: oldName }) => {
+      if (oldName === newData.columnName) {
+        dispatch(setAlertType('error'));
+        dispatch(setMessage('이미 존재하는 칼럼입니다'));
+        dispatch(openAlert());
+        return true;
+      }
+    });
+
+  return (
+    <>
+      <Grid container spacing={3}>
+        <Grid item xs={12}>
+          <TextField
+            required
+            label="태스크 이름"
+            fullWidth
+            value={taskName}
+            onChange={(e) => dispatch(setTaskName(e.target.value))}
+          />
+        </Grid>
+        <Grid item xs={12} sm={6}>
+          <TextField
+            label="최소 주기(일)"
+            type="number"
+            fullWidth
+            value={minPeriod}
+            onChange={(e) => dispatch(setMinPeriod(e.target.value))}
+          />
+        </Grid>
+        <Grid item xs={12} sm={6}>
+          <TextField
+            required
+            label="Pass 기준(0~10)"
+            type="number"
+            fullWidth
+            value={passCriteria}
+            onChange={(e) => dispatch(setPassCriteria(e.target.value))}
+          />
+        </Grid>
+        <Grid item xs={12}>
+          <TextField
+            label="설명"
+            fullWidth
+            multiline
+            value={description}
+            onChange={(e) => dispatch(setDescription(e.target.value))}
+          />
+        </Grid>
+      </Grid>
+      <Divider className={classes.divider} />
+      <MaterialTable
+        title="데이터 스키마"
+        components={{
+          Container: (props) => <Paper {...props} elevation={0} />,
+        }}
+        options={{
+          pageSize: 4,
+          pageSizeOptions: [],
+          actionsColumnIndex: -1,
+          paginationType: 'stepped',
+          search: false,
+        }}
+        localization={{
+          body: {
+            emptyDataSourceMessage: '칼럼을 추가해 주세요',
+          },
+          header: {
+            actions: '',
+          },
+        }}
+        columns={[
+          { title: '칼럼', field: 'columnName' },
+          { title: '타입', field: 'type' },
+        ]}
+        data={data}
+        editable={{
+          onRowAdd: (newData) =>
+            new Promise((resolve, reject) => {
+              if (!isDuplicated(newData)) {
+                dispatch(setTaskData([...data, newData]));
+                resolve();
+              } else {
+                reject();
+              }
+            }),
+          onRowUpdate: (newData, oldData) =>
+            new Promise((resolve, reject) => {
+              if (!isDuplicated(newData)) {
+                const dataUpdate = [...data];
+                const index = oldData.tableData.id;
+                dataUpdate[index] = newData;
+                dispatch(setTaskData([...dataUpdate]));
+                resolve();
+              } else {
+                reject();
+              }
+            }),
+          onRowDelete: (oldData) =>
+            new Promise((resolve, reject) => {
+              const dataDelete = [...data];
+              const index = oldData.tableData.id;
+              dataDelete.splice(index, 1);
+              dispatch(setTaskData([...dataDelete]));
+              resolve();
+            }),
+        }}
+      />
+    </>
+  );
+}

@@ -8,14 +8,13 @@ import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import Container from '@material-ui/core/Container';
 import { makeStyles } from '@material-ui/core/styles';
-import Snackbar from '@material-ui/core/Snackbar';
 import CircularProgress from '@material-ui/core/CircularProgress';
-import MuiAlert from '@material-ui/lab/Alert';
 
 import { useDispatch, useSelector } from 'react-redux';
 import { Redirect, Link, useHistory } from 'react-router-dom';
 import { Backdrop } from '@material-ui/core';
 import { login } from '../actions/authentication';
+import { openAlert, setAlertType } from '../actions/message';
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -46,10 +45,8 @@ function Login(props) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
-  const [open, setOpen] = useState(false);
 
   const { isLoggedIn } = useSelector((state) => state.authentication);
-  const { message } = useSelector((state) => state.message);
 
   const classes = useStyles();
 
@@ -75,17 +72,10 @@ function Login(props) {
         window.location.reload();
       })
       .catch(() => {
-        setOpen(true);
+        dispatch(setAlertType('error'));
+        dispatch(openAlert());
         setLoading(false);
       });
-  };
-
-  const handleClose = (event, reason) => {
-    if (reason === 'clickaway') {
-      return;
-    }
-
-    setOpen(false);
   };
 
   if (isLoggedIn) {
@@ -142,18 +132,6 @@ function Login(props) {
             </Grid>
           </Grid>
         </form>
-        {message && (
-          <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
-            <MuiAlert
-              elevation={6}
-              variant="filled"
-              onClose={handleClose}
-              severity="error"
-            >
-              {message}
-            </MuiAlert>
-          </Snackbar>
-        )}
         <Backdrop className={classes.backdrop} open={loading}>
           <CircularProgress color="inherit" />
         </Backdrop>

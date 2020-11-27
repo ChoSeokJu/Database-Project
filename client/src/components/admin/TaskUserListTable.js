@@ -31,29 +31,39 @@ export default function TaskTableAdmin({ taskName }) {
     setOpenUserInfo({ open: false, Uid: 0 });
   };
 
-  const getPendingUserList = (query) => new Promise((resolve, reject) => {
-    setTimeout(() => resolve({
-      data: [
-        { ID: 'username1', Name: '회원1', Uid: 1 },
-        { ID: 'username2', Name: '회원2', Uid: 2 },
-        { ID: 'username3', Name: '회원3', Uid: 3 },
-      ],
-      page: query.page,
-      totalCount: 100,
-    }), 500);
-  });
+  const getPendingUserList = (query) =>
+    new Promise((resolve, reject) => {
+      setTimeout(
+        () =>
+          resolve({
+            data: [
+              { ID: 'username1', Name: '회원1', Uid: 1 },
+              { ID: 'username2', Name: '회원2', Uid: 2 },
+              { ID: 'username3', Name: '회원3', Uid: 3 },
+            ],
+            page: query.page,
+            totalCount: 100,
+          }),
+        500
+      );
+    });
 
-  const getApprovedUserList = (query) => new Promise((resolve, reject) => {
-    setTimeout(() => resolve({
-      data: [
-        { ID: 'username1', Name: '회원1', Uid: 1 },
-        { ID: 'username2', Name: '회원2', Uid: 2 },
-        { ID: 'username3', Name: '회원3', Uid: 3 },
-      ],
-      page: query.page,
-      totalCount: 100,
-    }), 500);
-  });
+  const getApprovedUserList = (query) =>
+    new Promise((resolve, reject) => {
+      setTimeout(
+        () =>
+          resolve({
+            data: [
+              { ID: 'username1', Name: '회원1', Uid: 1 },
+              { ID: 'username2', Name: '회원2', Uid: 2 },
+              { ID: 'username3', Name: '회원3', Uid: 3 },
+            ],
+            page: query.page,
+            totalCount: 100,
+          }),
+        500
+      );
+    });
 
   const MaterialTableFixed = (props) => (
     <MaterialTable
@@ -69,6 +79,9 @@ export default function TaskTableAdmin({ taskName }) {
         search: false,
       }}
       localization={{
+        body: {
+          emptyDataSourceMessage: '',
+        },
         header: {
           actions: '',
         },
@@ -93,42 +106,42 @@ export default function TaskTableAdmin({ taskName }) {
       <MaterialTableFixed
         tableRef={pendingTableRef}
         title="대기중인 회원 목록"
-        actions={
-          [
-            {
-              icon: 'check',
-              tooltip: '승인',
-              onClick: handleApproval,
-            },
-            {
-              icon: 'clear',
-              tooltip: '거절',
-              onClick: handleRejection,
-            },
-            {
-              icon: 'info',
-              tooltip: '회원 정보',
-              onClick: handleUserInfo,
-            },
-          ]
-        }
+        actions={[
+          {
+            icon: 'check',
+            tooltip: '승인',
+            onClick: handleApproval,
+          },
+          {
+            icon: 'clear',
+            tooltip: '거절',
+            onClick: handleRejection,
+          },
+          {
+            icon: 'info',
+            tooltip: '회원 정보',
+            onClick: handleUserInfo,
+          },
+        ]}
         data={getPendingUserList}
       />
       <MaterialTableFixed
         tableRef={approvedTableRef}
         title="참여 중인 회원 목록"
-        actions={
-          [
-            {
-              icon: 'info',
-              tooltip: '회원 정보',
-              onClick: handleUserInfo,
-            },
-          ]
-        }
+        actions={[
+          {
+            icon: 'info',
+            tooltip: '회원 정보',
+            onClick: handleUserInfo,
+          },
+        ]}
         data={getApprovedUserList}
       />
-      <UserInfo open={openUserInfo.open} handleClose={handleClose} Uid={openUserInfo.Uid} />
+      <UserInfo
+        open={openUserInfo.open}
+        handleClose={handleClose}
+        Uid={openUserInfo.Uid}
+      />
     </>
   );
 }

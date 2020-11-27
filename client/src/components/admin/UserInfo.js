@@ -27,9 +27,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const fields = ({
-  ID, Name, Gender, UType, Addr, Bdate, PhoneNo, AvgScore,
-}) => {
+const fields = ({ ID, Name, Gender, UType, Addr, Bdate, PhoneNo, Score }) => {
   const userTypeMap = {
     admin: '관리자',
     eval: '평가자',
@@ -48,29 +46,34 @@ const fields = ({
     { key: '주소', value: Addr },
     { key: '생년월일', value: Bdate },
     { key: '휴대전화', value: PhoneNo },
-    { key: '평균 평가 점수', value: AvgScore },
+    { key: '평균 평가 점수', value: Score },
   ];
 };
 
 export default function UserInfo({ open, handleClose, Uid }) {
   const classes = useStyles();
 
-  const getUserInfo = (query) => new Promise((resolve, reject) => {
-    setTimeout(() => resolve({
-      data: fields({
-        ID: 'username',
-        Name: '홍길동',
-        Gender: 'male',
-        UType: 'submit',
-        Addr: '서울특별시 서대문구 신촌동 연세로 50',
-        Bdate: '2020-01-01',
-        PhoneNo: '010-1234-1234',
-        AvgScore: '8점',
-      }),
-      page: query.page,
-      totalCount: 100,
-    }), 500);
-  });
+  const getUserInfo = (query) =>
+    new Promise((resolve, reject) => {
+      setTimeout(
+        () =>
+          resolve({
+            data: fields({
+              ID: 'username',
+              Name: '홍길동',
+              Gender: 'male',
+              UType: 'submit',
+              Addr: '서울특별시 서대문구 신촌동 연세로 50',
+              Bdate: '2020-01-01',
+              PhoneNo: '010-1234-1234',
+              Score: '8점',
+            }),
+            page: query.page,
+            totalCount: 8,
+          }),
+        500
+      );
+    });
 
   return (
     <Dialog
@@ -93,6 +96,9 @@ export default function UserInfo({ open, handleClose, Uid }) {
             header: false,
           }}
           localization={{
+            body: {
+              emptyDataSourceMessage: '',
+            },
             header: {
               actions: '',
             },
