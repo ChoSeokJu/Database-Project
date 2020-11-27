@@ -1,10 +1,11 @@
 /* jshint indent: 2 */
 
+const Sequelize = require('sequelize');
 module.exports = function(sequelize, DataTypes) {
   return sequelize.define('user', {
     Uid: {
       autoIncrement: true,
-      type: DataTypes.INTEGER(11),
+      type: DataTypes.INTEGER,
       allowNull: false,
       primaryKey: true
     },
@@ -14,41 +15,56 @@ module.exports = function(sequelize, DataTypes) {
       unique: "ID_UNIQUE"
     },
     Gender: {
-      type: DataTypes.ENUM('undeclared','male','female'),
-      allowNull: true,
-      comment: "'0: undeclared, 1: male, 2: female'"
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      comment: "0: undeclared, 1: male, 2: female"
     },
     Name: {
       type: DataTypes.STRING(255),
-      allowNull: true
+      allowNull: false
     },
     Addr: {
       type: DataTypes.STRING(255),
-      allowNull: true
+      allowNull: false
     },
     PhoneNo: {
       type: DataTypes.STRING(255),
-      allowNull: true
+      allowNull: false
     },
     Bdate: {
-      type: DataTypes.DATE,
-      allowNull: true
+      type: DataTypes.DATEONLY,
+      allowNull: false
     },
     Password: {
       type: DataTypes.STRING(255),
       allowNull: false
     },
     UType: {
-      type: DataTypes.ENUM('eval','submit','admin'),
+      type: DataTypes.INTEGER,
       allowNull: false,
-      comment: "0: eval, 1:  submit, 2: admin"
-    },
-    salt: {
-      type: "MEDIUMTEXT",
-      allowNull: true
+      comment: "eval: 0, submit: 1, admin: 2"
     }
   }, {
     sequelize,
-    tableName: 'user'
-    });
+    tableName: 'user',
+    timestamps: false,
+    indexes: [
+      {
+        name: "PRIMARY",
+        unique: true,
+        using: "BTREE",
+        fields: [
+          { name: "Uid" },
+        ]
+      },
+      {
+        name: "ID_UNIQUE",
+        unique: true,
+        using: "BTREE",
+        fields: [
+          { name: "ID" },
+        ]
+      },
+    ]
+  });
 };
