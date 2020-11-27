@@ -10,4 +10,7 @@ module.exports = function (app) {
   app.use('/api/user/eval', eval);
   app.use('/api/user/submit', submit);
   app.use('/api/account', account);
+  app.get('/example', function(req, res){
+    res.status(200).send("This is an example");
+  });
 };

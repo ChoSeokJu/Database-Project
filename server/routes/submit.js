@@ -10,4 +10,11 @@ router.get(
   submitController.submitContent
 );
 
+// router.post(
+//   '/submit/submit-data',
+//   [authJwt.verifyToken, authJwt.isSubmit],
+//   submitController.systemAssessment,
+//   submitController.assignEvaluator
+// )
+
 module.exports = router;
