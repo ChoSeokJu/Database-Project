@@ -24,6 +24,8 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+const types = { int: 'INT', float: 'FLOAT', char: 'CHAR' };
+
 export default function AppendTaskForm() {
   const dispatch = useDispatch();
   const classes = useStyles();
@@ -35,9 +37,6 @@ export default function AppendTaskForm() {
   const isDuplicated = (newData) =>
     data.some(({ columnName: oldName }) => {
       if (oldName === newData.columnName) {
-        dispatch(setAlertType('error'));
-        dispatch(setMessage('이미 존재하는 칼럼입니다'));
-        dispatch(openAlert());
         return true;
       }
     });
@@ -99,6 +98,10 @@ export default function AppendTaskForm() {
         localization={{
           body: {
             emptyDataSourceMessage: '칼럼을 추가해 주세요',
+            addTooltip: '스키마 추가',
+            editRow: {
+              deleteText: '이 칼럼을 지우시겠습니까?',
+            },
           },
           header: {
             actions: '',
@@ -106,29 +109,46 @@ export default function AppendTaskForm() {
         }}
         columns={[
           { title: '칼럼', field: 'columnName' },
-          { title: '타입', field: 'type' },
+          { title: '타입', field: 'type', lookup: types },
         ]}
         data={data}
         editable={{
           onRowAdd: (newData) =>
             new Promise((resolve, reject) => {
-              if (!isDuplicated(newData)) {
-                dispatch(setTaskData([...data, newData]));
-                resolve();
-              } else {
-                reject();
+              console.log(newData);
+              if (isDuplicated(newData)) {
+                dispatch(setAlertType('error'));
+                dispatch(setMessage('이미 존재하는 칼럼입니다'));
+                dispatch(openAlert());
+                return reject();
               }
+              if (!newData.type) {
+                dispatch(setAlertType('error'));
+                dispatch(setMessage('타입을 선택해 주세요'));
+                dispatch(openAlert());
+                return reject();
+              }
+              dispatch(setTaskData([...data, newData]));
+              resolve();
             }),
           onRowUpdate: (newData, oldData) =>
             new Promise((resolve, reject) => {
-              if (!isDuplicated(newData)) {
+              const update = () => {
                 const dataUpdate = [...data];
                 const index = oldData.tableData.id;
                 dataUpdate[index] = newData;
                 dispatch(setTaskData([...dataUpdate]));
                 resolve();
-              } else {
+              };
+              if (newData.columnName === oldData.columnName) {
+                update();
+              } else if (isDuplicated) {
+                dispatch(setAlertType('error'));
+                dispatch(setMessage('이미 존재하는 칼럼입니다'));
+                dispatch(openAlert());
                 reject();
+              } else {
+                update();
               }
             }),
           onRowDelete: (oldData) =>
