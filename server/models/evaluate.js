@@ -9,11 +9,12 @@ module.exports = function(sequelize, DataTypes) {
       references: {
         model: 'user',
         key: 'Uid'
-      }
+      },
+      primaryKey: true
     },
     Pid: {
       type: DataTypes.INTEGER,
-      allowNull: true,
+      allowNull: false,
       references: {
         model: 'parsing_data',
         key: 'Pid'
@@ -21,11 +22,11 @@ module.exports = function(sequelize, DataTypes) {
     },
     Score: {
       type: DataTypes.INTEGER,
-      allowNull: false
+      allowNull: true
     },
     Pass: {
       type: DataTypes.TINYINT,
-      allowNull: false
+      allowNull: true
     }
   }, {
     sequelize,

@@ -15,7 +15,7 @@ module.exports = function(sequelize, DataTypes) {
       unique: "ID_UNIQUE"
     },
     Gender: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.ENUM('undeclared', 'male', 'female'),
       allowNull: false,
       comment: "0: undeclared, 1: male, 2: female"
     },
@@ -40,7 +40,7 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: false
     },
     UType: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.ENUM('eval','submit','admin'),
       allowNull: false,
       comment: "eval: 0, submit: 1, admin: 2"
     }

@@ -12,8 +12,4 @@ router.get(
   evalController.evalContent
 );
 
-// router.get(
-
-// )
-
 module.exports = router;

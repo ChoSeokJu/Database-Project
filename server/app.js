@@ -16,13 +16,13 @@ const initial = () => {
   const { user } = db;
   const userInfo = {
     ID: 'admin',
-    Gender: 0,
+    Gender: 'undeclared',
     Name: '관리자',
     Addr: 'admin',
     PhoneNo: 'admin',
     Bdate: today,
     Password: bcrypt.hashSync('admin'),
-    UType: 2,
+    UType: 'admin',
   };
 
   user
