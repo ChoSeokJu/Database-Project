@@ -8,7 +8,6 @@ const router = express.Router();
 
 router.get(
   '/',
-  [authJwt.verifyToken, authJwt.isEval],
   evalController.evalContent
 );
 
