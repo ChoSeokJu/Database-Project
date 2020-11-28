@@ -34,12 +34,11 @@ exports.rejectUser = (req, res) => {
 
 exports.pendingUser = (req, res) => {
   const {taskName, per_page, page} = req.body
-  Task.count({where: {TaskName: taskName}}).then((count => 
-    User.findAll({
-      include:  {model: works_on,
-                attributes: ['Sid']},
-      attributes: ['Uid', 'Name'],
-      where: {permit: 0},
+  Task.count().then((count => 
+    works_on.findAll({
+      attributes: ['Sid'],
+      where: {permit: 0,
+              TaskName: taskName},
       offset: per_page*(page-1),
       limit: per_page}).then((result) => {
         res.json({
@@ -51,5 +50,18 @@ exports.pendingUser = (req, res) => {
 };
 
 exports.approvedUser = (req, res) => {
-
-}
+  const {taskName, per_page, page} = req.body
+  Task.count().then((count => 
+    works_on.findAll({
+      attributes: ['Sid'],
+      where: {permit: 1,
+              TaskName: taskName},
+      offset: per_page*(page-1),
+      limit: per_page}).then((result) => {
+        res.json({
+          'data': result,
+          'page': page,
+          'totalCount': count,
+        })
+      })))
+};

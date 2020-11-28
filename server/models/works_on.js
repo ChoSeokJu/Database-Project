@@ -1,4 +1,8 @@
 /* jshint indent: 2 */
+const db = require('../models');
+const User = db.user;
+const Task = db.Task
+
 
 const Sequelize = require('sequelize');
 module.exports = function(sequelize, DataTypes) {
