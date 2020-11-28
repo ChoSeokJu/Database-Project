@@ -29,7 +29,6 @@ import { setMessage, openAlert, setAlertType } from '../actions/message';
 const useStyles = makeStyles((theme) => ({
   paper: {
     marginTop: theme.spacing(8),
-    marginBottom: theme.spacing(8),
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',

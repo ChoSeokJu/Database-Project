@@ -3,7 +3,7 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import { Router, Switch, Route } from 'react-router-dom';
 import { createBrowserHistory } from 'history';
-import { FeedBacks, TopBar } from './components';
+import { FeedBacks, TopBar, Footer } from './components';
 
 import {
   Admin,
@@ -34,6 +34,7 @@ const App = () => {
             <Route path="/submit" component={Submit} />
             <Route path="/admin" component={Admin} />
           </Switch>
+          <Footer />
         </div>
       </Router>
       <FeedBacks />

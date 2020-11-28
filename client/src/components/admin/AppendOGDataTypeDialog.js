@@ -72,7 +72,7 @@ export default function AppendOGDataTypeDialog({
         <Button onClick={handleClose} color="primary">
           취소
         </Button>
-        <Button onClick={handleSubmit} color="primary">
+        <Button onClick={handleSubmit} color="primary" variant="contained">
           확인
         </Button>
       </DialogActions>

@@ -3,7 +3,7 @@ import Container from '@material-ui/core/Container';
 import Box from '@material-ui/core/Box';
 import { Redirect, Switch, useRouteMatch, Route } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { TaskTableAdmin, AppendTask, AppendOGDataType } from '../../components';
+import { TaskTableAdmin, AppendTask, Requests } from '../../components';
 import UserList from '../../components/admin/UserList';
 
 export default function Admin(props) {
@@ -25,6 +25,9 @@ export default function Admin(props) {
         </Route>
         <Route path={`${path}/user`}>
           <UserList />
+        </Route>
+        <Route path={`${path}/requests`}>
+          <Requests />
         </Route>
         <Route path="*">
           <Redirect to="/" />

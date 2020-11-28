@@ -61,6 +61,7 @@ export default function AppendOGDataType(props) {
           actionsColumnIndex: -1,
           paginationType: 'stepped',
           search: false,
+          sorting: false,
         }}
         localization={{
           body: {
