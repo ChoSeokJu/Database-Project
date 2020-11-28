@@ -4,6 +4,7 @@ import Box from '@material-ui/core/Box';
 import { Redirect, Switch, useRouteMatch, Route } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { TaskTableAdmin, AppendTask, AppendOGDataType } from '../../components';
+import UserList from '../../components/admin/UserList';
 
 export default function Admin(props) {
   const { user: currentUser } = useSelector((state) => state.authentication);
@@ -21,6 +22,9 @@ export default function Admin(props) {
         </Route>
         <Route path={`${path}/task/append`}>
           <AppendTask />
+        </Route>
+        <Route path={`${path}/user`}>
+          <UserList />
         </Route>
         <Route path="*">
           <Redirect to="/" />

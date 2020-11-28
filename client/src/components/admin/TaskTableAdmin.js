@@ -80,13 +80,12 @@ export default function TaskTableAdmin(props) {
           options={{
             pageSize: 8,
             pageSizeOptions: [],
-            actionsColumnIndex: -1,
             paginationType: 'stepped',
             search: false,
           }}
           localization={{
-            header: {
-              actions: '스키마',
+            body: {
+              emptyDataSourceMessage: '태스크가 없습니다',
             },
           }}
           columns={[
@@ -138,6 +137,19 @@ export default function TaskTableAdmin(props) {
               onClick: handleAppendTask,
             },
           ]}
+          components={{
+            Action: (props) => (
+              <Button
+                onClick={(event) => props.action.onClick(event)}
+                color="primary"
+                variant="contained"
+                size="medium"
+                endIcon={<AddIcon />}
+              >
+                태스크 추가
+              </Button>
+            ),
+          }}
         />
       </Container>
 
