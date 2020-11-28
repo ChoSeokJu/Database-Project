@@ -9,6 +9,7 @@ import InfoIcon from '@material-ui/icons/Info';
 import Container from '@material-ui/core/Container';
 import { useHistory } from 'react-router-dom';
 import FormatListBulletedIcon from '@material-ui/icons/FormatListBulleted';
+import TextField from '@material-ui/core/TextField';
 import TaskUserList from './TaskUserList';
 import TaskInfo from './TaskInfo';
 import { setTaskData } from '../../actions/taskData';
@@ -18,6 +19,13 @@ import UserInfo from './UserInfo';
 const parseUType = { admin: '관리자', eval: '평가자', submit: '제출자' };
 
 const parseGender = { undefined: '성별', male: '남성', female: '여성' };
+
+const searchCriteria = [
+  { label: '전체', value: 'all' },
+  { label: '아이디', value: 'ID' },
+  { label: '참여중인 태스크', value: 'task' },
+  { label: '성별', value: 'Gender' },
+];
 
 const parseUser = ({ Uid, ID, UType, Bdate, Gender }) => ({
   Uid,
@@ -39,12 +47,18 @@ export default function TaskTableAdmin(props) {
     open: false,
     Uid: '',
   });
+  const [searchCriterion, setSearchCriterion] = useState(
+    searchCriteria[0].value
+  );
 
   const handleUserInfo = (rowData) => () => {
     setOpenUserInfo({ open: true, Uid: rowData.Uid });
   };
   const handleUserTask = (rowData) => () => {
     setOpenUserTask({ open: true, Uid: rowData.Uid });
+  };
+  const handleCriterionChange = (e) => {
+    setSearchCriterion(e.target.value);
   };
 
   const handleClose = () => {
@@ -118,7 +132,7 @@ export default function TaskTableAdmin(props) {
           500
         );
       } else {
-        // TODO: 검색 문구가 있을 경우
+        // TODO: 검색 문구가 있을 경우. searchCriterion까지 같이 보내야 한다
         setTimeout(
           () =>
             resolve({
@@ -149,6 +163,7 @@ export default function TaskTableAdmin(props) {
             pageSize: 8,
             pageSizeOptions: [],
             paginationType: 'stepped',
+            sorting: false,
             debounceInterval: 1000,
           }}
           localization={{
@@ -197,6 +212,27 @@ export default function TaskTableAdmin(props) {
             },
           ]}
           data={getUsers}
+          components={{
+            Actions: () => (
+              <TextField
+                select
+                label="검색 기준"
+                value={searchCriterion}
+                onChange={handleCriterionChange}
+                SelectProps={{
+                  native: true,
+                }}
+                size="small"
+                style={{ marginBottom: '13px' }}
+              >
+                {searchCriteria.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </TextField>
+            ),
+          }}
         />
       </Container>
       <UserInfo

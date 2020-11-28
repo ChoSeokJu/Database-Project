@@ -32,7 +32,7 @@ export default function AppendOGDataTypeDialog({
           { columnName: '스키마1' },
           { columnName: '스키마2' },
           { columnName: '스키마3' },
-        ]),
+        ])
       );
     }
   }, [open]);
@@ -63,18 +63,17 @@ export default function AppendOGDataTypeDialog({
       aria-labelledby="form-dialog-title"
     >
       <DialogTitle id="form-dialog-title">
-        {taskName}
-        에 원본 데이터 스키마 추가
+        {taskName}에 원본 데이터 스키마 추가
       </DialogTitle>
       <DialogContent>
         <AppendOGDataType />
       </DialogContent>
       <DialogActions>
-        <Button onClick={handleSubmit} color="primary">
-          확인
-        </Button>
         <Button onClick={handleClose} color="primary">
           취소
+        </Button>
+        <Button onClick={handleSubmit} color="primary">
+          확인
         </Button>
       </DialogActions>
     </Dialog>
