@@ -119,7 +119,11 @@ export default function TopBar(props) {
         회원 관리
       </Button>
 
-      <Button size="large" color="inherit">
+      <Button
+        size="large"
+        color="inherit"
+        onClick={() => history.push('/admin/requests')}
+      >
         태스크 요청 게시판
       </Button>
     </>
