@@ -10,6 +10,8 @@ import Container from '@material-ui/core/Container';
 import { useHistory } from 'react-router-dom';
 import TaskUserList from './TaskUserList';
 import TaskInfo from './TaskInfo';
+import { setTaskData } from '../../actions/taskData';
+import AppendOGDataTypeDialog from './AppendOGDataTypeDialog';
 
 export default function TaskTableAdmin(props) {
   const [openTaskUserList, setOpenTaskUserList] = useState({
@@ -20,12 +22,17 @@ export default function TaskTableAdmin(props) {
     open: false,
     taskName: '',
   });
+  const [openAppendOGDataType, setOpenAppendOGDataType] = useState({
+    open: false,
+    taskName: '',
+  });
 
   const history = useHistory();
 
   const handleClose = () => {
     setOpenTaskUserList({ open: false, taskName: '' });
     setOpenTaskInfo({ open: false, taskName: '' });
+    setOpenAppendOGDataType({ open: false, taskName: '' });
   };
 
   const handleUserList = (rowData) => () => {
@@ -35,13 +42,14 @@ export default function TaskTableAdmin(props) {
     setOpenTaskInfo({ open: true, taskName: rowData.taskName });
   };
   const handleAppendSchema = (rowData) => () => {
-    alert(`${rowData.taskName}에 스키마를 추가`);
+    setOpenAppendOGDataType({ open: true, taskName: rowData.taskName });
   };
 
   const handleAppendTask = (event) => {
     history.push('/admin/task/append');
   };
 
+  // TODO: 태스크 목록 불러오기
   const getTask = (query) =>
     new Promise((resolve, reject) => {
       setTimeout(
@@ -141,6 +149,11 @@ export default function TaskTableAdmin(props) {
       <TaskInfo
         open={openTaskInfo.open}
         taskName={openTaskInfo.taskName}
+        handleClose={handleClose}
+      />
+      <AppendOGDataTypeDialog
+        open={openAppendOGDataType.open}
+        taskName={openAppendOGDataType.taskName}
         handleClose={handleClose}
       />
     </>

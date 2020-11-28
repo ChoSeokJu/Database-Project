@@ -13,11 +13,18 @@ import Button from '@material-ui/core/Button';
 import Link from '@material-ui/core/Link';
 import Typography from '@material-ui/core/Typography';
 import { useDispatch, useSelector } from 'react-redux';
+import { useHistory } from 'react-router-dom';
 import AppendTaskForm from './AppendTaskForm';
 import AppendOGDataType from './AppendOGDataType';
 import { clearTaskData } from '../../actions/taskData';
 import { postAdmin } from '../../services/user.service';
-import { setMessage, openAlert, setAlertType } from '../../actions/message';
+import {
+  setMessage,
+  openAlert,
+  setAlertType,
+  openDialog,
+} from '../../actions/message';
+import { setOriginalData, clearOriginalData } from '../../actions/originalData';
 
 const useStyles = makeStyles((theme) => ({
   layout: {
@@ -65,10 +72,13 @@ const steps = ['태스크 정보 입력', '원본 데이터 스키마 추가'];
 export default function AppendTask(props) {
   const classes = useStyles();
   const dispatch = useDispatch();
+  const history = useHistory();
 
   const { data, taskName, minPeriod, passCriteria, description } = useSelector(
     (state) => state.taskData
   );
+
+  const { name } = useSelector((state) => state.originalData);
   const [activeStep, setActiveStep] = React.useState(0);
 
   useEffect(() => {
@@ -99,17 +109,27 @@ export default function AppendTask(props) {
         dispatch(openAlert());
         return;
       }
+      dispatch(clearOriginalData());
+      dispatch(setOriginalData(data.map(({ columnName }) => ({ columnName }))));
       setActiveStep(activeStep + 1);
     } else {
-      // 최종 제출
+      if (!name) {
+        dispatch(setAlertType('error'));
+        dispatch(setMessage('스키마 이름을 입력해주세요'));
+        dispatch(openAlert());
+        return;
+      }
+      // TODO: 최종 제출. 제출할 때 Number로 바꿔야 함에 유의하자.
+
+      dispatch(setMessage('태스크 추가가 성공했습니다'));
+      dispatch(openDialog());
+      history.push('/');
     }
   };
 
   const handleBack = () => {
     setActiveStep(activeStep - 1);
   };
-
-  const handleSubmit = () => {};
 
   return (
     <>

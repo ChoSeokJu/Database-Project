@@ -10,12 +10,14 @@ export default function TaskTableAdmin({ taskName }) {
   const pendingTableRef = createRef();
   const approvedTableRef = createRef();
 
+  // TODO: 유저 승인
   const handleApproval = (event, rowData) => {
     alert(`회원 ${rowData.name} Uid ${rowData.Uid} 를 승인`);
     pendingTableRef.current && pendingTableRef.current.onQueryChange();
     approvedTableRef.current && approvedTableRef.current.onQueryChange();
     // 리콜 마지막에 호출해야한다
   };
+  // TODO: 유저 거절
   const handleRejection = (event, rowData) => {
     alert(`회원 ${rowData.name} Uid ${rowData.Uid} 를 거절`);
     pendingTableRef.current && pendingTableRef.current.onQueryChange();
@@ -31,6 +33,7 @@ export default function TaskTableAdmin({ taskName }) {
     setOpenUserInfo({ open: false, Uid: 0 });
   };
 
+  // TODO: 대기중인 유저 목록 받아오기
   const getPendingUserList = (query) =>
     new Promise((resolve, reject) => {
       setTimeout(
@@ -48,6 +51,7 @@ export default function TaskTableAdmin({ taskName }) {
       );
     });
 
+  // TODO: 승인된 유저의 목록 받아오기
   const getApprovedUserList = (query) =>
     new Promise((resolve, reject) => {
       setTimeout(

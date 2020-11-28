@@ -9,7 +9,12 @@ import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
 import Divider from '@material-ui/core/Divider';
 import { makeStyles } from '@material-ui/core/styles';
-import { openAlert, setAlertType, setMessage } from '../../actions/message';
+import {
+  openAlert,
+  openDialog,
+  setAlertType,
+  setMessage,
+} from '../../actions/message';
 import {
   setTaskData,
   setTaskName,
@@ -117,15 +122,13 @@ export default function AppendTaskForm() {
             new Promise((resolve, reject) => {
               console.log(newData);
               if (isDuplicated(newData)) {
-                dispatch(setAlertType('error'));
                 dispatch(setMessage('이미 존재하는 칼럼입니다'));
-                dispatch(openAlert());
+                dispatch(openDialog());
                 return reject();
               }
-              if (!newData.type) {
-                dispatch(setAlertType('error'));
-                dispatch(setMessage('타입을 선택해 주세요'));
-                dispatch(openAlert());
+              if (!newData.type || !newData.columnName) {
+                dispatch(setMessage('값을 입력해주세요'));
+                dispatch(openDialog());
                 return reject();
               }
               dispatch(setTaskData([...data, newData]));
@@ -142,10 +145,13 @@ export default function AppendTaskForm() {
               };
               if (newData.columnName === oldData.columnName) {
                 update();
-              } else if (isDuplicated) {
-                dispatch(setAlertType('error'));
+              } else if (isDuplicated(newData)) {
                 dispatch(setMessage('이미 존재하는 칼럼입니다'));
-                dispatch(openAlert());
+                dispatch(openDialog());
+                reject();
+              } else if (!newData.columnName) {
+                dispatch(setMessage('값을 입력해주세요'));
+                dispatch(openDialog());
                 reject();
               } else {
                 update();

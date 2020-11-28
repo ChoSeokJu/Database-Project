@@ -1,13 +1,9 @@
 /* eslint-disable react/jsx-filename-extension */
-import React, { useState, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import {
-  Router, Switch, Route, Link,
-} from 'react-router-dom';
+import React from 'react';
+import { useSelector } from 'react-redux';
+import { Router, Switch, Route } from 'react-router-dom';
 import { createBrowserHistory } from 'history';
-import Snackbar from '@material-ui/core/Snackbar';
-import MuiAlert from '@material-ui/lab/Alert';
-import { closeAlert, clearMessage } from './actions/message';
+import { FeedBacks, TopBar } from './components';
 
 import {
   Admin,
@@ -19,27 +15,10 @@ import {
   Register,
 } from './containers';
 
-import { TopBar } from './components';
-
 export const history = createBrowserHistory();
 
 const App = () => {
   const { user: currentUser } = useSelector((state) => state.authentication);
-  const { open, message, type } = useSelector((state) => state.message);
-  const dispatch = useDispatch();
-
-  // useEffect(() => {
-  //   history.listen((location) => {
-  //     dispatch(clearMessage()); // clear message when changing location
-  //   });
-  // }, [dispatch]);
-
-  const handleClose = (event, reason) => {
-    if (reason === 'clickaway') {
-      return;
-    }
-    dispatch(closeAlert());
-  };
 
   return (
     <>
@@ -57,16 +36,7 @@ const App = () => {
           </Switch>
         </div>
       </Router>
-      <Snackbar open={open} autoHideDuration={5000} onClose={handleClose}>
-        <MuiAlert
-          elevation={6}
-          variant="filled"
-          onClose={handleClose}
-          severity={type}
-        >
-          {message}
-        </MuiAlert>
-      </Snackbar>
+      <FeedBacks />
     </>
   );
 };
