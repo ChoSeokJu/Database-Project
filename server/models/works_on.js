@@ -9,7 +9,8 @@ module.exports = function(sequelize, DataTypes) {
       references: {
         model: 'user',
         key: 'Uid'
-      }
+      },
+      primaryKey: true
     },
     TaskName: {
       type: DataTypes.STRING(255),
@@ -17,7 +18,8 @@ module.exports = function(sequelize, DataTypes) {
       references: {
         model: 'task',
         key: 'TaskName'
-      }
+      },
+      primaryKey: true
     },
     Permit: {
       type: DataTypes.INTEGER,

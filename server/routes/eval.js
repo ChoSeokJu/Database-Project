@@ -6,10 +6,15 @@ const router = express.Router();
 
 /* route begins with "./api/user/eval" */
 
+// router.get(
+//   '/data-list',
+//   [authJwt.verifyToken, authJwt.isEval],
+//   evalController.evalContent
+// );
+
 router.get(
   '/',
-  [authJwt.verifyToken, authJwt.isEval],
-  evalController.evalContent
+  evalController.example
 );
 
 module.exports = router;
