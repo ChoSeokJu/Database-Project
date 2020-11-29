@@ -37,7 +37,7 @@ router.post(
   submitController.submitApply
 )
 
-router.post(
+router.get(
   /* user average score */
   '/submitter-details',
   submitController.getAvgScore

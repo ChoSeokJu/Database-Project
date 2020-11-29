@@ -215,17 +215,47 @@ exports.submitApply = function(req, res) {
 
 exports.getAvgScore = function(req, res) {
   /* get average score */
-  AVG_SCORE.findByPk(
-    req.body.ID
-  ).then((AVG_SCORE) => {
-    if (AVG_SCORE){
-      return res.status(200).json({
-        "Score": AVG_SCORE.score
+  /* remaining issues
+  TaskDataTableTupleCnt
+  */
+  user.findOne({
+    where: {
+      ID: req.query.username
+    }
+  }).then((user) => {
+    if (user) {
+      parsing_data.count({
+        where: {
+          Sid: user.Uid
+        }
+      }).then((parsing_data) => {
+        if (parsing_data) {
+          AVG_SCORE.findByPk(
+            user.Uid
+          ).then((AVG_SCORE) => {
+            if (AVG_SCORE){
+              return res.status(200).json({
+                "Score": AVG_SCORE.Score,
+                "SubmittedDataCnt": parsing_data,
+                // "TaskDataTableTupleCnt": 
+              })
+            } else {
+              return res.status(400).json({
+                "message": "such og_data_type does not exist"
+              })
+            }
+          })
+        } else {
+          return res.status(400).json({
+            "message": "user did not submit any parsing_data"
+          }) 
+        }
       })
     } else {
-      return res.status(404).json({
-        "message": `Not found`
-      })
+      return res.status(400).json({
+        "message": "such user does not exist"
+      }) 
     }
   })
+  
 }
