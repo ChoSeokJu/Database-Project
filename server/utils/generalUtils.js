@@ -1,7 +1,7 @@
 const multer = require('multer');
 
 exports.csvSanityCheck = function(data) {
-    /* check if the submitted csv file is in correct format */
+    /* check if the submitted csv file has headers that fit the mapping information in og_data_type */
     console.log(data)
     return true
 }

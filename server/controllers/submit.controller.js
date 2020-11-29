@@ -72,11 +72,10 @@ exports.quantAssess = async function (req, res, next){
 var pid = 134
 exports.systemAssessment = function(req, res, next){
   /* automatic system assessment */ 
-  /* remaining issues
-  SubmitCnt
-  Term
-  Pid --> how to get this and pass it on to "assignEvaluator"
-  */
+  // ! SubmitCnt
+  // ! Term 
+  // ! Pid --> how to get this and pass it on to "assignEvaluator"
+
   var submitSid, submitDid;
   
   /* find submitter Sid */
@@ -215,9 +214,8 @@ exports.submitApply = function(req, res) {
 
 exports.getAvgScore = function(req, res) {
   /* get average score */
-  /* remaining issues
-  TaskDataTableTupleCnt
-  */
+  // ! TaskDataTableTupleCnt
+  
   user.findOne({
     where: {
       ID: req.query.username

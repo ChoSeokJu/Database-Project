@@ -40,6 +40,7 @@ router.post(
 router.get(
   /* user average score */
   '/submitter-details',
+  // [authJwt.verifyToken, authJwt.isSubmit],
   submitController.getAvgScore
 )
 
