@@ -7,6 +7,8 @@ const { Op } = db.Sequelize;
 const Works_on = db.works_on
 const Parsing_data = db.parsing_data
 const Evaluate = db.evaluate
+const og_data_type = db.og_data_type
+const AVG_SCORE = db.AVG_SCORE
 
 Parsing_data.hasMany(Evaluate, {foreignKey: 'Pid'})
 Evaluate.belongsTo(Parsing_data, {foreignKey: 'Pid'})
@@ -142,6 +144,41 @@ exports.downloadParsedData = (req, res) => {
     } else {
       res.status(400).json({
         "message": "no such parsing data"
+      })
+    }
+  })
+}
+
+exports.getUserInfo = (req, res) => {
+  User.findOne({
+    where: {
+      Uid: req.body.Uid
+    }
+  }).then((User) => {
+    if (User) {
+      AVG_SCORE.findByPk(
+        req.body.Uid
+      ).then((AVG_SCORE) => {
+        if (AVG_SCORE){
+          return res.status(200).json({
+            "ID": User.ID,
+            "Name": User.Name,
+            "Gender": User.Gender,
+            "UType": User.UType,
+            "Bdate": User.Bdate,
+            "PhoneNo": User.PhoneNo,
+            "Addr": User.Addr,
+            "Score": AVG_SCORE.Score
+          })
+        } else {
+          return res.status(400).json({
+            "message": "no such user"
+          })
+        }
+      })
+    } else {
+      return res.status(400).json({
+        "message": "no such user"
       })
     }
   })

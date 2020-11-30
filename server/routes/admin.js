@@ -31,5 +31,10 @@ router.get(
 
   adminController.downloadParsedData
 )
+
+router.get(
+  '/user-info',
+  adminController.getUserInfo
+)
 module.exports = router;
 
