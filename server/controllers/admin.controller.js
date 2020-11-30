@@ -24,13 +24,43 @@ exports.getTask = (req, res) => {
     }))
 };
 
+exports.applyTask = (req, res) => {
+  const {taskName, Uid} = req.body
+  works_on.create({
+    'Sid': Uid,
+    'TaskName': taskName,
+    'permit': 0,
+  }).then((user) => {
+    res.json({
+      message: '성공적으로 신청되었습니다.'
+    })
+  })
+};
+
 exports.approveUser = (req, res) => {
   const {taskName, Uid} = req.body
-  
+  works_on.findByPk(Uid).then((user) => {
+    user.set('permit', 1)
+    user.save()
+    return res.status(200).json({
+      message: '해당 Task를 승인했습니다'
+    })
+  })
 };
 
 exports.rejectUser = (req, res) => {
+  const {taskName, Uid} = req.body
+  works_on.findByPk(Uid).then((user) => {
+    user.set('permit', 2)
+    user.save()
+    return res.status(200).json({
+      message: '해당 Task를 거절함'
+    })
+  })
+};
 
+exports.rejectUser = (req, res) => {
+  const {taskName, Uid} = req.body
 };
 
 exports.pendingUser = (req, res) => {

@@ -11,8 +11,9 @@ router.get(
 
 
 router.get('/task', adminController.getTask);
-
-router.get('/pending', adminController.pendingUser);
+router.get('/task/approve', adminController.approveUser)
+router.get('task/pending', adminController.pendingUser);
+router.get('task/approved', adminController.pendingUser);
 
 
 module.exports = router;
