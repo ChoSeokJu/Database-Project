@@ -1,38 +1,62 @@
 const db = require('../models');
 const { parsing_data, evaluate, user } = db;
+const { finalScore } = require('../utils/generalUtils')
 
 parsing_data.hasMany(evaluate, {foreignKey: 'Pid'})
 evaluate.belongsTo(parsing_data, {foreignKey: 'Pid'})
 
-exports.evaluate = (req, res, next) => {
+exports.evaluate = (req, res) => {
   /* insert evaluated value */
   // ! add timestamp
-  // ! final score metric
+  // ! final score metric => currently mock
   evaluate.update({
     Score: req.body.Score,
-    Pass: req.body.Pass,
-    where : {
-      Eid: req.body.Eid,
+    Pass: req.body.Pass},
+    {where : {
+      Eid: req.body.Uid,
       Pid: req.body.Pid
     }
-  }).then((evaluate)=>{
-    parsing_data.findAll({
-      include: [{
-        model: evaluate,
-        required: true
-      }]
-    }).then((parsing_data) => {
-      if (parsing_data){
-        parsing_data.forEach( (data) => {
-          /* implement the final score metric*/
-
-        })
-      } else {
-        return res.status(404).json({
-          "message": "No such data"
-        })
-      }
-    })
+  }).then((evaluate_result)=>{
+    console.log("UPTO HERE")
+    if (evaluate_result){
+      parsing_data.findOne({
+        include: [{
+          model: evaluate,
+          required: true
+        }],
+        where : {
+          Pid: req.body.Pid
+        }
+      }).then((parsing_data_result) => {
+        if (parsing_data_result) {
+          parsing_data.update({
+            FinalScore: finalScore(parsing_data_result)},
+            {where: {
+              Pid: parsing_data_result.Pid
+            }
+          }).then((parsing_data) => {
+            if (parsing_data){
+              // next()
+              return res.status(200).json({
+                "message": "this is mock success. erase this later"
+              })
+            } else {
+              return res.status(404).json({
+                "message": "No such data"
+              })
+            }
+          })
+        } else {
+          return res.status(404).json({
+            "message": "No such data"
+          })
+        }
+      })
+    } else {
+      return res.status(404).json({
+        "message": "No such data"
+      })
+    }
   })
 }
 

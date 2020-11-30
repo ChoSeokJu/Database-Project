@@ -43,3 +43,9 @@ exports.upload = multer({ dest: 'uploads/',
                           fileFilter: function (req, file, cb) {
                             file.mimetype === 'text/csv' ? cb(null, true) : cb(null, false)
 }})
+
+exports.finalScore = function (x) {
+    const { SubmitCnt, TotalTupleCnt, DuplicatedTupleCnt, NullRatio, Score } = x
+    console.log(`HEREEE ${Object.keys(x)}`)
+    return (SubmitCnt + TotalTupleCnt + DuplicatedTupleCnt + NullRatio + Score)
+}
