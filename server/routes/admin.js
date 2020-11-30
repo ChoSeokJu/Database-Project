@@ -14,6 +14,10 @@ router.get('/task', adminController.getTask);
 
 router.get('/pending', adminController.pendingUser);
 
+router.get(
+  '/user-info/eval',
+  adminController.evaluatedData
+)
 
 module.exports = router;
 
