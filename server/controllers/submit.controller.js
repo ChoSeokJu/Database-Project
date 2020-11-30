@@ -165,24 +165,28 @@ exports.assignEvaluator = function(req, res){
 };
 
 exports.getTaskList = function(req, res) {
+  var taskList = []
   user.findOne({
     where:{
-      ID: req.body.ID
+      ID: req.query.username
     }
   }).then((user) => {
     works_on.findAll({
       where:{
         Sid: user.Uid,
-        Permit: 1
+        Permit: 0
       }
     }).then((works_on) => {
-      if(!works_on){
-        return res.status(400).json({
-          message: "User has not been approved any task"
+      if(works_on){
+        works_on.forEach( (data) => {
+          taskList.push(data.TaskName)
+        })
+        return res.status(200).json({
+          "TaskNameList": taskList
         })
       } else {  
-        return res.status(200).json({
-          "TaskNameList": works_on.TaskName
+        return res.status(400).json({
+          message: "User has not been approved any task"
         })
       }
     })
@@ -215,7 +219,7 @@ exports.submitApply = function(req, res) {
 exports.getAvgScore = function(req, res) {
   /* get average score */
   // ! TaskDataTableTupleCnt
-  
+
   user.findOne({
     where: {
       ID: req.query.username

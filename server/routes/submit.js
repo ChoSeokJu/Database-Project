@@ -23,7 +23,7 @@ router.post(
   submitController.assignEvaluator
 )
 
-router.post(
+router.get(
   /* list of tasks user is approved for */
   '/task-list',
   // [authJwt.verifyToken, authJwt.isSubmit],
