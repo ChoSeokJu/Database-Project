@@ -16,4 +16,10 @@ router.post(
 
 router.post('/signin', controller.signin);
 
+router.get('/example', controller.getUser);
+
+router.get('/examples', function (req, res) {
+  return res.status(200).send('시발')
+});
+
 module.exports = router;

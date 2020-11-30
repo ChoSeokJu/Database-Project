@@ -6,8 +6,14 @@ const router = express.Router();
 
 router.get(
   '/',
-  [authJwt.verifyToken, authJwt.isAdmin],
   adminController.adminContent
 );
 
+
+router.get('/task', adminController.getTask);
+
+router.get('/pending', adminController.pendingUser);
+
+
 module.exports = router;
+
