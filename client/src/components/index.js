@@ -8,6 +8,7 @@ import AppendOGDataType from './admin/AppendOGDataType';
 import FeedBacks from './FeedBacks';
 import Footer from './Footer';
 import Requests from './admin/Requests';
+import DataTableEval from './eval/DataTableEval';
 
 export {
   TaskTableAdmin,
@@ -20,4 +21,5 @@ export {
   FeedBacks,
   Footer,
   Requests,
+  DataTableEval,
 };
