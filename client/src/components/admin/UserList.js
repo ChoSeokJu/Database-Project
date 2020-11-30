@@ -10,11 +10,14 @@ import Container from '@material-ui/core/Container';
 import { useHistory } from 'react-router-dom';
 import FormatListBulletedIcon from '@material-ui/icons/FormatListBulleted';
 import TextField from '@material-ui/core/TextField';
+import { useDispatch } from 'react-redux';
 import TaskUserList from './TaskUserList';
 import TaskInfo from './TaskInfo';
 import { setTaskData } from '../../actions/taskData';
 import AppendOGDataTypeDialog from './AppendOGDataTypeDialog';
 import UserInfo from './UserInfo';
+import { openAlert, setAlertType, setMessage } from '../../actions/message';
+import UserEvalTask from './UserEvalTask';
 
 const parseUType = { admin: '관리자', eval: '평가자', submit: '제출자' };
 
@@ -39,13 +42,21 @@ const parseUserList = (data) => data.map((user) => parseUser(user));
 
 export default function TaskTableAdmin(props) {
   const tableRef = React.createRef();
+  const dispatch = useDispatch();
+
   const [openUserInfo, setOpenUserInfo] = useState({
     open: false,
     Uid: '',
   });
-  const [openUserTask, setOpenUserTask] = useState({
+  const [openEvalTask, setOpenEvalTask] = useState({
     open: false,
     Uid: '',
+    ID: '',
+  });
+  const [openSubmitTask, setOpenSubmitTask] = useState({
+    open: false,
+    Uid: '',
+    ID: '',
   });
   const [searchCriterion, setSearchCriterion] = useState(
     searchCriteria[0].value
@@ -54,16 +65,32 @@ export default function TaskTableAdmin(props) {
   const handleUserInfo = (rowData) => () => {
     setOpenUserInfo({ open: true, Uid: rowData.Uid });
   };
+
   const handleUserTask = (rowData) => () => {
-    setOpenUserTask({ open: true, Uid: rowData.Uid });
+    switch (rowData.UType) {
+      case '관리자':
+        dispatch(setAlertType('error'));
+        dispatch(setMessage('관리자는 관련 태스크가 없습니다'));
+        dispatch(openAlert());
+        break;
+      case '평가자':
+        setOpenEvalTask({ open: true, Uid: rowData.Uid, ID: rowData.ID });
+        break;
+      case '제출자':
+        setOpenSubmitTask({ open: true, Uid: rowData.Uid, ID: rowData.ID });
+        break;
+      default:
+    }
   };
+
   const handleCriterionChange = (e) => {
     setSearchCriterion(e.target.value);
   };
 
   const handleClose = () => {
-    setOpenUserInfo({ open: false, Uid: '' });
-    setOpenUserTask({ open: false, Uid: '' });
+    setOpenUserInfo({ open: false, Uid: '', ID: '' });
+    setOpenEvalTask({ open: false, Uid: '', ID: '' });
+    setOpenSubmitTask({ open: false, Uid: '', ID: '' });
   };
 
   // TODO: 유저 목록 불러오기
@@ -239,6 +266,12 @@ export default function TaskTableAdmin(props) {
         open={openUserInfo.open}
         handleClose={handleClose}
         Uid={openUserInfo.Uid}
+      />
+      <UserEvalTask
+        open={openEvalTask.open}
+        handleClose={handleClose}
+        Uid={openEvalTask.Uid}
+        ID={openEvalTask.ID}
       />
     </>
   );

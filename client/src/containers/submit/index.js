@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { Redirect } from 'react-router-dom';
+import { Redirect, Switch, useRouteMatch, Route } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { getSubmit } from '../../services/user.service';
+import { TaskTableSubmit, TaskRequest } from '../../components';
+
 
 export default function Submit(props) {
   const { user: currentUser } = useSelector((state) => state.authentication);
+  const { path } = useRouteMatch();
 
   const [message, setMessage] = useState('');
 
@@ -24,8 +27,18 @@ export default function Submit(props) {
   }
 
   return (
+    // <>
+    //   <p>{message}</p>
+    // </>
     <>
-      <p>{message}</p>
+      <Switch>
+        <Route exact path={path}>
+          <TaskTableSubmit />
+        </Route>
+        <Route path={`${path}/task/request`}>
+          <TaskRequest />
+        </Route>
+      </Switch>
     </>
   );
 }

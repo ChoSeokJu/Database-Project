@@ -81,6 +81,7 @@ export default function TaskTableAdmin({ taskName }) {
         actionsColumnIndex: -1,
         paginationType: 'stepped',
         search: false,
+        sorting: false,
       }}
       localization={{
         body: {
