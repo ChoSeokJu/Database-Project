@@ -175,7 +175,9 @@ exports.getTaskList = function(req, res) {
       where:{
         Sid: user.Uid,
         Permit: 0
-      }
+      },
+      offset: (parseInt(req.query.per_page) * (parseInt(req.query.page)-1)),
+      limit: parseInt(req.query.per_page)
     }).then((works_on) => {
       if(works_on){
         works_on.forEach( (data) => {
@@ -196,7 +198,7 @@ exports.getTaskList = function(req, res) {
 exports.submitApply = function(req, res) {
   user.findOne({
     where: {
-      ID: req.body.ID
+      ID: req.body.username
     }
   }).then((user)=>{
     works_on.create({

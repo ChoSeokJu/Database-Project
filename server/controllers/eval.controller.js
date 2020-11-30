@@ -43,28 +43,26 @@ exports.saveToTaskTable = async function (req, res, next) {
 exports.evalContent = (req, res) => {
   console.log(`Eval user ${req.query.username} sent a request`);
   var assignedData = []
-  parsing_data.hasMany(evaluate, {foreignKey: 'Pid'})
-  evaluate.belongsTo(parsing_data, {foreignKey: 'Pid'})
   user.findOne({
     where : {
       ID: req.query.username
     }
   }).then((user) => {
     if (user) {
-      parsing_data.findAll({
+      evaluate.findAll({
         include: [{
-          model: evaluate,
+          model: parsing_data,
           required: true
-        }]
-      }).then((parsing_data) => {
-        if (parsing_data){
-          parsing_data.forEach( (data) => {
-            if(data.Eid = user.Uid){
-              assignedData.push(parsing_data)
-            }
-          })
+        }],
+        where: {
+          Eid: user.Uid
+        },
+        offset: (parseInt(req.query.per_page) * (parseInt(req.query.page)-1)),
+        limit: parseInt(req.query.per_page)
+      }).then((evaluate) => {
+        if (evaluate){
           return res.status(200).json({
-            "assignedData": parsing_data
+            "assignedData": evaluate
           })
         } else {
           return res.status(404).json({
