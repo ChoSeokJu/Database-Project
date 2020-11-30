@@ -36,23 +36,17 @@ const useStyle = makeStyles((theme) => ({
     right: theme.spacing(1),
     top: theme.spacing(1),
   },
+  divider: {
+    marginTop: theme.spacing(2),
+  },
+  finalSubmitText: {
+    marginTop: 5,
+    marginLeft: theme.spacing(1),
+  },
+  opinion: {
+    paddingBottom: theme.spacing(1),
+  },
 }));
-
-const IconBox = ({
-  onClick, children, color, Icon,
-}) => (
-    <Box display="flex" justifyContent="center">
-      <Card style={{ width: 'fit-content' }} onClick={onClick}>
-        <CardActionArea>
-          <Icon style={{ fontSize: 150, color }} />
-          {Icon}
-          <Box display="flex" justifyContent="center">
-            {children}
-          </Box>
-        </CardActionArea>
-      </Card>
-    </Box>
-  );
 
 export default function AppendOGDataTypeDialog({
   open,
@@ -78,12 +72,6 @@ export default function AppendOGDataTypeDialog({
   };
 
   const handleSubmit = () => {
-    if (score < 0 || score > 10) {
-      dispatch(setAlertType('error'));
-      dispatch(setMessage('점수는 0부터 10까지의 정수이어야 합니다'));
-      dispatch(openAlert());
-      return;
-    }
     // TODO: 평가 제출하기
     handleClose();
   };
@@ -110,7 +98,7 @@ export default function AppendOGDataTypeDialog({
       <DialogContent>
         <Container>
           <Grid container>
-            <Grid item xs={12} style={{ paddingBottom: 8 }}>
+            <Grid item xs={12} className={classes.opinion}>
               <TextField
                 variant="outlined"
                 margin="normal"
@@ -152,11 +140,11 @@ export default function AppendOGDataTypeDialog({
               </Box>
             </Grid>
             <Grid item xs={12}>
-              <Divider style={{ marginTop: 16 }} />
+              <Divider className={classes.divider} />
             </Grid>
             <Grid item xs={12}>
               <Box component="fieldset" borderColor="transparent" display="flex" justifyContent="space-between">
-                <Typography style={{ marginTop: 5, marginLeft: 8 }}>
+                <Typography className={classes.finalSubmitText}>
                   최종 점수
                 </Typography>
                 <Rating name="pristine" value={score} onChange={handleScoreChange} precision={0.5} size="large" />
