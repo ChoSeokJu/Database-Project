@@ -4,7 +4,7 @@ const config = require('../config/auth.config');
 const User = db.user;
 const Task = db.task;
 const { Op } = db.Sequelize;
-const works_on = db.works_on
+const Works_on = db.works_on
 const Parsing_data = db.parsing_data
 const Evaluate = db.evaluate
 
@@ -72,6 +72,7 @@ exports.approvedUser = (req, res) => {
 };
 
 exports.evaluatedData = (req, res) => {
+  // ! req.query? req.body? req?
   const { Uid, per_page, page } = req.query
 
   Evaluate.findAll({
@@ -94,6 +95,32 @@ exports.evaluatedData = (req, res) => {
       return res.status(404).json({
           message: 'evaluator does not have any data assigned'
         })
+    }
+  })
+}
+
+exports.requestList = (req, res) => {
+  const { per_page, page } = req.body
+  Task.hasMany(Works_on, {foreignKey: 'TaskName'})
+  Works_on.belongsTo(Task, {foreignKey: 'TaskName'})
+
+  Works_on.findAndCountAll({
+    include: [{
+      model: Task,
+      required: true
+    }],
+    where: {
+      Permit: 0
+    },
+    offset: (per_page * (page-1)),
+    limit: per_page
+  }).then( (Works_on) => {
+    if (Works_on){
+      return res.status(200).json({
+        "data": Works_on.rows,
+        "page": page,
+        "totalCount": Works_on.count
+      })
     }
   })
 }

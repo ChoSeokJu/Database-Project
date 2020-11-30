@@ -16,7 +16,14 @@ router.get('/pending', adminController.pendingUser);
 
 router.get(
   '/user-info/eval',
+
   adminController.evaluatedData
+)
+
+router.get(
+  '/request',
+
+  adminController.requestList
 )
 
 module.exports = router;

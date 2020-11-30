@@ -174,7 +174,7 @@ exports.getTaskList = function(req, res) {
     works_on.findAll({
       where:{
         Sid: user.Uid,
-        Permit: 0
+        Permit: 1
       },
       offset: (parseInt(req.query.per_page) * (parseInt(req.query.page)-1)),
       limit: parseInt(req.query.per_page)
