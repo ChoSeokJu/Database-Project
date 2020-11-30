@@ -124,3 +124,25 @@ exports.requestList = (req, res) => {
     }
   })
 }
+
+
+exports.downloadParsedData = (req, res) => {
+
+  Parsing_data.findByPk(
+    req.body.Pid
+  ).then((Parsing_data) => {
+    if (Parsing_data){
+      res.download(Parsing_data.DataRef, "download.csv", function(err){
+        if (err) {
+          res.status(404).send('bad request');
+        } else {
+          console.log(res.headersSent);
+        }
+      })
+    } else {
+      res.status(400).json({
+        "message": "no such parsing data"
+      })
+    }
+  })
+}

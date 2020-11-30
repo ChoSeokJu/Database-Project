@@ -26,5 +26,10 @@ router.get(
   adminController.requestList
 )
 
+router.get(
+  '/task/parsed-data/download',
+
+  adminController.downloadParsedData
+)
 module.exports = router;
 
