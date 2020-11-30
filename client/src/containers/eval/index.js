@@ -1,22 +1,13 @@
-import React, { useEffect, useState } from 'react';
-import { Redirect } from 'react-router-dom';
+import React from 'react';
+import {
+  Redirect, Switch, useRouteMatch, Route,
+} from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { getEval } from '../../services/user.service';
+import { TaskRequest } from '../../components';
 
 export default function Eval(props) {
   const { user: currentUser } = useSelector((state) => state.authentication);
-  const [message, setMessage] = useState('');
-
-  useEffect(() => {
-    getEval('')
-      .then((response) => {
-        setMessage(response.data);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  }, [currentUser]);
-  // only getEval(), postEval() are valid when user type is evaluator.
+  const { path } = useRouteMatch();
 
   if (!currentUser || currentUser.role !== 'eval') {
     return <Redirect to="/" />;
@@ -24,7 +15,14 @@ export default function Eval(props) {
 
   return (
     <>
-      <p>{message}</p>
+      <Switch>
+        <Route exact path={path}>
+          <p>Submit</p>
+        </Route>
+        <Route path={`${path}/task`}>
+          <TaskRequest />
+        </Route>
+      </Switch>
     </>
   );
 }

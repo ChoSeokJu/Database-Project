@@ -133,10 +133,10 @@ export default function TopBar(props) {
     <>
       <Typography color="inherit">평가자</Typography>
       <Divider orientation="vertical" flexItem className={classes.divider} />
-      <Button size="large" color="inherit">
+      <Button size="large" color="inherit" onClick={() => history.push('/')}>
         태스크 목록
       </Button>
-      <Button size="large" color="inherit">
+      <Button size="large" color="inherit" onClick={() => history.push('/eval/task')}>
         태스크 요청
       </Button>
     </>
@@ -149,7 +149,7 @@ export default function TopBar(props) {
       <Button size="large" color="inherit" onClick={() => history.push('/')}>
         태스크 목록
       </Button>
-      <Button size="large" color="inherit" onClick={() => history.push('/submit/task/request')}>
+      <Button size="large" color="inherit" onClick={() => history.push('/submit/task')}>
         태스크 요청
       </Button>
     </>

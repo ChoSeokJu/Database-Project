@@ -18,6 +18,7 @@ import AppendOGDataTypeDialog from './AppendOGDataTypeDialog';
 import UserInfo from './UserInfo';
 import { openAlert, setAlertType, setMessage } from '../../actions/message';
 import UserEvalTask from './UserEvalTask';
+import UserSubmitTask from './UserSubmitTask';
 
 const parseUType = { admin: '관리자', eval: '평가자', submit: '제출자' };
 
@@ -30,10 +31,13 @@ const searchCriteria = [
   { label: '성별', value: 'Gender' },
 ];
 
-const parseUser = ({ Uid, ID, UType, Bdate, Gender }) => ({
+const parseUser = ({
+  Uid, ID, UType, Bdate, Gender,
+}) => ({
   Uid,
   ID,
-  UType: parseUType[UType],
+  UType,
+  UserType: parseUType[UType],
   Bdate,
   Gender: parseGender[Gender],
 });
@@ -59,7 +63,7 @@ export default function TaskTableAdmin(props) {
     ID: '',
   });
   const [searchCriterion, setSearchCriterion] = useState(
-    searchCriteria[0].value
+    searchCriteria[0].value,
   );
 
   const handleUserInfo = (rowData) => () => {
@@ -68,15 +72,15 @@ export default function TaskTableAdmin(props) {
 
   const handleUserTask = (rowData) => () => {
     switch (rowData.UType) {
-      case '관리자':
+      case 'admin':
         dispatch(setAlertType('error'));
         dispatch(setMessage('관리자는 관련 태스크가 없습니다'));
         dispatch(openAlert());
         break;
-      case '평가자':
+      case 'eval':
         setOpenEvalTask({ open: true, Uid: rowData.Uid, ID: rowData.ID });
         break;
-      case '제출자':
+      case 'submit':
         setOpenSubmitTask({ open: true, Uid: rowData.Uid, ID: rowData.ID });
         break;
       default:
@@ -94,91 +98,88 @@ export default function TaskTableAdmin(props) {
   };
 
   // TODO: 유저 목록 불러오기
-  const getUsers = (query) =>
-    new Promise((resolve, reject) => {
-      if (!query.search) {
-        // TODO: 검색 문구가 없을 경우
-        setTimeout(
-          () =>
-            resolve({
-              data: parseUserList([
-                {
-                  Uid: '1',
-                  ID: 'babo1',
-                  UType: 'admin',
-                  Bdate: 12,
-                  Gender: 'female',
-                },
-                {
-                  Uid: '2',
-                  ID: 'babo2',
-                  UType: 'eval',
-                  Bdate: 12,
-                  Gender: 'male',
-                },
-                {
-                  Uid: '3',
-                  ID: 'babo3',
-                  UType: 'submit',
-                  Bdate: 12,
-                  Gender: 'female',
-                },
-                {
-                  Uid: '4',
-                  ID: 'babo4',
-                  UType: 'eval',
-                  Bdate: 12,
-                  Gender: 'male',
-                },
-                {
-                  Uid: '5',
-                  ID: 'babo5',
-                  UType: 'submit',
-                  Bdate: 12,
-                  Gender: 'female',
-                },
-                {
-                  Uid: '6',
-                  ID: 'babo6',
-                  UType: 'submit',
-                  Bdate: 12,
-                  Gender: 'female',
-                },
-                {
-                  Uid: '7',
-                  ID: 'babo7',
-                  UType: 'submit',
-                  Bdate: 12,
-                  Gender: 'male',
-                },
-              ]),
-              page: query.page,
-              totalCount: 100,
-            }),
+  const getUsers = (query) => new Promise((resolve, reject) => {
+    if (!query.search) {
+      // TODO: 검색 문구가 없을 경우
+      setTimeout(
+        () => resolve({
+          data: parseUserList([
+            {
+              Uid: '1',
+              ID: 'babo1',
+              UType: 'admin',
+              Bdate: 12,
+              Gender: 'female',
+            },
+            {
+              Uid: '2',
+              ID: 'babo2',
+              UType: 'eval',
+              Bdate: 12,
+              Gender: 'male',
+            },
+            {
+              Uid: '3',
+              ID: 'babo3',
+              UType: 'submit',
+              Bdate: 12,
+              Gender: 'female',
+            },
+            {
+              Uid: '4',
+              ID: 'babo4',
+              UType: 'eval',
+              Bdate: 12,
+              Gender: 'male',
+            },
+            {
+              Uid: '5',
+              ID: 'babo5',
+              UType: 'submit',
+              Bdate: 12,
+              Gender: 'female',
+            },
+            {
+              Uid: '6',
+              ID: 'babo6',
+              UType: 'submit',
+              Bdate: 12,
+              Gender: 'female',
+            },
+            {
+              Uid: '7',
+              ID: 'babo7',
+              UType: 'submit',
+              Bdate: 12,
+              Gender: 'male',
+            },
+          ]),
+          page: query.page,
+          totalCount: 100,
+        }),
 
-          500
-        );
-      } else {
-        // TODO: 검색 문구가 있을 경우. searchCriterion까지 같이 보내야 한다
-        setTimeout(
-          () =>
-            resolve({
-              data: parseUserList([
-                {
-                  Uid: '1',
-                  ID: 'babo1',
-                  UType: 'admin',
-                  Bdate: 12,
-                  Gender: 'male',
-                },
-              ]),
-              page: query.page,
-              totalCount: 1,
-            }),
-          200
-        );
-      }
-    });
+        500,
+      );
+    } else {
+      // TODO: 검색 문구가 있을 경우. searchCriterion까지 같이 보내야 한다
+      setTimeout(
+        () => resolve({
+          data: parseUserList([
+            {
+              Uid: '1',
+              ID: 'babo1',
+              UType: 'admin',
+              Bdate: 12,
+              Gender: 'male',
+            },
+          ]),
+          page: query.page,
+          totalCount: 1,
+        }),
+        200,
+      );
+    }
+  });
 
   return (
     <>
@@ -205,7 +206,7 @@ export default function TaskTableAdmin(props) {
             },
             {
               title: '역할',
-              field: 'UType',
+              field: 'UserType',
             },
             {
               title: '생년월일',
@@ -272,6 +273,12 @@ export default function TaskTableAdmin(props) {
         handleClose={handleClose}
         Uid={openEvalTask.Uid}
         ID={openEvalTask.ID}
+      />
+      <UserSubmitTask
+        open={openSubmitTask.open}
+        handleClose={handleClose}
+        Uid={openSubmitTask.Uid}
+        ID={openSubmitTask.ID}
       />
     </>
   );
