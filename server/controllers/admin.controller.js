@@ -2,6 +2,8 @@ const db = require('../models');
 const config = require('../config/auth.config');
 const { json } = require('body-parser');
 const { response } = require('express');
+require('date-utils')
+
 
 const User = db.user;
 const Task = db.task;
@@ -141,18 +143,40 @@ exports.addTask = (req, res) => {
 };
 
 exports.addOgData = (req, res) => {
-  const {taskName, OGDataType, data} = req.body
-  ogData.findAll()
+  var newDate = new Date()
+  const {taskName, OGDataType, data, desc, ref} = req.body
+  Task.findOne({
+    where:{TaskName: taskName},
+    attributes : ['TableSchema']}).then((schema) => {
+      if (schema) {
+        ogData.create({
+          Name: OGDataType,
+          Mapping: data,
+          TaskName: taskName,
+          Schema: schema['TableSchema'],
+          Desc: desc,
+          TimeStamp: newDate.toFormat('YYYY-MM-DD HH24:MI:SS'),
+          TableRef: ref,
+        }).then((ogdata) => {
+          res.status(200).json({
+            message: '원본데이터가 생성 되었습니다'
+          })
+      })
+    }
+    else {
+      return res.status(400).json({
+        message: '해당 Task가 없습니다'
+    })
+  }
+})
 };
 
 
 exports.test = (req, res) => {
-  const {taskName, Uid} = req.body
-  works_on.findOne({where: {TaskName: taskName, Sid: Uid}}).then((result) =>{
-    if (result.get('Permit') === 1) {
-      result.set('Permit', 3)
-      result.save()
-      res.json(result)
-    }}
-  );
+  const {taskName} = req.body
+  Task.findOne({
+    where:{TaskName: taskName},
+    attributes : ['TableSchema']}).then((result) => {
+      return res.json(result['TableSchema'])
+    })
 };
