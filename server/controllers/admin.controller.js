@@ -13,6 +13,12 @@ const AVG_SCORE = db.AVG_SCORE
 Parsing_data.hasMany(Evaluate, {foreignKey: 'Pid'})
 Evaluate.belongsTo(Parsing_data, {foreignKey: 'Pid'})
 
+User.hasMany(Parsing_data, {foreignKey: 'Sid'})
+Parsing_data.belongsTo(User, {foreignKey: "Sid"})
+
+og_data_type.hasMany(Parsing_data, {foreignKey: 'Did'})
+Parsing_data.belongsTo(og_data_type, {foreignKey: 'Did'})
+
 exports.adminContent = (req, res) => {
   console.log(`Admin user ${req.username} sent a request`);
   return res.status(200).send('Admin Content.');
@@ -127,6 +133,46 @@ exports.requestList = (req, res) => {
   })
 }
 
+exports.parsedDataList = (req, res) => {
+  const { taskName, per_page, page } = req.body
+  const output = []
+  Parsing_data.findAll({
+    include: [{
+      model: Evaluate,
+      required: true
+    }, {
+      model: User,
+      required: true
+    }, {
+      model: og_data_type,
+      required: true
+    }],
+    where: {
+      TaskName: taskName
+    },
+    offset: per_page*(page-1), 
+    limit: per_page
+  }).then((parsing_data) => {
+    if(parsing_data){
+      parsing_data.forEach( (p_data) => {
+        output.push({
+          "Pid": p_data.Pid,
+          "ID": p_data.user.ID,
+          "date": p_data.TimeStamp,
+          "OGDataType": p_data.og_data_type.Name,
+          "PNP": p_data.evaluates[0].Pass
+        })
+      })
+      return res.status(200).json({
+        output
+      })
+    } else {
+      return res.status(400).json({
+        "message": "nothing found"
+      })
+    }
+  })
+}
 
 exports.downloadParsedData = (req, res) => {
 

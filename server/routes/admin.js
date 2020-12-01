@@ -27,6 +27,12 @@ router.get(
 )
 
 router.get(
+  '/task/parsed-data',
+
+  adminController.parsedDataList
+)
+
+router.get(
   '/task/parsed-data/download',
 
   adminController.downloadParsedData
