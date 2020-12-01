@@ -3,6 +3,7 @@ const admin = require('./admin');
 const eval = require('./eval');
 const submit = require('./submit');
 const account = require('./account');
+const { authJwt } = require('../utils');
 
 module.exports = function (app) {
   app.use('/api/user/all', user);

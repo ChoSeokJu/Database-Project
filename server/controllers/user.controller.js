@@ -18,7 +18,7 @@ exports.changeUserInfo = (req, res) => {
 
 exports.changePassword = (req, res) => {
   User.findByPk(req.Uid).then((user) => {
-    if (user.get('UType') === 'admin') {
+    if (user.get('UType') === 2) {
       return res.status(400).json({
         message: '관리자는 비밀번호를 변경할 수 없습니다',
       });
@@ -48,7 +48,7 @@ exports.getUserInfo = (req, res) => {
 
 exports.handleWithdrawal = (req, res) => {
   User.findByPk(req.Uid).then((user) => {
-    if (user.get('UType') === 'admin') {
+    if (user.get('UType') === 2) {
       return res
         .status(400)
         .json({ message: 'Admin 계정은 탈퇴할 수 없습니다' });

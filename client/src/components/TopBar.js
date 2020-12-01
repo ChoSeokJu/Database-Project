@@ -10,8 +10,6 @@ import Typography from '@material-ui/core/Typography';
 import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
 import AccountCircle from '@material-ui/icons/AccountCircle';
-import Divider from '@material-ui/core/Divider';
-import SupervisorAccountIcon from '@material-ui/icons/SupervisorAccount';
 
 import { useHistory } from 'react-router-dom';
 import { logout } from '../actions/authentication';
@@ -27,14 +25,7 @@ const useStyles = makeStyles((theme) => ({
     color: 'inherit',
   },
   menuBar: {
-    paddingBottom: theme.spacing(4),
-  },
-  divider: {
-    marginRight: theme.spacing(1),
-    marginLeft: theme.spacing(2),
-  },
-  adminIcon: {
-    marginRight: theme.spacing(1),
+    paddingBottom: theme.spacing(3),
   },
 }));
 
@@ -105,53 +96,19 @@ export default function TopBar(props) {
 
   const adminBoard = (
     <>
-      <SupervisorAccountIcon className={classes.adminIcon} />
-      <Typography color="inherit">관리자</Typography>
-      <Divider orientation="vertical" flexItem className={classes.divider} />
-      <Button size="large" color="inherit" onClick={() => history.push('/')}>
-        태스크 목록
-      </Button>
-      <Button
-        size="large"
-        color="inherit"
-        onClick={() => history.push('/admin/user')}
-      >
-        회원 관리
-      </Button>
-
-      <Button
-        size="large"
-        color="inherit"
-        onClick={() => history.push('/admin/requests')}
-      >
-        태스크 요청 게시판
-      </Button>
+      <p>Admin</p>
     </>
   );
 
   const evalBoard = (
     <>
-      <Typography color="inherit">평가자</Typography>
-      <Divider orientation="vertical" flexItem className={classes.divider} />
-      <Button size="large" color="inherit" onClick={() => history.push('/')}>
-        태스크 목록
-      </Button>
-      <Button size="large" color="inherit" onClick={() => history.push('/eval/task')}>
-        태스크 요청
-      </Button>
+      <p>Eval</p>
     </>
   );
 
   const submitBoard = (
     <>
-      <Typography color="inherit">제출자</Typography>
-      <Divider orientation="vertical" flexItem className={classes.divider} />
-      <Button size="large" color="inherit" onClick={() => history.push('/')}>
-        태스크 목록
-      </Button>
-      <Button size="large" color="inherit" onClick={() => history.push('/submit/task')}>
-        태스크 요청
-      </Button>
+      <p>Submit</p>
     </>
   );
 
@@ -163,9 +120,11 @@ export default function TopBar(props) {
             FREESWOT
           </Button>
           <div className={classes.grow} />
-          {showAdminBoard && adminBoard}
-          {showEvalBoard && evalBoard}
-          {showSubmitBoard && submitBoard}
+          <div>
+            {showAdminBoard && adminBoard}
+            {showEvalBoard && evalBoard}
+            {showSubmitBoard && submitBoard}
+          </div>
           <div>
             <IconButton
               edge="end"

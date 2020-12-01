@@ -6,9 +6,11 @@ const logger = require('morgan');
 const cors = require('cors');
 const bcrypt = require('bcryptjs');
 const db = require('./models/index');
-const routes = require('./routes');
+const routes = require('./routes/index');
 
 const app = express();
+
+var today = new Date().toJSON().slice(0,10).replace(/-/g,'-');
 
 const initial = () => {
   const { user } = db;
@@ -16,6 +18,9 @@ const initial = () => {
     ID: 'admin',
     Gender: 'undeclared',
     Name: '관리자',
+    Addr: 'admin',
+    PhoneNo: 'admin',
+    Bdate: today,
     Password: bcrypt.hashSync('admin'),
     UType: 'admin',
   };

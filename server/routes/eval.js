@@ -4,9 +4,18 @@ const evalController = require('../controllers/eval.controller');
 
 const router = express.Router();
 
+/* route begins with "./api/user/eval" */
+
+router.post(
+  '/evaluate',
+  // [authJwt.verifyToken, authJwt.isEval],
+  evalController.evaluate,
+  evalController.saveToTaskTable
+)
+
 router.get(
-  '/',
-  [authJwt.verifyToken, authJwt.isEval],
+  '/data-list',
+  // [authJwt.verifyToken, authJwt.isEval],
   evalController.evalContent
 );
 

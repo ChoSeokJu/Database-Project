@@ -2,7 +2,7 @@
   "development": {
     "username": "root",
     "password": "epdlxjqpdltm11!",
-    "database": "Freeswot",
+    "database": "Freakswot",
     "host": "34.105.109.90",
     "dialect": "mysql",
     "define": {

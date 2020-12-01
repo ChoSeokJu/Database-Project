@@ -65,3 +65,17 @@ exports.signin = (req, res) => {
     });
   });
 };
+
+
+
+exports.getUser = (req, res) => {
+  User.findAll()
+    .then((user) => {
+      res.json(user);
+    })
+};
+//exports.getUser = (req, res) => {
+//    User.finaAll().then((users) => {
+ //     res.json({users});
+   // });
+//};
