@@ -49,6 +49,10 @@ const useStyle = makeStyles((theme) => ({
   opinion: {
     paddingBottom: theme.spacing(1),
   },
+  pnp: {
+    display: 'flex',
+    justifyContent: 'center',
+  },
 }));
 
 export default function AppendOGDataTypeDialog({ open, handleClose, Pid }) {
@@ -100,12 +104,12 @@ export default function AppendOGDataTypeDialog({ open, handleClose, Pid }) {
             <Grid item xs={12}>
               <Typography variant="h6">Pass/Non-Pass</Typography>
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid item xs={12} sm={6} className={classes.pnp}>
               <Tooltip title="Pass" placement="right">
                 <IconButton onClick={() => setPNP(true)}>
                   <CheckIcon
                     style={{
-                      fontSize: 150,
+                      fontSize: 100,
                       color: PNP ? green[500] : grey[500],
                     }}
                   />
@@ -113,12 +117,12 @@ export default function AppendOGDataTypeDialog({ open, handleClose, Pid }) {
               </Tooltip>
             </Grid>
 
-            <Grid item xs={12} sm={6}>
+            <Grid item xs={12} sm={6} className={classes.pnp}>
               <Tooltip title="Non-Pass" placement="right">
                 <IconButton onClick={() => setPNP(false)}>
                   <CloseIcon
                     style={{
-                      fontSize: 150,
+                      fontSize: 100,
                       color: PNP ? grey[500] : red[500],
                     }}
                   />

@@ -336,7 +336,7 @@ export default function Profile(props) {
           </MuiAlert>
         </Snackbar>
       </Container>
-      );
+
     </>
   );
 }

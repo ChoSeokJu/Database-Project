@@ -103,7 +103,7 @@ export default function TaskTableSubmit() {
 
   return (
     <>
-      <Container component="main" maxWidth="sm">
+      <Container component="main" maxWidth="md">
         <MaterialTable
           title="태스크 목록"
           data={getTask}
