@@ -170,13 +170,3 @@ exports.addOgData = (req, res) => {
   }
 })
 };
-
-
-exports.test = (req, res) => {
-  const {taskName} = req.body
-  Task.findOne({
-    where:{TaskName: taskName},
-    attributes : ['TableSchema']}).then((result) => {
-      return res.json(result['TableSchema'])
-    })
-};
