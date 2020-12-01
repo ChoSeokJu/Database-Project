@@ -7,7 +7,7 @@ require('date-utils')
 
 const User = db.user;
 const Task = db.task;
-const ogData = db.og_data_type
+const ogData = db.og_data_type;
 const { Op } = db.Sequelize;
 const works_on = db.works_on
 
