@@ -19,10 +19,40 @@ router.get('/task/schema', adminController.getSchema);
 router.post('/task/og-data', adminController.addOgData);
 router.get(
   '/user-info/eval',
+
   adminController.evaluatedData
 )
+
 router.get('/user-info/all',adminController.getUserinfo);
 router.get('/user-info/search',adminController.infoSearch);
 
+
+router.get(
+  '/request',
+
+  adminController.requestList
+)
+
+router.get(
+  '/task/parsed-data',
+
+  adminController.parsedDataList
+)
+
+router.get(
+  '/task/parsed-data/download',
+
+  adminController.downloadParsedData
+)
+
+router.get(
+  '/task/download',
+  adminController.downloadTaskData
+)
+
+router.get(
+  '/user-info',
+  adminController.getUserInfo
+)
 module.exports = router;
 

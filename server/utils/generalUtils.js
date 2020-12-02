@@ -45,7 +45,34 @@ exports.upload = multer({ dest: 'uploads/',
 }})
 
 exports.finalScore = function (x) {
-    const { SubmitCnt, TotalTupleCnt, DuplicatedTupleCnt, NullRatio, Score } = x
-    console.log(`HEREEE ${Object.keys(x)}`)
-    return (SubmitCnt + TotalTupleCnt + DuplicatedTupleCnt + NullRatio + Score)
+    
+    const { SubmitCnt, TotalTupleCnt, DuplicatedTupleCnt, NullRatio } = x
+    const { Score, Pass } = x.evaluates[0]
+    
+    return {
+        "totalScore": (SubmitCnt + TotalTupleCnt + DuplicatedTupleCnt + NullRatio + Score),
+        "Pass": Pass
+    }
+}
+
+exports.isInt = (n) => {
+    return Number(n) === n && n % 1 === 0;
+}
+
+exports.isFloat= (n) => {
+    return Number(n) === n && n % 1 !== 0;
+}
+
+exports.typeCheck  = (type, item) => {
+    if (item == null | item==undefined){
+        return true;
+    } else {
+        if (type=="INT"){
+            return this.isInt(item);
+        } else if (type=="FLOAT"){
+            return this.isFloat(item);
+        } else if (type=="VARCHAR"){
+            return ((typeof item) == 'string');
+        }
+    }
 }
