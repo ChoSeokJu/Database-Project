@@ -27,6 +27,10 @@ module.exports = function(sequelize, DataTypes) {
     Pass: {
       type: DataTypes.TINYINT,
       allowNull: true
+    },
+    TimeStamp: {
+      type: DataTypes.DATE,
+      allowNull: true
     }
   }, {
     sequelize,

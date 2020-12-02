@@ -209,6 +209,7 @@ exports.getUserinfo = (req,res) => {
         'totalCount': count})
   }))
 };
+
 exports.infoSearch = (req, res) => {
   const { search, searchCriterion, per_page, page} = req.body;
   User.count().then((count) => {
