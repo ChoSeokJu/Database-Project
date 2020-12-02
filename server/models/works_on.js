@@ -1,7 +1,7 @@
 /* jshint indent: 2 */
 const db = require('../models');
 const User = db.user;
-const Task = db.Task
+const Task = db.task
 
 
 const Sequelize = require('sequelize');
@@ -9,7 +9,7 @@ module.exports = function(sequelize, DataTypes) {
   return sequelize.define('works_on', {
     Sid: {
       type: DataTypes.INTEGER,
-      allowNull: true,
+      primaryKey: true,
       references: {
         model: 'user',
         key: 'Uid'
@@ -18,7 +18,7 @@ module.exports = function(sequelize, DataTypes) {
     },
     TaskName: {
       type: DataTypes.STRING(255),
-      allowNull: true,
+      primaryKey: true,
       references: {
         model: 'task',
         key: 'TaskName'

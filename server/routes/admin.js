@@ -11,13 +11,17 @@ router.get(
 
 
 router.get('/task', adminController.getTask);
-
-router.get('/pending', adminController.pendingUser);
-
+router.post('/task/approve', adminController.approveUser)
+router.post('/task/reject', adminController.rejectUser)
+router.get('/task/pending', adminController.pendingUser);
+router.get('/task/approved', adminController.pendingUser);
+router.get('/task/schema', adminController.getSchema);
+router.post('/task/og-data', adminController.addOgData);
 router.get(
   '/user-info/eval',
   adminController.evaluatedData
 )
+
 
 module.exports = router;
 
