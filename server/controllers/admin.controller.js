@@ -2,7 +2,6 @@ const db = require('../models');
 const config = require('../config/auth.config');
 const { json } = require('body-parser');
 const { response } = require('express');
-require('date-utils')
 
 
 const User = db.user;
@@ -145,12 +144,9 @@ exports.getSchema = (req, res) => {
     })
 };
 
-exports.addTask = (req, res) => {
-};
 
 exports.addOgData = (req, res) => {
-  var newDate = new Date()
-  const {taskName, OGDataType, data, desc, ref} = req.body
+  const {taskName, OGDataType, data, desc} = req.body
   Task.findOne({
     where:{TaskName: taskName},
     attributes : ['TableSchema']}).then((schema) => {
@@ -160,9 +156,7 @@ exports.addOgData = (req, res) => {
           Mapping: data,
           TaskName: taskName,
           Schema: schema['TableSchema'],
-          Desc: desc,
-          TimeStamp: newDate.toFormat('YYYY-MM-DD HH24:MI:SS'),
-          TableRef: ref,
+          Desc: desc
         }).then((ogdata) => {
           res.status(200).json({
             message: '원본데이터가 생성 되었습니다'
