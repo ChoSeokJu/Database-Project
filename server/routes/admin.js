@@ -21,7 +21,8 @@ router.get(
   '/user-info/eval',
   adminController.evaluatedData
 )
-
+router.get('/user-info/all',adminController.getUserinfo);
+router.get('/user-info/search',adminController.infoSearch);
 
 module.exports = router;
 
