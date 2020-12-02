@@ -260,6 +260,16 @@ exports.getAvgScore = function(req, res) {
         "message": "such user does not exist"
       }) 
     }
-  })
-  
+  }) 
 }
+exports.getOgData = (req, res) => {
+  const {taskName} = req.query
+  og_data_type.findAll({
+    attributes: ['Did', 'Name'],
+    where: {TaskName: taskName}})
+    .then((result) => {
+      res.status(200).json({
+        data: result
+      })
+    })
+};
