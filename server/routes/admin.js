@@ -39,6 +39,12 @@ router.get(
 )
 
 router.get(
+  '/task/download',
+
+  adminController.downloadTaskData
+)
+
+router.get(
   '/user-info',
   adminController.getUserInfo
 )

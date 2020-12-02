@@ -61,6 +61,11 @@ module.exports = function(sequelize, DataTypes) {
         model: 'user',
         key: 'Uid'
       }
+    },
+    Appended: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      comment: 'null: 아직 평가 안됨, 0: 추가 안됨, 1: 추가 됨'
     }
   }, {
     sequelize,

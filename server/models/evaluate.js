@@ -27,6 +27,10 @@ module.exports = function(sequelize, DataTypes) {
     Pass: {
       type: DataTypes.TINYINT,
       allowNull: true
+    },
+    Desc: {
+      type: DataTypes.TEXT,
+      allowNull: true
     }
   }, {
     sequelize,

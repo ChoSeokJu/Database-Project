@@ -195,6 +195,31 @@ exports.downloadParsedData = (req, res) => {
   })
 }
 
+exports.downloadTaskData = (req, res) => {
+  const mock_taskDataRef = "task_data_table/2aaa5e831d47a5e3199ea2acdf2f334d"// this is mock
+  const { taskName } = req.query 
+  Task.findByPk(
+    taskName
+  ).then((Task)=>{
+    if (Task){
+      res.download(mock_taskDataRef, Task.TableName+".csv", function(err){     // this is mock
+      // res.download(Task.TableRef, Task.TableName+".csv", function(err){
+        if (err) {
+          return res.status(404).json({
+            "message": "Could not download"
+          });
+        } else {
+          console.log(res.headersSent);
+        }
+      })
+    } else {
+      res.status(400).json({
+        "message": "requested data does not exist"
+      })
+    }
+  })
+}
+
 exports.getUserInfo = (req, res) => {
   User.findOne({
     where: {
