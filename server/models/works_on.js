@@ -12,17 +12,18 @@ module.exports = function(sequelize, DataTypes) {
       primaryKey: true,
       references: {
         model: 'user',
-        key: 'Uid',
-      }
+        key: 'Uid'
+      },
+      primaryKey: true
     },
     TaskName: {
       type: DataTypes.STRING(255),
       primaryKey: true,
       references: {
         model: 'task',
-        key: 'TaskName',
-        primaryKey: true
-      }
+        key: 'TaskName'
+      },
+      primaryKey: true
     },
     Permit: {
       type: DataTypes.INTEGER,

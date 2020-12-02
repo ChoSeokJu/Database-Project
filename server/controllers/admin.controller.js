@@ -10,6 +10,11 @@ const Task = db.task;
 const ogData = db.og_data_type;
 const { Op } = db.Sequelize;
 const works_on = db.works_on
+const Parsing_data = db.parsing_data
+const Evaluate = db.evaluate
+
+Parsing_data.hasMany(Evaluate, {foreignKey: 'Pid'})
+Evaluate.belongsTo(Parsing_data, {foreignKey: 'Pid'})
 
 
 exports.adminContent = (req, res) => {
@@ -122,6 +127,7 @@ exports.approvedUser = (req, res) => {
       })))
 };
 
+
 exports.getSchema = (req, res) => {
   const {taskName} = req.query
   var arr = []
@@ -170,3 +176,30 @@ exports.addOgData = (req, res) => {
   }
 })
 };
+
+exports.evaluatedData = (req, res) => {
+  const { Uid, per_page, page } = req.query
+
+  Evaluate.findAll({
+    include: [{
+      model: Parsing_data,
+      required: true
+    }],
+    where: {
+      Eid: parseInt(Uid),
+      Pass: {[Op.ne]: null}
+    },
+    offset: (parseInt(per_page) * (parseInt(page)-1)),
+    limit: parseInt(per_page)
+  }).then((evaluate) => {
+    if (evaluate){
+      return res.status(200).json({
+        "evaluatedData": evaluate
+      })
+    } else {
+      return res.status(404).json({
+          message: 'evaluator does not have any data assigned'
+        })
+    }
+  })
+}

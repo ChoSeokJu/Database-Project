@@ -6,7 +6,8 @@ module.exports = function(sequelize, DataTypes) {
     Pid: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      primaryKey: true
+      primaryKey: true,
+      autoIncrement: true
     },
     FinalScore: {
       type: DataTypes.INTEGER.UNSIGNED,

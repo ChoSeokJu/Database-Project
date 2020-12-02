@@ -1,14 +1,14 @@
-exports.quantAssess = function(data) {
-    /* code for quantitative assessment automatically processed by the system*/
-    score = {"TotalTupleCnt": 0, 
-             "DuplicatedTupleCnt": 0, 
-             "NullRatio":0.0}
-    return score
+const multer = require('multer');
+
+exports.csvSanityCheck = function(data) {
+    /* check if the submitted csv file has headers that fit the mapping information in og_data_type */
+    console.log(data)
+    return true
 }
 
 exports.nowDate = function (x) {
     /* for current date/time/datetime to be input in db */
-    /* "Date"|"Time"|"DateTime" */
+    /* x: "Date"|"Time"|"DateTime" */
     var date = new Date();
     var parts = date.toLocaleDateString().split("/");
     var formattedDate = parts[2] + "-" + parts[0] + "-" + parts[1];
@@ -37,4 +37,15 @@ exports.nowDate = function (x) {
             return formattedTime;
         }
     }
+}
+
+exports.upload = multer({ dest: 'uploads/',
+                          fileFilter: function (req, file, cb) {
+                            file.mimetype === 'text/csv' ? cb(null, true) : cb(null, false)
+}})
+
+exports.finalScore = function (x) {
+    const { SubmitCnt, TotalTupleCnt, DuplicatedTupleCnt, NullRatio, Score } = x
+    console.log(`HEREEE ${Object.keys(x)}`)
+    return (SubmitCnt + TotalTupleCnt + DuplicatedTupleCnt + NullRatio + Score)
 }

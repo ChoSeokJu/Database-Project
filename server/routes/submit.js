@@ -1,5 +1,6 @@
 const express = require('express');
 const { authJwt } = require('../utils');
+const { upload } = require("../utils/generalUtils");
 const submitController = require('../controllers/submit.controller');
 const router = express.Router();
 
@@ -11,9 +12,35 @@ router.get(
 );
 
 router.post(
+  /* user submits data */
   '/submit-data',
-  // submitController.systemAssessment,
+  // [authJwt.verifyToken, authJwt.isSubmit],
+  upload.single('csv'),
+  submitController.submitContent,
+  submitController.quantAssess,
+  submitController.systemAssessment,
   submitController.assignEvaluator
+)
+
+router.get(
+  /* list of tasks user is approved for */
+  '/task-list',
+  // [authJwt.verifyToken, authJwt.isSubmit],
+  submitController.getTaskList
+)
+
+router.post(
+  /* user applies to participate in a task */
+  '/apply',
+  // [authJwt.verifyToken, authJwt.isSubmit],
+  submitController.submitApply
+)
+
+router.get(
+  /* user average score */
+  '/submitter-details',
+  // [authJwt.verifyToken, authJwt.isSubmit],
+  submitController.getAvgScore
 )
 
 module.exports = router;
