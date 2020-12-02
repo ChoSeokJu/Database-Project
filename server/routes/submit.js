@@ -46,8 +46,7 @@ router.get(
 router.get(
   /* list of og data type for a given task*/
   '/og-data',
-  // [authJwt.verifyToken, authJwt.isSubmit],
-  submitController.submitOG
+  submitController.getOgData
 )
 
 module.exports = router;

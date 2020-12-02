@@ -320,26 +320,16 @@ exports.getAvgScore = function(req, res) {
         "message": "such user does not exist"
       }) 
     }
-  })
-  
+  }) 
 }
-
-exports.submitOG = function (req, res) {
-  const { taskName } = req.query
+exports.getOgData = (req, res) => {
+  const {taskName} = req.query
   og_data_type.findAll({
-    where: {
-      TaskName: taskName
-    },
-    attributes: ["Name", "Did"]
-  }).then((og_data_type)=>{
-    if (og_data_type){
-      return res.status(200).json({
-        "OGDataList": og_data_type
+    attributes: ['Did', 'Name'],
+    where: {TaskName: taskName}})
+    .then((result) => {
+      res.status(200).json({
+        data: result
       })
-    } else {
-      return res.status(400).json({
-        "message": "no OG data has been added for this task"
-      })
-    }
-  })
-}
+    })
+};
