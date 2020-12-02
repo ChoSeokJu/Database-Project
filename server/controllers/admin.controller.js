@@ -40,6 +40,34 @@ exports.getTask = (req, res) => {
     }))
 };
 
+exports.makeTask = (req, res) => {
+  const {taskName, desc, minTerm, tableName, tableSchema, timeStamp} = req.body;
+  const tableRef = "../task_data_table";
+  Task.findOne({where: {TaskName: taskName}}).then((task) => {
+    if(!task) {
+      Task.create({
+        TaskName: taskName,
+        Desc: desc,
+        MinTerm: minTerm,
+        TableName: tableName,
+        TableSchema: tableSchema,
+        TableRef: tableRef,
+        TimeStamp: timeStamp
+      }).then((task) => {
+        if(task){ 
+          return res.status(200).json({
+            message: '테스크가 생성되었습니다.',
+          });
+        }
+      });
+    }
+    else {
+      return res.status(404).json({
+        message: '테스크 이름이 이미 존재합니다.',
+      });
+    }
+  })
+};
 
 exports.approveUser = (req, res) => {
   const {taskName, Uid} = req.body
