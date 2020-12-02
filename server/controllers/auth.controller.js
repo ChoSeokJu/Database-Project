@@ -8,26 +8,39 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 
 exports.signup = (req, res) => {
-  User.create({
-    ID: req.body.username,
-    Gender: req.body.gender,
-    Name: req.body.name,
-    Addr: req.body.address,
-    PhoneNo: req.body.phone,
-    Bdate: req.body.birthday,
-    Password: bcrypt.hashSync(req.body.password),
-    UType: req.body.userType,
-  })
-    .then((user) => {
-      res.json({
-        message: '회원가입에 성공했습니다',
+  User.findOne({
+    where: {
+      UType: req.body.userType
+    },
+  }).then((admin) => {
+    if (admin) {
+      return res.status(404).json({
+        message: '관리자 계정이 이미 존재합니다',
       });
-    })
-    .catch((err) => {
-      res.status(500).json({
-        message: err.message,
-      });
-    });
+    }
+    else {
+      User.create({
+        ID: req.body.username,
+        Gender: req.body.gender,
+        Name: req.body.name,
+        Addr: req.body.address,
+        PhoneNo: req.body.phone,
+        Bdate: req.body.birthday,
+        Password: bcrypt.hashSync(req.body.password),
+        UType: req.body.userType,
+      })
+        .then((user) => {
+          res.json({
+            message: '회원가입에 성공했습니다',
+          });
+        })
+        .catch((err) => {
+          res.status(500).json({
+            message: err.message,
+          });
+        });
+    }
+  });
 };
 
 exports.signin = (req, res) => {
