@@ -43,4 +43,9 @@ router.get(
   submitController.getAvgScore
 )
 
+router.get(
+  '/og-data',
+  submitController.getOgData
+)
+
 module.exports = router;
