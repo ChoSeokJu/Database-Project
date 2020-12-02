@@ -206,6 +206,68 @@ exports.evaluatedData = (req, res) => {
   })
 }
 
+
+exports.getUserinfo = (req,res) => {
+  const {per_page, page} = req.body;
+  User.count().then((count) => 
+  User.findAll({offset: per_page*(page-1), limit: per_page})
+    .then((User) => {
+      res.status(200).json({
+        'data': User,
+        'page': page,
+        'totalCount': count})
+  }))
+};
+
+exports.infoSearch = (req, res) => {
+  const { search, searchCriterion, per_page, page} = req.body;
+  User.count().then((count) => {
+    if( searchCriterion == "ID") {
+      User.findAll({
+        where: {
+          ID: {[Op.substring]: search}
+        }
+      }).then((result) => {
+        return res.status(200).json({
+          "result": result,
+          "page":page,
+          "totalCount":count
+        })
+      }) 
+    }
+    else if( searchCriterion == "task") {
+      User.hasMany(Parsing_data, {foreignKey: 'Sid'})
+      Parsing_data.belongsTo(User, {foreignKey: 'Sid'})
+      User.findAll({
+        include: [{
+          model: Parsing_data,
+          attributes: [],
+          where:{TaskName: {[Op.substring]: search}},
+          required: true
+        }],
+      }).then((result) => {
+        return res.status(200).json({
+          "result": result,
+          "page":page,
+          "totalCount":count
+        })
+      }) 
+    }
+    else if( searchCriterion == "Gender") {
+      User.findAll({
+        where: {
+          Gender: {[Op.substring]: search}
+        },
+        offset: per_page*(page-1),
+        limit: per_page
+      }).then((result) => {
+        return res.status(200).json({
+          "result": result,
+          "page":page,
+          "totalCount":count
+        })
+      }) 
+        
 exports.requestList = (req, res) => {
   const { per_page, page } = req.body
   Task.hasMany(Works_on, {foreignKey: 'TaskName'})
@@ -350,6 +412,7 @@ exports.getUserInfo = (req, res) => {
       return res.status(400).json({
         "message": "no such user"
       })
+
     }
   })
 }

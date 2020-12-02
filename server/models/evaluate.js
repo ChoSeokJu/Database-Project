@@ -1,5 +1,4 @@
 /* jshint indent: 2 */
-
 const Sequelize = require('sequelize');
 module.exports = function(sequelize, DataTypes) {
   return sequelize.define('evaluate', {
@@ -18,16 +17,24 @@ module.exports = function(sequelize, DataTypes) {
       references: {
         model: 'parsing_data',
         key: 'Pid'
-      }
+      },
+      primaryKey: true
     },
     Score: {
       type: DataTypes.INTEGER,
+      allowNull: true
+    },
+    Desc: {
+      type: DataTypes.TEXT,
       allowNull: true
     },
     Pass: {
       type: DataTypes.TINYINT,
       allowNull: true
     },
+    TimeStamp: {
+      type: DataTypes.DATE,
+      allowNull: false
     Desc: {
       type: DataTypes.TEXT,
       allowNull: true
@@ -37,6 +44,15 @@ module.exports = function(sequelize, DataTypes) {
     tableName: 'evaluate',
     timestamps: false,
     indexes: [
+      {
+        name: "PRIMARY",
+        unique: true,
+        using: "BTREE",
+        fields: [
+          { name: "Eid" },
+          { name: "Pid" },
+        ]
+      },
       {
         name: "fk_USER_has_PARSING_DATA_PARSING_DATA1_idx",
         using: "BTREE",
