@@ -94,12 +94,20 @@ exports.approveUser = (req, res) => {
       message: '해당 Task의 참여를 승인했습니다'
       })
     }
-    else {
+    else if (result.get('Permit') === 1) {
       return res.status(400).json({
         message: '해당 유저는 이미 승인 되었습니다'
       })
     }
-  })
+    else if (result.get('Permit') === null) {
+      return res.status(400).json({
+        message: '해당 유저는 이미 거절 되었습니다'
+    })
+  } 
+  }).catch((err) => {
+    res.status(500).json({
+      message: "해당 정보는 존재하지 않습니다"})
+    })
 };
   
 
@@ -113,12 +121,20 @@ exports.rejectUser = (req, res) => {
       message: '해당 Task의 참여를 거절했습니다'
       })
     }
-    else {
+    else if (result.get('Permit') === 1) {
       return res.status(400).json({
-        message: '해당 유저는 이미 거절 되었습니다'
+        message: '해당 유저는 이미 승인 되었습니다'
       })
     }
-  })
+    else if (result.get('Permit') === null) {
+      return res.status(400).json({
+        message: '해당 유저는 이미 거절 되었습니다'
+    })
+  } 
+  }).catch((err) => {
+    res.status(500).json({
+      message: "해당 정보는 존재하지 않습니다"})
+    })
 };
 
 exports.pendingUser = (req, res) => {
