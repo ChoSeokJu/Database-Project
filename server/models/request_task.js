@@ -1,7 +1,8 @@
 /* jshint indent: 2 */
 
 const Sequelize = require('sequelize');
-module.exports = function(sequelize, DataTypes) {
+
+module.exports = function (sequelize, DataTypes) {
   return sequelize.define('request_task', {
     Rid: {
       autoIncrement: true,
@@ -27,11 +28,11 @@ module.exports = function(sequelize, DataTypes) {
     timestamps: false,
     indexes: [
       {
-        name: "PRIMARY",
+        name: 'PRIMARY',
         unique: true,
-        using: "BTREE",
+        using: 'BTREE',
         fields: [
-          { name: "Rid" },
+          { name: 'Rid' },
         ],
       },
     ],
