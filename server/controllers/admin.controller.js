@@ -89,6 +89,7 @@ exports.makeTask = (req, res) => {
   });
 };
 
+
 exports.approveUser = (req, res) => {
   const { taskName, Uid } = req.body;
   Works_on.findOne({ where: { TaskName: taskName, Sid: Uid } }).then((result) => {
@@ -278,11 +279,11 @@ exports.evaluatedData = (req, res) => {
 
 exports.getUserinfo = (req, res) => {
   const { per_page, page } = req.body;
-  User.count().then((count) => User.findAll({ offset: per_page * (page - 1), limit: per_page })
-    .then((User) => {
+  User.count().then((count) => User.findAll({ offset: parseInt(per_page) * parseInt((page - 1)), limit: parseInt(per_page) })
+    .then((user) => {
       res.status(200).json({
-        data: User,
-        page,
+        data: user,
+        page: page,
         totalCount: count,
       });
     }));

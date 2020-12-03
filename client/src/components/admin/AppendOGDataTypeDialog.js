@@ -29,10 +29,10 @@ export default function AppendOGDataTypeDialog({
       /* TODO: task에 대한 scheme 다운로드해서 setTaskData에 넣음. */
       dispatch(
         setOriginalData([
-          { columnName: '스키마1' },
-          { columnName: '스키마2' },
-          { columnName: '스키마3' },
-        ])
+          { columnName: '스키마1', originalColumnName: '' },
+          { columnName: '스키마2', originalColumnName: '' },
+          { columnName: '스키마3', originalColumnName: '' },
+        ]),
       );
     }
   }, [open]);
@@ -63,7 +63,8 @@ export default function AppendOGDataTypeDialog({
       aria-labelledby="form-dialog-title"
     >
       <DialogTitle id="form-dialog-title">
-        {taskName}에 원본 데이터 스키마 추가
+        {taskName}
+        에 원본 데이터 스키마 추가
       </DialogTitle>
       <DialogContent>
         <AppendOGDataType />
