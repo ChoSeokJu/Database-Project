@@ -25,14 +25,9 @@ router.post(
 router.get(
   /* list of tasks user is approved for */
   '/task-list',
-<<<<<<< HEAD
   // [authJwt.verifyToken, authJwt.isSubmit],
   submitController.getTaskList,
   submitController.getAvgScore
-=======
-  [authJwt.verifyToken, authJwt.isSubmit],
-  submitController.getTaskList
->>>>>>> f68c84a45ef7f270edde396b879655b383ad8eea
 )
 
 router.post(
@@ -43,16 +38,6 @@ router.post(
 )
 
 router.get(
-<<<<<<< HEAD
-=======
-  /* user average score */
-  '/submitter-details',
-  [authJwt.verifyToken, authJwt.isSubmit],
-  submitController.getAvgScore
-)
-
-router.get(
->>>>>>> f68c84a45ef7f270edde396b879655b383ad8eea
   /* list of og data type for a given task*/
   '/og-data',
   [authJwt.verifyToken, authJwt.isSubmit],
