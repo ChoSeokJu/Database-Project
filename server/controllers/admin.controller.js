@@ -13,6 +13,7 @@ const Parsing_data = db.parsing_data;
 const Evaluate = db.evaluate;
 const { og_data_type } = db;
 const { AVG_SCORE } = db;
+const Requests = db.request_task;
 
 Parsing_data.hasMany(Evaluate, { foreignKey: 'Pid' });
 Evaluate.belongsTo(Parsing_data, { foreignKey: 'Pid' });
