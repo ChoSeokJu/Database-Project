@@ -30,29 +30,46 @@ const useStyles = makeStyles((theme) => ({
 export default function TaskUserList({ open, handleClose, taskName }) {
   const classes = useStyles();
 
-  const getParsedData = (query) => new Promise((resolve, reject) => {
-    setTimeout(() => resolve({
-      data: [
-        {
-          ID: 'user1', date: '2020-01-01', OGDataType: '데이터타입1', PNP: 'P',
-        },
-        {
-          ID: 'user2', date: '2020-01-01', OGDataType: '데이터타입2', PNP: 'P',
-        },
-        {
-          ID: 'user3', date: '2020-01-01', OGDataType: '데이터타입3', PNP: 'P',
-        },
-      ],
-      page: query.page,
-      totalCount: 100,
-    }), 500);
-  });
+  // TODO: 파싱된 데이터 목록 얻어오기
+  const getParsedData = (query) =>
+    new Promise((resolve, reject) => {
+      setTimeout(
+        () =>
+          resolve({
+            data: [
+              {
+                ID: 'user1',
+                date: '2020-01-01',
+                OGDataType: '데이터타입1',
+                PNP: 'P',
+              },
+              {
+                ID: 'user2',
+                date: '2020-01-01',
+                OGDataType: '데이터타입2',
+                PNP: 'P',
+              },
+              {
+                ID: 'user3',
+                date: '2020-01-01',
+                OGDataType: '데이터타입3',
+                PNP: 'P',
+              },
+            ],
+            page: query.page,
+            totalCount: 100,
+          }),
+        500
+      );
+    });
 
   const handleTableDownload = () => {
+    // TODO: 태스크의 테이블 다운로드
     alert(`${taskName} 태스크의 테이블 다운로드`);
   };
 
   const handleParsedDataDownload = (event, rowData) => {
+    // TODO: 파싱된 데이터 다운로드
     alert(`${rowData.ID}가 올린 파싱된 데이터를 다운`);
   };
 
@@ -64,16 +81,9 @@ export default function TaskUserList({ open, handleClose, taskName }) {
       fullWidth
       aria-labelledby="form-dialog-title"
     >
-      {/* <DialogTitle id="form-dialog-title">
-        태스크
-        {' '}
-        {taskName}
-        의 데이터 테이블
-      </DialogTitle> */}
       <DialogContent>
         <Typography variant="h5" component="h2" className={classes.title}>
-          {taskName}
-          의 데이터 테이블
+          {taskName}의 데이터 테이블
         </Typography>
         <Button
           variant="contained"

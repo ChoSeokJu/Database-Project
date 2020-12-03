@@ -24,12 +24,11 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import { useDispatch, useSelector } from 'react-redux';
 import { Redirect, Link, useHistory } from 'react-router-dom';
 import { register } from '../actions/authentication';
-import { setMessage } from '../actions/message';
+import { setMessage, openAlert, setAlertType } from '../actions/message';
 
 const useStyles = makeStyles((theme) => ({
   paper: {
     marginTop: theme.spacing(8),
-    marginBottom: theme.spacing(8),
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
@@ -90,8 +89,6 @@ function Register(props) {
 
   const [successful, setSuccessful] = useState(false);
 
-  const [open, setOpen] = useState(false);
-
   const classes = useStyles();
 
   const { isLoggedIn } = useSelector((state) => state.authentication);
@@ -111,8 +108,9 @@ function Register(props) {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (gender === 'undeclared') {
+      dispatch(setAlertType('error'));
       dispatch(setMessage('성별을 선택해주세요'));
-      setOpen(true);
+      dispatch(openAlert());
       return;
     }
 
@@ -127,15 +125,13 @@ function Register(props) {
       userType,
     };
 
-    setSuccessful(false);
-
     dispatch(register(data))
       .then(() => {
         setSuccessful(true);
       })
       .catch(() => {
-        setOpen(true);
-        setSuccessful(false);
+        dispatch(openAlert());
+        dispatch(setAlertType('error'));
       });
   };
 
@@ -145,13 +141,6 @@ function Register(props) {
 
   const handleUserType = (ut) => () => {
     setUserType(ut === 'eval' ? 'eval' : 'submit');
-  };
-
-  const handleClose = (event, reason) => {
-    if (reason === 'clickaway') {
-      return;
-    }
-    setOpen(false);
   };
 
   if (isLoggedIn) {
@@ -335,18 +324,6 @@ function Register(props) {
             </Grid>
           </Grid>
         </form>
-        {message && (
-          <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
-            <MuiAlert
-              elevation={6}
-              variant="filled"
-              onClose={handleClose}
-              severity="error"
-            >
-              {message}
-            </MuiAlert>
-          </Snackbar>
-        )}
         <Dialog
           open={successful}
           aria-labelledby="alert-dialog-title"
