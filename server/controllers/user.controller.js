@@ -3,6 +3,7 @@ const db = require('../models');
 const { checkValidPassword } = require('../utils/verifySignUp');
 
 const User = db.user;
+const Requests = db.request_task;
 
 exports.changeUserInfo = (req, res) => {
   const { Uid } = req;
@@ -59,4 +60,27 @@ exports.handleWithdrawal = (req, res) => {
       .destroy()
       .then(() => res.json({ message: '회원탈퇴가 완료되었습니다' }));
   });
+};
+
+exports.requestTask = (req, res) => {
+  const { title, content } = req.body;
+  const date = new Date();
+  const dateToTimestamp = date.getTime();
+  const timestampToDate = new Date(dateToTimestamp);
+  Requests.create({
+    Title: title,
+    Content: content,
+    Date: timestampToDate
+  }).then((result) => {
+    if (title || content) {
+      res.status(200).json({
+        message: 'Task 요청이 완료되었습니다'
+      });
+    }
+    else if (!title || !content) {
+      res.status(400).json({
+        message: '제목이나 내용을 작성하지 않으셨습니다'
+      });
+    }
+  })
 };
