@@ -19,8 +19,7 @@ module.exports = function(sequelize, DataTypes) {
     TableName: {
       type: DataTypes.STRING(255),
       allowNull: false,
-      comment: "수집하는 테이블 이름",
-      unique: "TableName_UNIQUE"
+      comment: "수집하는 테이블 이름"
     },
     TableSchema: {
       type: DataTypes.JSON,
@@ -30,8 +29,7 @@ module.exports = function(sequelize, DataTypes) {
     TableRef: {
       type: DataTypes.STRING(255),
       allowNull: false,
-      comment: "물리적 저장장소",
-      unique: "TableRef_UNIQUE"
+      comment: "물리적 저장장소"
     },
     TimeStamp: {
       type: DataTypes.DATE,
@@ -49,23 +47,7 @@ module.exports = function(sequelize, DataTypes) {
         fields: [
           { name: "TaskName" },
         ]
-      },
-      {
-        name: "TableName_UNIQUE",
-        unique: true,
-        using: "BTREE",
-        fields: [
-          { name: "TableName" },
-        ]
-      },
-      {
-        name: "TableRef_UNIQUE",
-        unique: true,
-        using: "BTREE",
-        fields: [
-          { name: "TableRef" },
-        ]
-      },
+      }
     ]
   });
 };

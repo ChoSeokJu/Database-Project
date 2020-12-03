@@ -2,7 +2,7 @@ const db = require('../models');
 const config = require('../config/auth.config');
 const { json } = require('body-parser');
 const { response } = require('express');
-
+const createCsvWriter = require('csv-writer').createObjectCsvWriter;
 
 const User = db.user;
 const Task = db.task;
@@ -40,6 +40,49 @@ exports.getTask = (req, res) => {
     }))
 };
 
+exports.makeTask = (req, res) => {
+  // make task & csv file
+  const {taskName, desc, minTerm, tableName, tableSchema, timeStamp} = req.body;
+  const tableRef = "./task_data_table";
+  const splitSchema = tableSchema.split(",");
+  Task.findOne({where: {TaskName: taskName}}).then((task) => {
+    if(!task) {
+      Task.create({
+        TaskName: taskName,
+        Desc: desc,
+        MinTerm: minTerm,
+        TableName: tableName,
+        TableSchema: tableSchema,
+        TableRef: tableRef,
+        TimeStamp: timeStamp
+      }).then((new_task) => {
+        if(new_task){
+          var csvHead = []
+          for(var i =0; i<splitSchema.length; i++) {
+            csvHead.push({id: splitSchema[i], title: splitSchema[i]})
+          }
+          const csvWriter = createCsvWriter({
+            path: `${tableRef}/${taskName}.csv`,
+            header: csvHead
+          });
+          csvWriter.writeRecords([])
+          return res.status(200).json({
+            message: '테스크가 생성되었습니다.',
+          });
+        }
+      }).catch((err) => {
+        res.status(500).json({
+          message: err.message,
+        });
+      });
+    }
+    else {
+      return res.status(404).json({
+        message: '테스크 이름이 이미 존재합니다.',
+      });
+    }
+  })
+};
 
 exports.approveUser = (req, res) => {
   const {taskName, Uid} = req.body

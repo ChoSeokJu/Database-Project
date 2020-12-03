@@ -11,6 +11,7 @@ router.get(
 
 
 router.get('/task', adminController.getTask);
+router.post('/task/make', adminController.makeTask);
 router.post('/task/approve', adminController.approveUser)
 router.post('/task/reject', adminController.rejectUser)
 router.get('/task/pending', adminController.pendingUser);
