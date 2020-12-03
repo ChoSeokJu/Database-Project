@@ -337,29 +337,19 @@ exports.infoSearch = (req, res) => {
 };
 
 exports.requestList = (req, res) => {
-  const { per_page, page } = req.body;
-  Task.hasMany(Works_on, { foreignKey: 'TaskName' });
-  Works_on.belongsTo(Task, { foreignKey: 'TaskName' });
-
-  Works_on.findAndCountAll({
-    include: [{
-      model: Task,
-      required: true,
-    }],
-    where: {
-      Permit: "pending",
-    },
-    offset: (per_page * (page - 1)),
-    limit: per_page,
-  }).then((Works_on) => {
-    if (Works_on) {
-      return res.status(200).json({
-        data: Works_on.rows,
-        page,
-        totalCount: Works_on.count,
+  const { per_page, page } = req.query;
+  Requests.count().then((count) => Requests.findAll({
+    attributes: ['title', 'content', 'date'],
+    offset: parseInt(per_page) * (parseInt(page) - 1),
+    limit: parseInt(per_page),
+  })
+    .then((result) => {
+      res.status(200).json({
+        data: result,
+        page: parseInt(page),
+        totalCount: count,
       });
-    }
-  });
+    }));
 };
 
 exports.parsedDataList = (req, res) => {
