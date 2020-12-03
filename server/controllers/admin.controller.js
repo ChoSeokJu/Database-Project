@@ -140,11 +140,11 @@ exports.rejectUser = (req, res) => {
 };
 
 exports.pendingUser = (req, res) => {
-  User.hasMany(works_on, { foreignKey: 'Sid' });
-  works_on.belongsTo(User, { foreignKey: 'Sid' });
+  User.hasMany(Works_on, { foreignKey: 'Sid' });
+  Works_on.belongsTo(User, { foreignKey: 'Sid' });
   const arr = [];
   const { taskName, per_page, page } = req.query;
-  Task.count().then(((count) => works_on.findAll({
+  Task.count().then(((count) => Works_on.findAll({
     attributes: [],
     include: [
       {
@@ -160,7 +160,6 @@ exports.pendingUser = (req, res) => {
     for (let i = 0; i < result.length; i++) {
       arr.push(result[i].user);
     }
-    console.log(JSON.stringify(result));
     res.json({
       data: arr,
       page: parseInt(page),
@@ -170,11 +169,11 @@ exports.pendingUser = (req, res) => {
 };
 
 exports.approvedUser = (req, res) => {
-  User.hasMany(works_on, { foreignKey: 'Sid' });
-  works_on.belongsTo(User, { foreignKey: 'Sid' });
+  User.hasMany(Works_on, { foreignKey: 'Sid' });
+  Works_on.belongsTo(User, { foreignKey: 'Sid' });
   const arr = [];
   const { taskName, per_page, page } = req.query;
-  Task.count().then(((count) => works_on.findAll({
+  Task.count().then(((count) => Works_on.findAll({
     attributes: [],
     include: [
       {
