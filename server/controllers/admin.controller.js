@@ -86,7 +86,7 @@ exports.makeTask = (req, res) => {
 
 exports.approveUser = (req, res) => {
   const {taskName, Uid} = req.body
-  works_on.findOne({where: {TaskName: taskName, Sid: Uid}}).then((result) =>{
+  Works_on.findOne({where: {TaskName: taskName, Sid: Uid}}).then((result) =>{
     if (result.get('Permit') === 0) {
       result.set('Permit', 1)
       result.save()
@@ -96,7 +96,7 @@ exports.approveUser = (req, res) => {
     }
     else {
       return res.status(400).json({
-        message: '해당 유저는 이미 승인 결과가 나왔습니다'
+        message: '해당 유저는 이미 승인 되었습니다'
       })
     }
   })
@@ -105,7 +105,7 @@ exports.approveUser = (req, res) => {
 
 exports.rejectUser = (req, res) => {
   const {taskName, Uid} = req.body
-  works_on.findOne({where: {TaskName: taskName, Sid: Uid}}).then((result) =>{
+  Works_on.findOne({where: {TaskName: taskName, Sid: Uid}}).then((result) =>{
     if (result.get('Permit') === 0) {
       result.set('Permit', null)
       result.save()
@@ -115,7 +115,7 @@ exports.rejectUser = (req, res) => {
     }
     else {
       return res.status(400).json({
-        message: '해당 유저는 이미 승인 결과가 나왔습니다'
+        message: '해당 유저는 이미 거절 되었습니다'
       })
     }
   })
