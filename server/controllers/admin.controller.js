@@ -30,7 +30,7 @@ exports.adminContent = (req, res) => {
 
 exports.getTask = (req, res) => {
   const { per_page, page } = req.query;
-  Task.count().then((count) => Task.findAll({ attributes: ['TaskName'], offset: parseInt(per_page) * (parseInt(page) - 1), limit: parseInt(per_page) })
+  Task.count().then((count) => Task.findAll({ attributes: ['taskName'], offset: parseInt(per_page) * (parseInt(page) - 1), limit: parseInt(per_page) })
     .then((task) => {
       res.status(200).json({
         data: task,
