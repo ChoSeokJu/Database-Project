@@ -23,6 +23,10 @@ router.get(
   adminController.evaluatedData
 )
 
+router.get('/user-info/all',adminController.getUserinfo);
+router.get('/user-info/search',adminController.infoSearch);
+
+
 router.get(
   '/request',
 
@@ -43,7 +47,6 @@ router.get(
 
 router.get(
   '/task/download',
-
   adminController.downloadTaskData
 )
 

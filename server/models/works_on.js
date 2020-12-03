@@ -36,6 +36,15 @@ module.exports = function(sequelize, DataTypes) {
     timestamps: false,
     indexes: [
       {
+        name: "PRIMARY",
+        unique: true,
+        using: "BTREE",
+        fields: [
+          { name: "Sid" },
+          { name: "TaskName" },
+        ]
+      },
+      {
         name: "fk_USER_has_TASK_TASK1_idx",
         using: "BTREE",
         fields: [

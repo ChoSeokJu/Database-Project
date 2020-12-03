@@ -24,7 +24,6 @@ module.exports = function(sequelize, DataTypes) {
     TaskName: {
       type: DataTypes.STRING(255),
       allowNull: false,
-      primaryKey: true,
       references: {
         model: 'task',
         key: 'TaskName'
