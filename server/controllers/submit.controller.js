@@ -467,7 +467,8 @@ exports.groupSubmitterList = async (req, res) => {
 
   const { score, taskDataTableTupleCnt } = await parsing_data.findOne({
     where: {
-      TaskName: taskName
+      TaskName: taskName,
+      Sid: Uid
     },
     attributes: [
       [sequelize.fn('AVG', sequelize.col('FinalScore')), 'score'],
@@ -478,7 +479,8 @@ exports.groupSubmitterList = async (req, res) => {
 
   const count  = await parsing_data.count({
     where: {
-      TaskName: taskName
+      TaskName: taskName,
+      Sid: Uid
     }
   })
 

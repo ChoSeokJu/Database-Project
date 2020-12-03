@@ -2,11 +2,13 @@ import {
   SET_ORIGINAL_DATA,
   SET_SCHEMA_NAME,
   CLEAR_ORIGINAL_DATA,
+  SET_COLUMNS,
 } from '../actions/ActionTypes';
 
 const initialState = {
   data: [],
   name: '',
+  columns: { '': '없음' },
 };
 
 export default function (state = initialState, action) {
@@ -24,6 +26,11 @@ export default function (state = initialState, action) {
       };
     case CLEAR_ORIGINAL_DATA:
       return initialState;
+    case SET_COLUMNS:
+      return {
+        ...state,
+        columns: payload,
+      };
     default:
       return state;
   }

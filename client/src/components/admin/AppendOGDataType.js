@@ -1,5 +1,5 @@
 /* eslint-disable react/jsx-filename-extension */
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import MaterialTable from 'material-table';
 import Paper from '@material-ui/core/Paper';
 import { useDispatch, useSelector } from 'react-redux';
@@ -8,6 +8,10 @@ import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
 import Divider from '@material-ui/core/Divider';
+import Tooltip from '@material-ui/core/Tooltip';
+import IconButton from '@material-ui/core/IconButton';
+import AddBoxIcon from '@material-ui/icons/AddBox';
+import Chip from '@material-ui/core/Chip';
 import { makeStyles } from '@material-ui/core/styles';
 import {
   openAlert,
@@ -15,43 +19,121 @@ import {
   setAlertType,
   setMessage,
 } from '../../actions/message';
-import { setOriginalData, setSchemaName } from '../../actions/originalData';
+import { setOriginalData, setSchemaName, setColumns } from '../../actions/originalData';
 
 const useStyles = makeStyles((theme) => ({
-  divider: {
-    marginTop: theme.spacing(3),
+  root: {
+    display: 'flex',
+    justifyContent: 'center',
+    flexWrap: 'wrap',
+    listStyle: 'none',
+    padding: theme.spacing(0.5),
+  },
+  chip: {
+    margin: theme.spacing(0.5),
   },
 }));
 
 export default function AppendOGDataType(props) {
   const dispatch = useDispatch();
   const classes = useStyles();
-  const { data, name } = useSelector((state) => state.originalData);
+  const { data, name, columns } = useSelector((state) => state.originalData);
+  const [columnName, setColumnName] = useState('');
 
-  const isDuplicated = (newData) =>
-    data.some(({ originalColumnName: oldName }) => {
-      if (oldName === newData.originalColumnName) {
-        return true;
+  const isDuplicated = (newData) => data.some(({ originalColumnName: oldName }) => {
+    if (oldName === newData.originalColumnName) {
+      return true;
+    }
+  });
+
+  const handleAppendColumn = () => {
+    setColumnName(columnName.trim());
+
+    if (columnName === '') {
+      dispatch(setAlertType('error'));
+      dispatch(setMessage('칼럼 이름은 빈칸이 될 수 없습니다'));
+      dispatch(openAlert());
+      return;
+    }
+    if (columnName in columns && columns[columnName] !== '') {
+      dispatch(setAlertType('error'));
+      dispatch(setMessage('이미 있는 칼럼입니다'));
+      dispatch(openAlert());
+      setColumnName('');
+      return;
+    }
+
+    dispatch(setColumns({ ...columns, [columnName]: columnName }));
+    setColumnName('');
+  };
+
+  const handleDeleteColumn = (name) => () => {
+    dispatch(setColumns({ ...columns, [name]: '' }));
+    const newData = [...data];
+    dispatch(setOriginalData(newData.map((row) => {
+      if (row.originalColumnName === name) {
+        return { ...row, originalColumnName: '' };
       }
-    });
+      return row;
+    })));
+  };
 
   return (
     <>
-      <Grid container>
+      <Grid container spacing={3}>
         <Grid item xs={12}>
           <TextField
             required
             label="원본 데이터 스키마 이름"
-            variant="outlined"
             fullWidth
+            variant="outlined"
             value={name}
             onChange={(e) => dispatch(setSchemaName(e.target.value))}
           />
         </Grid>
+        <Grid item xs={12}>
+          <Divider className={classes.divider} />
+        </Grid>
+        <Grid item xs={12}>
+          <TextField
+            label="원본 데이터 칼럼 추가"
+            fullWidth
+            variant="outlined"
+            value={columnName}
+            onChange={(e) => setColumnName(e.target.value)}
+            InputProps={{
+              endAdornment: (
+                <Tooltip title="칼럼 추가">
+                  <IconButton
+                    color="inherit"
+                    position="absolute"
+                    onClick={handleAppendColumn}
+                  >
+                    <AddBoxIcon />
+                  </IconButton>
+                </Tooltip>
+              ),
+            }}
+          />
+        </Grid>
+        <Grid item xs={12}>
+          <Paper component="ul" className={classes.root} elevation={0}>
+            {Object.keys(columns).map((name) => (
+              (columns[name] === '' || name === '') ? null : (
+                <li key={name}>
+                  <Chip
+                    label={name}
+                    color="primary"
+                    onDelete={handleDeleteColumn(name)}
+                    className={classes.chip}
+                  />
+                </li>
+              )
+            ))}
+          </Paper>
+        </Grid>
       </Grid>
-      <Divider className={classes.divider} />
       <MaterialTable
-        title="원본 데이터 스키마"
         components={{
           Container: (props) => <Paper {...props} elevation={0} />,
         }}
@@ -62,6 +144,7 @@ export default function AppendOGDataType(props) {
           paginationType: 'stepped',
           search: false,
           sorting: false,
+          toolbar: false,
         }}
         localization={{
           body: {
@@ -73,33 +156,32 @@ export default function AppendOGDataType(props) {
         }}
         columns={[
           { title: '태스크 칼럼', field: 'columnName', editable: 'never' },
-          { title: '원본 데이터 칼럼', field: 'originalColumnName' },
+          { title: '원본 데이터 칼럼', field: 'originalColumnName', lookup: columns },
         ]}
         data={data}
         editable={{
-          onRowUpdate: (newData, oldData) =>
-            new Promise((resolve, reject) => {
-              const update = () => {
-                const dataUpdate = [...data];
-                const index = oldData.tableData.id;
-                dataUpdate[index] = newData;
-                dispatch(setOriginalData([...dataUpdate]));
-                resolve();
-              };
-              if (newData.originalColumnName === oldData.originalColumnName) {
-                update();
-              } else if (isDuplicated(newData)) {
-                dispatch(setMessage('이미 존재하는 원본 칼럼 이름입니다'));
-                dispatch(openDialog());
-                reject();
-              } else if (!newData.originalColumnName) {
-                dispatch(setMessage('값을 입력해주세요'));
-                dispatch(openDialog());
-                reject();
-              } else {
-                update();
-              }
-            }),
+          onRowUpdate: (newData, oldData) => new Promise((resolve, reject) => {
+            const update = () => {
+              const dataUpdate = [...data];
+              const index = oldData.tableData.id;
+              dataUpdate[index] = newData;
+              dispatch(setOriginalData([...dataUpdate]));
+              resolve();
+            };
+            if (newData.originalColumnName === oldData.originalColumnName) {
+              update();
+            } else if (isDuplicated(newData)) {
+              dispatch(setMessage('이미 존재하는 원본 칼럼 이름입니다'));
+              dispatch(openDialog());
+              reject();
+            } else if (!newData.originalColumnName) {
+              dispatch(setMessage('값을 입력해주세요'));
+              dispatch(openDialog());
+              reject();
+            } else {
+              update();
+            }
+          }),
         }}
       />
     </>
