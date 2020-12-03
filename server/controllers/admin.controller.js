@@ -13,6 +13,7 @@ const Parsing_data = db.parsing_data;
 const Evaluate = db.evaluate;
 const { og_data_type } = db;
 const { AVG_SCORE } = db;
+const Requests = db.request_task;
 
 Parsing_data.hasMany(Evaluate, { foreignKey: 'Pid' });
 Evaluate.belongsTo(Parsing_data, { foreignKey: 'Pid' });
@@ -93,19 +94,19 @@ exports.makeTask = (req, res) => {
 exports.approveUser = (req, res) => {
   const { taskName, Uid } = req.body;
   Works_on.findOne({ where: { TaskName: taskName, Sid: Uid } }).then((result) => {
-    if (result.get('Permit') === 0) {
-      result.set('Permit', 1);
+    if (result.get('Permit') === "pending") {
+      result.set('Permit', "approved");
       result.save();
       return res.status(200).json({
         message: '해당 Task의 참여를 승인했습니다',
       });
     }
-    if (result.get('Permit') === 1) {
+    if (result.get('Permit') === "approved") {
       return res.status(400).json({
         message: '해당 유저는 이미 승인 되었습니다',
       });
     }
-    if (result.get('Permit') === null) {
+    if (result.get('Permit') === "rejected") {
       return res.status(400).json({
         message: '해당 유저는 이미 거절 되었습니다',
       });
@@ -120,19 +121,19 @@ exports.approveUser = (req, res) => {
 exports.rejectUser = (req, res) => {
   const { taskName, Uid } = req.body;
   Works_on.findOne({ where: { TaskName: taskName, Sid: Uid } }).then((result) => {
-    if (result.get('Permit') === 0) {
-      result.set('Permit', null);
+    if (result.get('Permit') === "pending") {
+      result.set('Permit', "rejected");
       result.save();
       return res.status(200).json({
         message: '해당 Task의 참여를 거절했습니다',
       });
     }
-    if (result.get('Permit') === 1) {
+    if (result.get('Permit') === "approved") {
       return res.status(400).json({
         message: '해당 유저는 이미 승인 되었습니다',
       });
     }
-    if (result.get('Permit') === null) {
+    if (result.get('Permit') === "rejected") {
       return res.status(400).json({
         message: '해당 유저는 이미 거절 되었습니다',
       });
@@ -160,7 +161,7 @@ exports.pendingUser = (req, res) => {
         required: true,
       },
     ],
-    where: { TaskName: taskName, Permit: 0 },
+    where: { TaskName: taskName, Permit: "pending" },
     offset: parseInt(per_page) * (parseInt(page) - 1),
     limit: parseInt(per_page),
   }).then((result) => {
@@ -191,7 +192,7 @@ exports.approvedUser = (req, res) => {
         required: true,
       },
     ],
-    where: { TaskName: taskName, Permit: 1 },
+    where: { TaskName: taskName, Permit: "approved" },
     offset: parseInt(per_page) * (parseInt(page) - 1),
     limit: parseInt(per_page),
   }).then((result) => {
@@ -346,7 +347,7 @@ exports.requestList = (req, res) => {
       required: true,
     }],
     where: {
-      Permit: 0,
+      Permit: "pending",
     },
     offset: (per_page * (page - 1)),
     limit: per_page,

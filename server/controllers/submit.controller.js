@@ -13,6 +13,15 @@ const sequelize = new Sequelize({
   dialect: 'mysql',
 });
 
+const { Op } = db.Sequelize;
+
+user.hasMany(works_on, { foreignKey: 'Sid'})
+works_on.belongsTo(user, { foreignKey: 'Sid'})
+
+task.hasMany(works_on, { foreignKey: 'TaskName'})
+works_on.belongsTo(task, { foreignKey: 'TaskName'})
+
+
 exports.submitContent = (req, res, next) => {
   console.log(`Submit user ${req.body.username} submitted data`);
   if (!req.file) {
@@ -20,6 +29,7 @@ exports.submitContent = (req, res, next) => {
       message: '파일 업로드 형식이 잘 못 되었습니다. CSV 파일로 업로드 부탁드립니다',
     });
   }
+
   og_data_type.findOne({
     where: {
       TaskName: req.body.taskName,
@@ -32,12 +42,12 @@ exports.submitContent = (req, res, next) => {
           TaskName: req.body.taskName,
         },
       }).then((task) => {
-        req.body.taskDataTableRef = task.TableRef;
-        req.body.taskTaskName = task.TaskName;
-        req.body.Mapping = og_data_type.Mapping;
-        req.body.ogSchema = og_data_type.Schema;
-        next();
-      });
+        req.body.taskDataTableRef = task.TableRef
+        req.body.taskTableName = task.TableName
+        req.body.Mapping = og_data_type.Mapping[0]
+        req.body.ogSchema = og_data_type.Schema[0]
+        next()
+      })
     } else {
       return res.status(400).json({
         message: 'og_data_type이 존재하지 않습니다',
@@ -216,41 +226,6 @@ exports.assignEvaluator = function (req, res) {
   });
 };
 
-exports.getTaskList = function (req, res) {
-  const taskList = [];
-  const { username, per_page, page } = req.query;
-  user.findOne({
-    where: {
-      ID: username,
-    },
-  }).then((user) => {
-    works_on.findAll({
-      where: {
-        Sid: user.Uid,
-        Permit: 1,
-      },
-      offset: (parseInt(per_page) * (parseInt(page) - 1)),
-      limit: parseInt(per_page),
-    }).then((works_on) => {
-
-      if (works_on) {
-        var taskListSingle = {}
-        works_on.forEach((data) => {
-          taskListSingle.taskName = data.TaskName
-          taskListSingle.permit = permitState(data.Permit)
-          taskList.push(taskListSingle);
-        });
-        return res.status(200).json({
-          TaskNameList: taskList,
-        });
-      }
-      return res.status(400).json({
-        message: '관리자가 task를 승인하지 않았습니다',
-      });
-    });
-  });
-};
-
 exports.submitApply = function (req, res) {
   const { username, taskName } = req.body;
   user.findOne({
@@ -275,6 +250,74 @@ exports.submitApply = function (req, res) {
   });
 };
 
+exports.getTaskList = function (req, res, next) {
+  const { username, per_page, page } = req.query
+  user.findOne({
+    where: {
+      ID: username
+    },
+    attributes: ["Uid"]
+  }).then((user_id) => {
+    if (user_id) {
+      console.log(user_id.Uid)
+      works_on.findAll({
+        attributes: ["Permit"],
+        include: [{
+          model: user,
+          attributes: [],
+          required: true,
+          where: { 
+            [Op.or]:[
+              {Uid :
+                {[Op.eq]: user_id.Uid}
+              },
+              {Uid :
+                {[Op.is]: null}
+              }
+            ]
+          },
+        }, {
+          model: task,
+          attributes: ["TaskName"],
+          required: false,
+          right: true,
+        }],
+        order: [
+          ["Permit", "DESC"]
+        ],
+        offset: parseInt(per_page) * parseInt((page - 1)),
+        limit: parseInt(per_page)
+      }).then((results)=>{
+        if (results){
+          console.log(results)
+          var amendedResults = []
+          var counts = results.length
+          results.forEach((result)=>{
+            amendedResults.push({
+              "taskName": result.task.TaskName,
+              "permit": permitState(result.Permit)
+            })
+          })
+          req.body.response = {
+            "data": amendedResults,
+            "page": parseInt(page),
+            "totalCount": counts
+          }
+          next()
+        } else {
+          return res.status(404).json({
+            "message": "아무것도 찾을 수 없습니다"
+          })
+        }
+      })
+    } else {
+      return res.status(404).json({
+        "message": "아무것도 찾을 수 없습니다"
+      })
+    }
+  })
+}
+
 exports.getAvgScore = function (req, res) {
   /* get average score and total tuple cnt */
   const { username } = req.query;
@@ -290,10 +333,12 @@ exports.getAvgScore = function (req, res) {
         },
       }).then((p_data) => {
         if (p_data) {
+          req.body.response.submittedDataCnt = p_data
           AVG_SCORE.findByPk(
             user.Uid,
           ).then((AVG_SCORE) => {
             if (AVG_SCORE) {
+              req.body.response.score = AVG_SCORE.Score
               parsing_data.findOne({
                 attributes: [[
                   sequelize.fn('SUM', sequelize.col('TotalTupleCnt')), 'TotalTupleCnt',
@@ -305,32 +350,37 @@ exports.getAvgScore = function (req, res) {
                 raw: true,
               }).then((parsing_data) => {
                 if (parsing_data) {
-                  return res.status(200).json({
-                    Score: AVG_SCORE.Score,
-                    SubmittedDataCnt: p_data,
-                    TaskDataTableTupleCnt: parsing_data.TotalTupleCnt,
-                  });
+                  req.body.response.taskDataTableTupleCnt = parsing_data.TotalTupleCnt
+                  return res.status(200).json(
+                    req.body.response
+                  )
+                } else {
+                  /* 데이터는 제출했고 점수는 받았지만 태스크 데이터 테이블에 추가는 안됨 */
+                  req.body.response.taskDataTableTupleCnt = null
+                  return res.status(200).json(
+                    req.body.response
+                  )
                 }
-                return res.status(400).json({
-                  message: '데이터를 찾을 수 없습니다',
-                });
-              });
+              })
             } else {
-              return res.status(400).json({
-                message: 'og_data_type이 존재하지 않습니다',
-              });
+              /* 데이터는 제출했지만 점수는 안받음 */
+              req.body.response.score = null
+              req.body.response.taskDataTableTupleCnt = null
+              return res.status(200).json(
+                req.body.response
+              )
             }
           });
         } else {
-          return res.status(400).json({
-            message: '사용자가 parsing_data를 제출하지 않았습니다',
-          });
+          /* 아무런 데이터를 제출 하지 않음 */
+          req.body.response.submittedDataCnt = null
+          req.body.response.score = null
+          req.body.response.taskDataTableTupleCnt = null
+          return res.status(200).json(
+            req.body.response
+          )
         }
-      });
-    } else {
-      return res.status(400).json({
-        message: '해당 사용자가 존재하지 않습니다',
-      });
+      })
     }
   });
 };
@@ -347,3 +397,7 @@ exports.getOgData = (req, res) => {
       });
     });
 };
+
+exports.getSubmitterList = (req, res) => {
+  
+}

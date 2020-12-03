@@ -26,9 +26,8 @@ module.exports = function(sequelize, DataTypes) {
       primaryKey: true
     },
     Permit: {
-      type: DataTypes.INTEGER,
-      allowNull: true,
-      comment: "null: applied but rejected, 0: applied & waiting for approval, 1: applied & approved"
+      type: DataTypes.ENUM("rejected", "approved", "pending"),
+      allowNull: false
     }
   }, {
     sequelize,
