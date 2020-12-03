@@ -37,9 +37,8 @@ const useStyles = makeStyles((theme) => ({
 export default function AppendOGDataType(props) {
   const dispatch = useDispatch();
   const classes = useStyles();
-  const { data, name } = useSelector((state) => state.originalData);
+  const { data, name, columns } = useSelector((state) => state.originalData);
   const [columnName, setColumnName] = useState('');
-  const [columns, setColumns] = useState({ '': '없음' });
 
   const isDuplicated = (newData) => data.some(({ originalColumnName: oldName }) => {
     if (oldName === newData.originalColumnName) {
@@ -64,14 +63,12 @@ export default function AppendOGDataType(props) {
       return;
     }
 
-    setColumns({ ...columns, [columnName]: columnName });
+    dispatch(setColumns({ ...columns, [columnName]: columnName }));
     setColumnName('');
   };
 
   const handleDeleteColumn = (name) => () => {
-    // const state = { ...columns };
-    // delete state[name];
-    setColumns({ ...columns, [name]: '' });
+    dispatch(setColumns({ ...columns, [name]: '' }));
     const newData = [...data];
     dispatch(setOriginalData(newData.map((row) => {
       if (row.originalColumnName === name) {
