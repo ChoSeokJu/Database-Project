@@ -25,8 +25,9 @@ router.post(
 router.get(
   /* list of tasks user is approved for */
   '/task-list',
-  [authJwt.verifyToken, authJwt.isSubmit],
-  submitController.getTaskList
+  // [authJwt.verifyToken, authJwt.isSubmit],
+  submitController.getTaskList,
+  submitController.getAvgScore
 )
 
 router.post(
@@ -37,17 +38,16 @@ router.post(
 )
 
 router.get(
-  /* user average score */
-  '/submitter-details',
-  [authJwt.verifyToken, authJwt.isSubmit],
-  submitController.getAvgScore
-)
-
-router.get(
   /* list of og data type for a given task*/
   '/og-data',
   [authJwt.verifyToken, authJwt.isSubmit],
   submitController.getOgData
+)
+
+router.get(
+  '/submitter-list',
+  // [authJwt.verifyToken, authJwt.isSubmit],
+  submitController.getSubmitterList
 )
 
 module.exports = router;

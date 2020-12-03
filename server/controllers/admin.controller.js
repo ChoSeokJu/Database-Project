@@ -13,6 +13,7 @@ const Parsing_data = db.parsing_data;
 const Evaluate = db.evaluate;
 const { og_data_type } = db;
 const { AVG_SCORE } = db;
+const Requests = db.request_task;
 
 Parsing_data.hasMany(Evaluate, { foreignKey: 'Pid' });
 Evaluate.belongsTo(Parsing_data, { foreignKey: 'Pid' });
@@ -88,6 +89,7 @@ exports.makeTask = (req, res) => {
     }
   });
 };
+
 
 exports.approveUser = (req, res) => {
   const { taskName, Uid } = req.body;
@@ -250,31 +252,30 @@ exports.addOgData = (req, res) => {
 };
 
 exports.evaluatedData = (req, res) => {
+  // ! req.query? req.body? req?
   const { Uid, per_page, page } = req.query;
-  return res.status(404).json({
-    message: '평가자에게 할당된 데이터가 없습니다',
+
+  Evaluate.findAll({
+    include: [{
+      model: Parsing_data,
+      required: true,
+    }],
+    where: {
+      Eid: parseInt(Uid),
+      Pass: { [Op.ne]: null },
+    },
+    offset: (parseInt(per_page) * (parseInt(page) - 1)),
+    limit: parseInt(per_page),
+  }).then((evaluate) => {
+    if (evaluate) {
+      return res.status(200).json({
+        evaluatedData: evaluate,
+      });
+    }
+    return res.status(404).json({
+      message: '평가자에게 할당된 데이터가 없습니다',
+    });
   });
-  // Evaluate.findAll({
-  //   include: [{
-  //     model: Parsing_data,
-  //     required: true,
-  //   }],
-  //   where: {
-  //     Eid: parseInt(Uid),
-  //     Pass: { [Op.ne]: null },
-  //   },
-  //   offset: (parseInt(per_page) * (parseInt(page) - 1)),
-  //   limit: parseInt(per_page),
-  // }).then((evaluate) => {
-  //   if (evaluate) {
-  //     return res.status(200).json({
-  //       evaluatedData: evaluate,
-  //     });
-  //   }
-  //   return res.status(404).json({
-  //     message: '평가자에게 할당된 데이터가 없습니다',
-  //   });
-  // });
 };
 
 exports.getUserinfo = (req, res) => {
