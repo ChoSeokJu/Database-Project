@@ -35,7 +35,7 @@ module.exports = function(sequelize, DataTypes) {
   }, {
     sequelize,
     tableName: 'evaluate',
-    timestamps: false,
+    timestamps: true,
     indexes: [
       {
         name: "fk_USER_has_PARSING_DATA_PARSING_DATA1_idx",

@@ -15,12 +15,6 @@ exports.submitContent = (req, res, next) => {
     return res.status(405).json({
       message: 'Wrong file uploaded. Please upload in .csv format'
     })
-  } else {
-    if (!csvSanityCheck(req.file.path)){
-      return res.status(405).json({
-        message: 'Submitted csv file is in wrong format'
-      })
-    }
   }
   var taskCol
   og_data_type.findOne({
@@ -30,9 +24,17 @@ exports.submitContent = (req, res, next) => {
     }
   }).then((og_data_type) => {
     if (og_data_type) {
-      req.body.Mapping = og_data_type.Mapping
-      req.body.ogSchema = og_data_type.Schema
-      next()
+      task.findOne({
+        where: {
+          TaskName: req.body.TaskName
+        }
+      }).then((task)=>{
+        req.body.taskDataTableRef = task.TableRef
+        req.body.Mapping = og_data_type.Mapping
+        req.body.ogSchema = og_data_type.Schema
+        next()
+      })
+      
     } else {
       return res.status(400).json({
         "message": "such og_data_type does not exist"
@@ -43,6 +45,10 @@ exports.submitContent = (req, res, next) => {
 
 exports.quantAssess = async function (req, res, next){
   const data = await csv({noheader:false}).fromFile(req.file.path)  // set this to be true for csvSanityCheck
+  const taskData = await csv({noheader:true}).fromFile(req.body.taskDataTableRef)
+  console.log(taskData);
+  // const taskDataHeader = taskData
+
   const dataHeader = Object.keys(data[0]);
   const { Mapping, ogSchema } = req.body
   if (JSON.stringify(dataHeader.sort()) != JSON.stringify(Object.keys(ogSchema))){
@@ -261,9 +267,7 @@ exports.submitApply = function(req, res) {
 }
 
 exports.getAvgScore = function(req, res) {
-  /* get average score */
-  // ! TaskDataTableTupleCnt
-  // calculate TaskDataTableTupleCnt as view
+  /* get average score and total tuple cnt*/
   user.findOne({
     where: {
       ID: req.query.username
@@ -322,6 +326,7 @@ exports.getAvgScore = function(req, res) {
     }
   }) 
 }
+
 exports.getOgData = (req, res) => {
   const {taskName} = req.query
   og_data_type.findAll({

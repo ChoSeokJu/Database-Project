@@ -5,8 +5,8 @@ const db = require('../models');
 const { parsing_data, evaluate, user, og_data_type, task } = db;
 const { finalScore } = require('../utils/generalUtils');
 
-parsing_data.hasMany(evaluate, {foreignKey: 'Pid'})
-evaluate.belongsTo(parsing_data, {foreignKey: 'Pid'})
+parsing_data.hasMany(evaluate, {foreignKey: 'Pid', as:"Eval"})
+evaluate.belongsTo(parsing_data, {foreignKey: 'Pid', as:"Eval"})
 
 user.hasMany(parsing_data, {foreignKey: 'Sid'})
 parsing_data.belongsTo(user, {foreignKey: "Sid"})
@@ -18,7 +18,6 @@ exports.evaluate = (req, res, next) => {
   /* insert evaluated value */
   // ! add timestamp
   // ! final score metric => add all numbers
-  // ! add description in db
   const { Pid, score, description, PNP } = req.body
 
   evaluate.update({
@@ -140,79 +139,46 @@ exports.saveToTaskTable = async function (req, res) {
   })
 }
 
-// exports.evalContent = (req, res) => {
-//   console.log(`Eval user ${req.query.username} sent a request`);
-//   var assignedData = []
-//   user.findOne({
-//     where : {
-//       ID: req.query.username
-//     }
-//   }).then((user) => {
-//     if (user) {
-//       evaluate.findAll({
-//         include: [{
-//           model: parsing_data,
-//           required: true
-//         }],
-//         where: {
-//           Eid: user.Uid
-//         },
-//         offset: (parseInt(req.query.per_page) * (parseInt(req.query.page)-1)),
-//         limit: parseInt(req.query.per_page)
-//       }).then((evaluate) => {
-//         if (evaluate){
-//           return res.status(200).json({
-//             "assignedData": evaluate
-//           })
-//         } else {
-//           return res.status(404).json({
-//               message: 'evaluator does not have any data assigned'
-//             })
-//         }
-//       })
-//     } else {
-//       return res.status(404).json({
-//         message: 'there is no evaluator yet'
-//       })
-//     }
-    
-//   })
-// };
-
-
 exports.evalContent = (req, res) => {
   const { username, per_page, page } = req.query
   user.findOne({
     where: {
-      "ID": username
+      ID: username
     },
     attributes: ["Uid"]
   }).then((user_id)=>{
     if (user_id) {
-      console.log(user_id)
-
+      console.log(user_id.Uid)
       parsing_data.findAll({
+        attributes: ['Pid','TaskName','FinalScore','TimeStamp'],
         include: [{
           model: evaluate,
-          required: true
+          attributes: [],
+          required: true,
+          where:{Eid: user_id.Uid}
         }, {
           model: user,
-          required: true
+          attributes: ['ID'],
+          required: true,
+          // where:{ID: username},
         }, {
           model: og_data_type,
-          required: true
+          attributes: ['Name'],
+          required: true,
         }],
-        // where: {
-        //   // evaluate.Eid: user_id.Uid
-        // },
+        where: {
+        },
         order: [
           ["FinalScore", "DESC"],
           ["TimeStamp", "DESC"]
         ],
-        offset: per_page*(page-1), 
-        limit: per_page
+        offset: parseInt(per_page)*parseInt((page-1)), 
+        limit: parseInt(per_page)
       }).then((parsing_data)=>{
-        console.log(parsing_data)
+        // console.log(parsing_data)
+        res.status(200).json({
+          'data':parsing_data
+        })
       })
     } else {
       return res.status(404).json({
