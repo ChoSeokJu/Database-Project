@@ -45,7 +45,7 @@ exports.makeTask = (req, res) => {
   // make task & csv file
   const { taskName, desc, minTerm, tableName, tableSchema, timeStamp } = req.body;
   const tableRef = "./task_data_table";
-  const splitSchema = tableSchema.split(",");
+
   Task.findOne({ where: { TaskName: taskName } }).then((task) => {
     if (!task) {
       Task.create({
@@ -59,8 +59,10 @@ exports.makeTask = (req, res) => {
       }).then((new_task) => {
         if (new_task) {
           var csvHead = []
-          for (var i = 0; i < splitSchema.length; i++) {
-            csvHead.push({ id: splitSchema[i], title: splitSchema[i] })
+          columns = Object.keys(tableSchema[0])
+          columns.push("Sid")
+          for (var i = 0; i < columns.length; i++) {
+            csvHead.push({ id: columns[i], title: columns[i] })
           }
           const csvWriter = createCsvWriter({
             path: `${tableRef}/${taskName}.csv`,

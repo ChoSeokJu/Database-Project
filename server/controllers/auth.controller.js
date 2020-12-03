@@ -14,7 +14,7 @@ exports.signup = (req, res) => {
       UType: userType
     },
   }).then((user) => {
-    if (user.userType === "admin") {
+    if (user && user.userType === "admin") {
       return res.status(404).json({
         message: '관리자 계정이 이미 존재합니다',
       });
