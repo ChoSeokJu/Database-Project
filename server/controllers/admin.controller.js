@@ -42,11 +42,13 @@ exports.getTask = (req, res) => {
 
 exports.makeTask = (req, res) => {
   // make task & csv file
-  const {
-    taskName, desc, minTerm, tableName, tableSchema, timeStamp,
-  } = req.body;
-  const tableRef = './task_data_table';
-  const splitSchema = tableSchema.split(',');
+  const { taskName, desc, minTerm, tableName, tableSchema, timeStamp } = req.body;
+  const tableRef = "./task_data_table";
+  const date = new Date();
+  const dateToTimestamp = date.getTime();
+  const timestampToDate = new Date(dateToTimestamp);
+
+
   Task.findOne({ where: { TaskName: taskName } }).then((task) => {
     if (!task) {
       Task.create({
@@ -56,12 +58,14 @@ exports.makeTask = (req, res) => {
         TableName: tableName,
         TableSchema: tableSchema,
         TableRef: tableRef,
-        TimeStamp: timeStamp,
+        TimeStamp: timestampToDate
       }).then((new_task) => {
         if (new_task) {
-          const csvHead = [];
-          for (let i = 0; i < splitSchema.length; i++) {
-            csvHead.push({ id: splitSchema[i], title: splitSchema[i] });
+          var csvHead = []
+          columns = Object.keys(tableSchema[0])
+          columns.push("Sid")
+          for (var i = 0; i < columns.length; i++) {
+            csvHead.push({ id: columns[i], title: columns[i] })
           }
           const csvWriter = createCsvWriter({
             path: `${tableRef}/${taskName}.csv`,
@@ -145,7 +149,7 @@ exports.pendingUser = (req, res) => {
   const arr = [];
   const { taskName, per_page, page } = req.query;
   Task.count({
-    where : {TaskName: taskName}
+    where: { TaskName: taskName }
   }).then(((count) => Works_on.findAll({
     attributes: [],
     include: [
@@ -176,7 +180,7 @@ exports.approvedUser = (req, res) => {
   const arr = [];
   const { taskName, per_page, page } = req.query;
   Task.count({
-    where : {TaskName: taskName}
+    where: { TaskName: taskName }
   }).then(((count) => Works_on.findAll({
     attributes: [],
     include: [
