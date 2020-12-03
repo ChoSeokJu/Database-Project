@@ -3,7 +3,7 @@ const json2csv = require('json2csv').parse;
 const csv = require('csvtojson');
 const db = require('../models');
 const { parsing_data, evaluate, user, og_data_type, task } = db;
-const { finalScore } = require('../utils/generalUtils');
+const { finalScore, nowDate } = require('../utils/generalUtils');
 
 parsing_data.hasMany(evaluate, {foreignKey: 'Pid', as:"Eval"})
 evaluate.belongsTo(parsing_data, {foreignKey: 'Pid', as:"Eval"})
@@ -18,12 +18,13 @@ exports.evaluate = (req, res, next) => {
   /* insert evaluated value */
   // ! add timestamp
   // ! final score metric => add all numbers
-  const { Pid, score, description, PNP } = req.body
+  const { Pid, Score, Desc, PNP } = req.body
 
   evaluate.update({
-    Score: score,
+    Score: Score,
     Pass: PNP,
-    Desc: description
+    Desc: Desc,
+    TimeStamp: nowDate("DateTime")
   },
     {where : {
       Pid: Pid
@@ -110,17 +111,18 @@ exports.saveToTaskTable = async function (req, res) {
   console.log(taskDataRef.TableRef)
   console.log(mapping.Mapping)
 
-  const mock_filepath = "parseduploads/f5f7c6037bb2ed0ef7a0e1f78115f16c"
+  // const mock_filepath = "parseduploads/f5f7c6037bb2ed0ef7a0e1f78115f16c"
 
-  const parsedData = await csv({noheader:false}).fromFile(mock_filepath)
-  // const parsedData = await csv({noheader:false}).fromFile(DataRef)  // this is for deployment
+  // const parsedData = await csv({noheader:false}).fromFile(mock_filepath)
+  console.log(DataRef)
+  const parsedData = await csv({noheader:false}).fromFile(DataRef)  // this is for deployment
   parsedData.forEach( (row) => {
     row["Sid"] = Sid
   })
 
   const parsedHeader = Object.keys(parsedData[0]) // or Object.values(mapping.Mapping)
 
-  mock_taskDataRef = "task_data_table/f5f7c6037bb2ed0ef7a0e1f78115f16c"
+  // mock_taskDataRef = "task_data_table/f5f7c6037bb2ed0ef7a0e1f78115f16c"
   
   const write = async (fileName, fields, data) => {
     // ! take note that here, the data is being appended in the order in which they are written and not in the correct "mapping".
@@ -131,8 +133,9 @@ exports.saveToTaskTable = async function (req, res) {
     await fs.appendFileSync(fileName, "\r\n");
     await fs.appendFileSync(fileName, newRows);
   };
-  await write(mock_taskDataRef, parsedHeader, parsedData)
-  // await write(taskDataRef, parsedHeader, parsedData)  // this is for deployment
+  // await write(mock_taskDataRef, parsedHeader, parsedData)
+  console.log(taskDataRef.TableRef)
+  await write(taskDataRef.TableRef, parsedHeader, parsedData)  // this is for deployment
   
   return res.status(200).json({
     "message": "Successfully appended"

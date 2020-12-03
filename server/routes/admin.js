@@ -4,6 +4,8 @@ const adminController = require('../controllers/admin.controller');
 
 const router = express.Router();
 
+/* /api/user/admin */
+
 router.get(
   '/',
   adminController.adminContent

@@ -47,6 +47,7 @@ exports.makeTask = (req, res) => {
   const splitSchema = tableSchema.split(",");
   Task.findOne({where: {TaskName: taskName}}).then((task) => {
     if(!task) {
+      console.log("hello")
       Task.create({
         TaskName: taskName,
         Desc: desc,

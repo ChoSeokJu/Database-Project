@@ -2,7 +2,7 @@ const db = require('../models');
 const csv = require('csvtojson');
 const json2csv = require('json2csv').parse;
 const fs = require('fs');
-const { nowDate, csvSanityCheck, typeCheck } = require("../utils/generalUtils");
+const { nowDate, typeCheck } = require("../utils/generalUtils");
 const { user, parsing_data, evaluate, works_on, AVG_SCORE, og_data_type, task } = db;
 const Sequelize = require('sequelize')
 const sequelize = new Sequelize({
@@ -19,14 +19,14 @@ exports.submitContent = (req, res, next) => {
   var taskCol
   og_data_type.findOne({
     where: {
-      TaskName: req.body.TaskName,
+      TaskName: req.body.taskName,
       Name: req.body.ogDataName
     }
   }).then((og_data_type) => {
     if (og_data_type) {
       task.findOne({
         where: {
-          TaskName: req.body.TaskName
+          TaskName: req.body.taskName
         }
       }).then((task)=>{
         req.body.taskDataTableRef = task.TableRef
@@ -46,7 +46,8 @@ exports.submitContent = (req, res, next) => {
 exports.quantAssess = async function (req, res, next){
   const data = await csv({noheader:false}).fromFile(req.file.path)  // set this to be true for csvSanityCheck
   const taskCol = Object.values(
-    (await csv({noheader:true}).fromFile(req.body.taskDataTableRef))[0]
+    // (await csv({noheader:true}).fromFile(req.body.taskDataTableRef))[0] // this is for deployment
+    (await csv({noheader:true}).fromFile("task_data_table/abc.csv"))[0]
   )
   taskCol.pop() // pop "Sid" from task data columns
 
@@ -123,14 +124,14 @@ exports.systemAssessment = function(req, res, next){
           og_data_type.findOne({
             where: {
               Name: req.body.ogDataName,
-              TaskName: req.body.TaskName
+              TaskName: req.body.taskName
             }
           }).then((og_data_type) => {
             if (og_data_type){
               submitDid = og_data_type.Did
               parsing_data.create({
                     "FinalScore": null,
-                    "TaskName": req.body.TaskName,
+                    "TaskName": req.body.taskName,
                     "SubmitCnt": p_data.count + 1,
                     "TotalTupleCnt": req.body.TotalTupleCnt,
                     "DuplicatedTupleCnt": req.body.DuplicatedTupleCnt,
@@ -214,10 +215,11 @@ exports.assignEvaluator = function(req, res){
 };
 
 exports.getTaskList = function(req, res) {
+  const { username, per_page, page } = req.query
   var taskList = []
   user.findOne({
     where:{
-      ID: req.query.username
+      ID: username
     }
   }).then((user) => {
     works_on.findAll({
@@ -225,8 +227,8 @@ exports.getTaskList = function(req, res) {
         Sid: user.Uid,
         Permit: 1
       },
-      offset: (parseInt(req.query.per_page) * (parseInt(req.query.page)-1)),
-      limit: parseInt(req.query.per_page)
+      offset: (parseInt(per_page) * (parseInt(page)-1)),
+      limit: parseInt(per_page)
     }).then((works_on) => {
       if(works_on){
         works_on.forEach( (data) => {
@@ -245,14 +247,15 @@ exports.getTaskList = function(req, res) {
 }
 
 exports.submitApply = function(req, res) {
+  const { taskName, username } = req.body
   user.findOne({
     where: {
-      ID: req.body.username
+      ID: username
     }
   }).then((user)=>{
     works_on.create({
       Sid: user.Uid,
-      TaskName: req.body.TaskName
+      TaskName: taskName
     }).then((works_on) => {
       if (works_on){
         return res.status(200).json({
@@ -269,9 +272,10 @@ exports.submitApply = function(req, res) {
 
 exports.getAvgScore = function(req, res) {
   /* get average score and total tuple cnt*/
+  const { username } = req.query
   user.findOne({
     where: {
-      ID: req.query.username
+      ID: username
     }
   }).then((user) => {
     if (user) {
@@ -329,7 +333,7 @@ exports.getAvgScore = function(req, res) {
 }
 
 exports.getOgData = (req, res) => {
-  const {taskName} = req.query
+  const { taskName } = req.query
   og_data_type.findAll({
     attributes: ['Did', 'Name'],
     where: {TaskName: taskName}})
