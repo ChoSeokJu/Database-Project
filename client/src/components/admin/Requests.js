@@ -6,6 +6,7 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import Button from '@material-ui/core/Button';
 import TaskRequest from '../TaskRequest';
+import { getAdmin } from '../../services/user.service';
 
 export default function Requests() {
   const [selectedRow, setSelectedRow] = useState(null);
@@ -19,21 +20,26 @@ export default function Requests() {
     setOpenRequest({ open: false });
   };
 
-  // TODO: Request 목록 받아오기
+  // TODO: 완료! Request 목록 받아오기
   const getRequests = (query) => new Promise((resolve, reject) => {
-    resolve({
-      data: [
-        { title: 'asdf', content: 'asdfasdfasdfasdfas\ndfas\ndfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdf', date: '2020-12-01' },
-        { title: 'asdf', content: 'asdfasdf', date: '2020-12-01' },
-        { title: 'asdf', content: 'asdfasdf', date: '2020-12-01' },
-        { title: 'asdf', content: 'asdfasdf', date: '2020-12-01' },
-        { title: 'asdf', content: 'asdfasdf', date: '2020-12-01' },
-        { title: 'asdf', content: 'asdfasdf', date: '2020-12-01' },
-      ],
-      page: query.page,
-      totalCount: 100,
+    getAdmin('/request', {
+      per_page: query.pageSize,
+      page: query.page + 1,
+    }).then((response) => {
+      const { data, page, totalCount } = response.data;
+      resolve({
+        data, page: page - 1, totalCount,
+      });
+    }, (error) => {
+      const message = (error.response
+        && error.response.data
+        && error.response.data.message)
+        || error.message
+        || error.toString();
+      reject(message);
     });
   });
+
   return (
     <>
       <Container maxWidth="md">
@@ -48,6 +54,11 @@ export default function Requests() {
             rowStyle: (rowData) => ({
               backgroundColor: (selectedRow === rowData.tableData.id) ? '#EEE' : '#FFF',
             }),
+          }}
+          localization={{
+            body: {
+              emptyDataSourceMessage: '태스크 요청이 없습니다',
+            },
           }}
           columns={[
             {

@@ -16,6 +16,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 import GetAppIcon from '@material-ui/icons/GetApp';
 import TaskUserTable from './TaskUserListTable';
+import { getAdmin } from '../../services/user.service';
 
 const useStyles = makeStyles((theme) => ({
   title: {
@@ -27,50 +28,42 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function TaskUserList({ open, handleClose, taskName }) {
+export default function TaskInfo({ open, handleClose, taskName }) {
   const classes = useStyles();
 
-  // TODO: 파싱된 데이터 목록 얻어오기
-  const getParsedData = (query) =>
-    new Promise((resolve, reject) => {
-      setTimeout(
-        () =>
-          resolve({
-            data: [
-              {
-                ID: 'user1',
-                date: '2020-01-01',
-                OGDataType: '데이터타입1',
-                PNP: 'P',
-              },
-              {
-                ID: 'user2',
-                date: '2020-01-01',
-                OGDataType: '데이터타입2',
-                PNP: 'P',
-              },
-              {
-                ID: 'user3',
-                date: '2020-01-01',
-                OGDataType: '데이터타입3',
-                PNP: 'P',
-              },
-            ],
-            page: query.page,
-            totalCount: 100,
-          }),
-        500
-      );
+  // TODO: 완료! 파싱된 데이터 목록 얻어오기
+  const getParsedData = (query) => new Promise((resolve, reject) => {
+    getAdmin('/task/parsed-data', {
+      taskName,
+      per_page: query.pageSize,
+      page: query.page + 1,
+    }).then((response) => {
+      const { data, page, totalCount } = response.data;
+      resolve({
+        data, page: page - 1, totalCount,
+      });
+    }, (error) => {
+      const message = (error.response
+        && error.response.data
+        && error.response.data.message)
+        || error.message
+        || error.toString();
+      reject(message);
     });
+  });
 
   const handleTableDownload = () => {
     // TODO: 태스크의 테이블 다운로드
-    alert(`${taskName} 태스크의 테이블 다운로드`);
+    getAdmin('/task/download', {
+      taskName,
+    });
   };
 
   const handleParsedDataDownload = (event, rowData) => {
     // TODO: 파싱된 데이터 다운로드
-    alert(`${rowData.ID}가 올린 파싱된 데이터를 다운`);
+    getAdmin('/task/download', {
+      Pid: rowData.Pid,
+    });
   };
 
   return (
@@ -83,7 +76,8 @@ export default function TaskUserList({ open, handleClose, taskName }) {
     >
       <DialogContent>
         <Typography variant="h5" component="h2" className={classes.title}>
-          {taskName}의 데이터 테이블
+          {taskName}
+          의 데이터 테이블
         </Typography>
         <Button
           variant="contained"
