@@ -5,7 +5,7 @@ import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
-import TaskUserTable from './TaskUserListTable';
+import TaskUserListTable from './TaskUserListTable';
 
 export default function TaskUserList({ open, handleClose, taskName }) {
   return (
@@ -16,9 +16,12 @@ export default function TaskUserList({ open, handleClose, taskName }) {
       fullWidth
       aria-labelledby="form-dialog-title"
     >
-      <DialogTitle id="form-dialog-title">{taskName}의 회원 목록</DialogTitle>
+      <DialogTitle id="form-dialog-title">
+        {taskName}
+        의 회원 목록
+      </DialogTitle>
       <DialogContent>
-        <TaskUserTable taskName={taskName} />
+        <TaskUserListTable taskName={taskName} />
       </DialogContent>
       <DialogActions>
         <Button onClick={handleClose} color="primary">

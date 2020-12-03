@@ -13,6 +13,7 @@ const Parsing_data = db.parsing_data;
 const Evaluate = db.evaluate;
 const { og_data_type } = db;
 const { AVG_SCORE } = db;
+const Requests = db.request_task;
 
 Parsing_data.hasMany(Evaluate, { foreignKey: 'Pid' });
 Evaluate.belongsTo(Parsing_data, { foreignKey: 'Pid' });
@@ -335,30 +336,43 @@ exports.infoSearch = (req, res) => {
   });
 };
 
-exports.requestList = (req, res) => {
-  const { per_page, page } = req.body;
-  Task.hasMany(Works_on, { foreignKey: 'TaskName' });
-  Works_on.belongsTo(Task, { foreignKey: 'TaskName' });
+// exports.requestList = (req, res) => {
+//   const { per_page, page } = req.body;
+//   Task.hasMany(Works_on, { foreignKey: 'TaskName' });
+//   Works_on.belongsTo(Task, { foreignKey: 'TaskName' });
 
-  Works_on.findAndCountAll({
-    include: [{
-      model: Task,
-      required: true,
-    }],
-    where: {
-      Permit: 0,
-    },
-    offset: (per_page * (page - 1)),
-    limit: per_page,
-  }).then((Works_on) => {
-    if (Works_on) {
-      return res.status(200).json({
-        data: Works_on.rows,
-        page,
-        totalCount: Works_on.count,
+//   Works_on.findAndCountAll({
+//     include: [{
+//       model: Task,
+//       required: true,
+//     }],
+//     where: {
+//       Permit: 0,
+//     },
+//     offset: (per_page * (page - 1)),
+//     limit: per_page,
+//   }).then((Works_on) => {
+//     if (Works_on) {
+//       return res.status(200).json({
+//         data: Works_on.rows,
+//         page,
+//         totalCount: Works_on.count,
+//       });
+//     }
+//   });
+// };
+
+exports.requestList = (req, res) => {
+  const { per_page, page } = req.query;
+  Requests.count().then((count) => Requests.findAll({ attributes: ['title', 'content', 'date'], 
+  offset: parseInt(per_page) * (parseInt(page) - 1), limit: parseInt(per_page) })
+    .then((result) => {
+      res.status(200).json({
+        data: result,
+        page: parseInt(page),
+        totalCount: count,
       });
-    }
-  });
+    }));
 };
 
 exports.parsedDataList = (req, res) => {

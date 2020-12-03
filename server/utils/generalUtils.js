@@ -78,8 +78,8 @@ exports.typeCheck  = (type, item) => {
 }
 
 exports.permitState = (n) => {
-    if(n=="approved"){ return "신청승인" }
-    else if (n=="pending") { return "승인대기" }
-    else if (n=="rejected") { return "신청거절" }
-    else if (n==null) { return "미신청" }
+    if(n==1){ return "신청승인" }
+    else if (n==0) { return "신청대기" }
+    else if (n==null) { return "신청거절" }
+    else if (n==undefined) { return "미신청" }
 }

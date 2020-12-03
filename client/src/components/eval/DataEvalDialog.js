@@ -35,6 +35,7 @@ import {
   setAlertType,
   setMessage,
 } from '../../actions/message';
+import { postEval } from '../../services/user.service';
 
 const useStyle = makeStyles((theme) => ({
   downloadButton: {
@@ -75,8 +76,24 @@ export default function AppendOGDataTypeDialog({ open, handleClose, Pid }) {
   };
 
   const handleSubmit = () => {
-    // TODO: 평가 제출하기
-    handleClose();
+    // TODO: 완료! 평가 제출하기
+    postEval('/', {
+      Pid,
+      Score: score,
+      Desc: opinion,
+      PNP: PNP ? 'P' : 'NP',
+    }).then(() => {
+      handleClose();
+    }, (error) => {
+      const message = (error.response
+        && error.response.data
+        && error.response.data.message)
+        || error.message
+        || error.toString();
+      dispatch(setAlertType('error'));
+      dispatch(setMessage(message));
+      dispatch(openAlert());
+    });
   };
 
   return (
