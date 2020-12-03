@@ -50,14 +50,13 @@ export default function TaskTableAdmin(props) {
     history.push('/admin/task/append');
   };
 
-  // TODO: 태스크 목록 불러오기
+  // TODO: 완료! 태스크 목록 불러오기
   const getTask = (query) => new Promise((resolve, reject) => {
     getAdmin('/task', {
       per_page: query.pageSize,
       page: query.page + 1,
     }).then((response) => {
       const { data, page, totalCount } = response.data;
-      console.log(response);
       resolve({
         data, page: page - 1, totalCount,
       });
@@ -67,7 +66,7 @@ export default function TaskTableAdmin(props) {
         && error.response.data.message)
         || error.message
         || error.toString();
-      console.log(message);
+      reject(message);
     });
   });
 

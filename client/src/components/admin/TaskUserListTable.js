@@ -2,28 +2,55 @@
 import React, { createRef, useState } from 'react';
 import MaterialTable from 'material-table';
 import Paper from '@material-ui/core/Paper';
+import { useDispatch } from 'react-redux';
 import UserInfo from './UserInfo';
-import { getAdmin } from '../../services/user.service';
+import { getAdmin, postAdmin } from '../../services/user.service';
+import { openAlert, setAlertType, setMessage } from '../actions/message';
 
-export default function TaskTableAdmin({ taskName }) {
+export default function TaskUserListTable({ taskName }) {
   const [openUserInfo, setOpenUserInfo] = useState({ open: false, Uid: 0 });
+  const dispatch = useDispatch();
 
   const pendingTableRef = createRef();
   const approvedTableRef = createRef();
 
-  // TODO: 유저 승인
+  // TODO: 완료! 유저 승인
   const handleApproval = (event, rowData) => {
-    alert(`회원 ${rowData.name} Uid ${rowData.Uid} 를 승인`);
-    pendingTableRef.current && pendingTableRef.current.onQueryChange();
-    approvedTableRef.current && approvedTableRef.current.onQueryChange();
-    // 리콜 마지막에 호출해야한다
+    postAdmin('/task/approve', {
+      taskName,
+      Uid: rowData.Uid,
+    }).then((response) => {
+      pendingTableRef.current && pendingTableRef.current.onQueryChange();
+      approvedTableRef.current && approvedTableRef.current.onQueryChange();
+    }, (error) => {
+      const message = (error.response
+        && error.response.data
+        && error.response.data.message)
+        || error.message
+        || error.toString();
+      dispatch(setAlertType('error'));
+      dispatch(setMessage(message));
+      dispatch(openAlert());
+    });
   };
-  // TODO: 유저 거절
+  // TODO: 완료! 유저 거절
   const handleRejection = (event, rowData) => {
-    alert(`회원 ${rowData.name} Uid ${rowData.Uid} 를 거절`);
-    pendingTableRef.current && pendingTableRef.current.onQueryChange();
-    approvedTableRef.current && approvedTableRef.current.onQueryChange();
-    // 리콜 마지막에 호출해야한다
+    postAdmin('/task/reject', {
+      taskName,
+      Uid: rowData.Uid,
+    }).then((response) => {
+      pendingTableRef.current && pendingTableRef.current.onQueryChange();
+      approvedTableRef.current && approvedTableRef.current.onQueryChange();
+    }, (error) => {
+      const message = (error.response
+        && error.response.data
+        && error.response.data.message)
+        || error.message
+        || error.toString();
+      dispatch(setAlertType('error'));
+      dispatch(setMessage(message));
+      dispatch(openAlert());
+    });
   };
 
   const handleUserInfo = (event, rowData) => {
@@ -34,14 +61,13 @@ export default function TaskTableAdmin({ taskName }) {
     setOpenUserInfo({ open: false, Uid: 0 });
   };
 
-  // TODO: 대기중인 유저 목록 받아오기
+  // TODO: 완료! 대기중인 유저 목록 받아오기
   const getPendingUserList = (query) => new Promise((resolve, reject) => {
     getAdmin('/task/pending', {
       taskName,
       per_page: query.pageSize,
       page: query.page + 1,
     }).then((response) => {
-      console.log(response);
       const { data, page, totalCount } = response.data;
       resolve({
         data, page: page - 1, totalCount,
@@ -52,24 +78,29 @@ export default function TaskTableAdmin({ taskName }) {
         && error.response.data.message)
         || error.message
         || error.toString();
-      console.log(message);
+      reject(message);
     });
   });
 
-  // TODO: 승인된 유저의 목록 받아오기
+  // TODO: 완료! 승인된 유저의 목록 받아오기
   const getApprovedUserList = (query) => new Promise((resolve, reject) => {
-    setTimeout(
-      () => resolve({
-        data: [
-          { ID: 'username1', Name: '회원1', Uid: 1 },
-          { ID: 'username2', Name: '회원2', Uid: 2 },
-          { ID: 'username3', Name: '회원3', Uid: 3 },
-        ],
-        page: query.page,
-        totalCount: 100,
-      }),
-      500,
-    );
+    getAdmin('/task/approved', {
+      taskName,
+      per_page: query.pageSize,
+      page: query.page + 1,
+    }).then((response) => {
+      const { data, page, totalCount } = response.data;
+      resolve({
+        data, page: page - 1, totalCount,
+      });
+    }, (error) => {
+      const message = (error.response
+        && error.response.data
+        && error.response.data.message)
+        || error.message
+        || error.toString();
+      reject(message);
+    });
   });
 
   const MaterialTableFixed = (props) => (
