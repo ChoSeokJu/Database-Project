@@ -222,17 +222,16 @@ exports.getSchema = (req, res) => {
 
 
 exports.addOgData = (req, res) => {
-  const { taskName, OGDataType, data, desc } = req.body
+  const { taskName, OGDataType, data, desc, schema} = req.body
   Task.findOne({
-    where: { TaskName: taskName },
-    attributes: ['TableSchema']
+    where: { TaskName: taskName }
   }).then((schema) => {
     if (schema) {
       ogData.create({
         Name: OGDataType,
         Mapping: data,
         TaskName: taskName,
-        Schema: schema['TableSchema'],
+        Schema: schema,
         Desc: desc
       }).then((ogdata) => {
         res.status(200).json({
