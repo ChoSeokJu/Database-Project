@@ -3,6 +3,7 @@ import React, { createRef, useState } from 'react';
 import MaterialTable from 'material-table';
 import Paper from '@material-ui/core/Paper';
 import UserInfo from './UserInfo';
+import { getAdmin } from '../../services/user.service';
 
 export default function TaskTableAdmin({ taskName }) {
   const [openUserInfo, setOpenUserInfo] = useState({ open: false, Uid: 0 });
@@ -34,40 +35,42 @@ export default function TaskTableAdmin({ taskName }) {
   };
 
   // TODO: 대기중인 유저 목록 받아오기
-  const getPendingUserList = (query) =>
-    new Promise((resolve, reject) => {
-      setTimeout(
-        () =>
-          resolve({
-            data: [
-              { ID: 'username1', Name: '회원1', Uid: 1 },
-              { ID: 'username2', Name: '회원2', Uid: 2 },
-              { ID: 'username3', Name: '회원3', Uid: 3 },
-            ],
-            page: query.page,
-            totalCount: 100,
-          }),
-        500
-      );
+  const getPendingUserList = (query) => new Promise((resolve, reject) => {
+    getAdmin('/task/pending', {
+      taskName,
+      per_page: query.pageSize,
+      page: query.page + 1,
+    }).then((response) => {
+      console.log(response);
+      const { data, page, totalCount } = response.data;
+      resolve({
+        data, page: page - 1, totalCount,
+      });
+    }, (error) => {
+      const message = (error.response
+        && error.response.data
+        && error.response.data.message)
+        || error.message
+        || error.toString();
+      console.log(message);
     });
+  });
 
   // TODO: 승인된 유저의 목록 받아오기
-  const getApprovedUserList = (query) =>
-    new Promise((resolve, reject) => {
-      setTimeout(
-        () =>
-          resolve({
-            data: [
-              { ID: 'username1', Name: '회원1', Uid: 1 },
-              { ID: 'username2', Name: '회원2', Uid: 2 },
-              { ID: 'username3', Name: '회원3', Uid: 3 },
-            ],
-            page: query.page,
-            totalCount: 100,
-          }),
-        500
-      );
-    });
+  const getApprovedUserList = (query) => new Promise((resolve, reject) => {
+    setTimeout(
+      () => resolve({
+        data: [
+          { ID: 'username1', Name: '회원1', Uid: 1 },
+          { ID: 'username2', Name: '회원2', Uid: 2 },
+          { ID: 'username3', Name: '회원3', Uid: 3 },
+        ],
+        page: query.page,
+        totalCount: 100,
+      }),
+      500,
+    );
+  });
 
   const MaterialTableFixed = (props) => (
     <MaterialTable

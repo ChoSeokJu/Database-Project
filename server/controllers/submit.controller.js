@@ -2,50 +2,54 @@ const db = require('../models');
 const csv = require('csvtojson');
 const json2csv = require('json2csv').parse;
 const fs = require('fs');
-const { nowDate, typeCheck } = require("../utils/generalUtils");
-const { user, parsing_data, evaluate, works_on, AVG_SCORE, og_data_type, task } = db;
-const Sequelize = require('sequelize')
+const { nowDate, typeCheck, permitState } = require('../utils/generalUtils');
+
+const {
+  user, parsing_data, evaluate, works_on, AVG_SCORE, og_data_type, task,
+} = db;
+const Sequelize = require('sequelize');
+
 const sequelize = new Sequelize({
   dialect: 'mysql',
-})
+});
 
 exports.submitContent = (req, res, next) => {
-  console.log(`Submit user ${req.body.username} submitted data`)
+  console.log(`Submit user ${req.body.username} submitted data`);
   if (!req.file) {
     return res.status(405).json({
-      message: '파일 업로드 형식이 잘 못 되었습니다. CSV 파일로 업로드 부탁드립니다'
-    })
+      message: '파일 업로드 형식이 잘 못 되었습니다. CSV 파일로 업로드 부탁드립니다',
+    });
   }
   og_data_type.findOne({
     where: {
       TaskName: req.body.taskName,
-      Name: req.body.ogDataName
-    }
+      Name: req.body.ogDataName,
+    },
   }).then((og_data_type) => {
     if (og_data_type) {
       task.findOne({
         where: {
-          TaskName: req.body.taskName
-        }
+          TaskName: req.body.taskName,
+        },
       }).then((task) => {
-        req.body.taskDataTableRef = task.TableRef
-        req.body.Mapping = og_data_type.Mapping
-        req.body.ogSchema = og_data_type.Schema
-        next()
-      })
-
+        req.body.taskDataTableRef = task.TableRef;
+        req.body.taskTaskName = task.TaskName;
+        req.body.Mapping = og_data_type.Mapping;
+        req.body.ogSchema = og_data_type.Schema;
+        next();
+      });
     } else {
       return res.status(400).json({
-        "message": "og_data_type이 존재하지 않습니다"
-      })
+        message: 'og_data_type이 존재하지 않습니다',
+      });
     }
-  })
+  });
 };
 
 exports.quantAssess = async function (req, res, next) {
   const data = await csv({ noheader: false }).fromFile(req.file.path)  // set this to be true for csvSanityCheck
   const taskCol = Object.values(
-    (await csv({ noheader: true }).fromFile(req.body.taskDataTableRef))[0]
+    (await csv({ noheader: true }).fromFile(req.body.taskDataTableRef+"/"+req.body.taskTableName))[0]
   )
   taskCol.pop() // pop "Sid" from task data columns
 
@@ -129,7 +133,7 @@ exports.systemAssessment = function (req, res, next) {
               submitDid = og_data_type.Did
               parsing_data.create({
                 "FinalScore": null,
-                "TaskName": req.body.TaskName,
+                "TaskName": req.body.taskName,
                 "SubmitCnt": p_data.count + 1,
                 "TotalTupleCnt": req.body.TotalTupleCnt,
                 "DuplicatedTupleCnt": req.body.DuplicatedTupleCnt,
@@ -175,7 +179,7 @@ exports.assignEvaluator = function (req, res) {
   // ! Pid obtained by max (most recent)
   parsing_data.findOne({
     attributes: [[
-      sequelize.fn('MAX', sequelize.col('Pid')), 'Pid'
+      sequelize.fn('MAX', sequelize.col('Pid')), 'Pid',
     ]],
     raw: true,
   }).then((parsing_data) => {
@@ -187,158 +191,159 @@ exports.assignEvaluator = function (req, res) {
         order: sequelize.random(),
       }).then((user) => {
         if (user) {
-          console.log("hello")
+          console.log('hello');
           evaluate.create({
-            "Eid": user.Uid,
-            "Pid": parsing_data.Pid
+            Eid: user.Uid,
+            Pid: parsing_data.Pid,
           }).then((evaluate) => {
             if (evaluate) {
               return res.status(200).json({
-                "message": `Parsing data에 데이터를 성공적으로 추가하고 평가자를 할당했습니다`
-              })
+                message: 'Parsing data에 데이터를 성공적으로 추가하고 평가자를 할당했습니다',
+              });
             }
-          })
+          });
         } else {
           return res.status(206).json({
-            "message": `Parsing data에 데이터를 성공적으로 추가였지만 평가자를 할당 받지 못했습니다`
-          })
+            message: 'Parsing data에 데이터를 성공적으로 추가였지만 평가자를 할당 받지 못했습니다',
+          });
         }
       });
     } else {
       return res.status(404).json({
-        "message": `데이터베이스에 Parsing data가 존재하지 않습니다`
-      })
+        message: '데이터베이스에 Parsing data가 존재하지 않습니다',
+      });
     }
-  })
+  });
 };
 
 exports.getTaskList = function (req, res) {
-  var taskList = []
-  const { username, per_page, page } = req.query
+  const taskList = [];
+  const { username, per_page, page } = req.query;
   user.findOne({
     where: {
-      ID: username
-    }
+      ID: username,
+    },
   }).then((user) => {
     works_on.findAll({
       where: {
         Sid: user.Uid,
-        Permit: 1
+        Permit: 1,
       },
       offset: (parseInt(per_page) * (parseInt(page) - 1)),
-      limit: parseInt(per_page)
+      limit: parseInt(per_page),
     }).then((works_on) => {
+
       if (works_on) {
+        var taskListSingle = {}
         works_on.forEach((data) => {
-          taskList.push(data.TaskName)
-        })
+          taskListSingle.taskName = data.TaskName
+          taskListSingle.permit = permitState(data.Permit)
+          taskList.push(taskListSingle);
+        });
         return res.status(200).json({
-          "TaskNameList": taskList
-        })
-      } else {
-        return res.status(400).json({
-          message: "관리자가 task를 승인하지 않았습니다"
-        })
+          TaskNameList: taskList,
+        });
       }
-    })
-  })
-}
+      return res.status(400).json({
+        message: '관리자가 task를 승인하지 않았습니다',
+      });
+    });
+  });
+};
 
 exports.submitApply = function (req, res) {
-  const { username, taskName } = req.body
+  const { username, taskName } = req.body;
   user.findOne({
     where: {
-      ID: username
-    }
+      ID: username,
+    },
   }).then((user) => {
     works_on.create({
       Sid: user.Uid,
-      TaskName: taskName
+      TaskName: taskName,
+      Permit: 0
     }).then((works_on) => {
       if (works_on) {
         return res.status(200).json({
-          message: "요청을 성공하였습니다"
-        })
-      } else {
-        return res.status(500).json({
-          message: "요청을 실패했습니다"
-        })
+          message: '요청을 성공하였습니다',
+        });
       }
-    })
-  })
-}
+      return res.status(500).json({
+        message: '요청을 실패했습니다',
+      });
+    });
+  });
+};
 
 exports.getAvgScore = function (req, res) {
-  /* get average score and total tuple cnt*/
-  const { username } = req.query
+  /* get average score and total tuple cnt */
+  const { username } = req.query;
   user.findOne({
     where: {
-      ID: username
-    }
+      ID: username,
+    },
   }).then((user) => {
     if (user) {
       parsing_data.count({
         where: {
-          Sid: user.Uid
+          Sid: user.Uid,
         },
       }).then((p_data) => {
         if (p_data) {
           AVG_SCORE.findByPk(
-            user.Uid
+            user.Uid,
           ).then((AVG_SCORE) => {
             if (AVG_SCORE) {
               parsing_data.findOne({
                 attributes: [[
-                  sequelize.fn('SUM', sequelize.col('TotalTupleCnt')), 'TotalTupleCnt'
+                  sequelize.fn('SUM', sequelize.col('TotalTupleCnt')), 'TotalTupleCnt',
                 ]],
                 where: {
                   Sid: user.Uid,
-                  Appended: 1
+                  Appended: 1,
                 },
                 raw: true,
               }).then((parsing_data) => {
                 if (parsing_data) {
                   return res.status(200).json({
-                    "Score": AVG_SCORE.Score,
-                    "SubmittedDataCnt": p_data,
-                    "TaskDataTableTupleCnt": parsing_data.TotalTupleCnt
-                  })
-                } else {
-                  return res.status(400).json({
-                    "message": "데이터를 찾을 수 없습니다"
-                  })
+                    Score: AVG_SCORE.Score,
+                    SubmittedDataCnt: p_data,
+                    TaskDataTableTupleCnt: parsing_data.TotalTupleCnt,
+                  });
                 }
-              })
-
+                return res.status(400).json({
+                  message: '데이터를 찾을 수 없습니다',
+                });
+              });
             } else {
               return res.status(400).json({
-                "message": "og_data_type이 존재하지 않습니다"
-              })
+                message: 'og_data_type이 존재하지 않습니다',
+              });
             }
-          })
+          });
         } else {
           return res.status(400).json({
-            "message": "사용자가 parsing_data를 제출하지 않았습니다"
-          })
+            message: '사용자가 parsing_data를 제출하지 않았습니다',
+          });
         }
-      })
+      });
     } else {
       return res.status(400).json({
-        "message": "해당 사용자가 존재하지 않습니다"
-      })
+        message: '해당 사용자가 존재하지 않습니다',
+      });
     }
-  })
-}
+  });
+};
 
 exports.getOgData = (req, res) => {
-  const { taskName } = req.query
+  const { taskName } = req.query;
   og_data_type.findAll({
     attributes: ['Did', 'Name'],
-    where: { TaskName: taskName }
+    where: { TaskName: taskName },
   })
     .then((result) => {
       res.status(200).json({
-        data: result
-      })
-    })
+        data: result,
+      });
+    });
 };
