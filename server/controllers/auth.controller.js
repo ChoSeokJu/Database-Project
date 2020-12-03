@@ -9,12 +9,13 @@ const bcrypt = require('bcryptjs');
 
 exports.signup = (req, res) => {
   const { username, gender, name, address, phone, birthday, password, userType } = req.body;
+  console.log("Heellooo")
   User.findOne({
     where: {
       UType: userType
     },
   }).then((user) => {
-    if (user.userType === "admin") {
+    if (user && user.userType === "admin") {
       return res.status(404).json({
         message: '관리자 계정이 이미 존재합니다',
       });

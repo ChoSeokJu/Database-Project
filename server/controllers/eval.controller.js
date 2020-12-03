@@ -104,8 +104,8 @@ exports.saveToTaskTable = async function (req, res) {
 
   var taskDataRef = await task.findOne({
     where: {
-      TaskName: "Fundamentals",
-      // TaskName: TaskName   // this is for deployment
+      // TaskName: "Fundamentals",
+      TaskName: TaskName   // this is for deployment
     },
     attributes: ["TableRef"]
   })
@@ -115,8 +115,8 @@ exports.saveToTaskTable = async function (req, res) {
 
   // const mock_filepath = "parseduploads/f5f7c6037bb2ed0ef7a0e1f78115f16c"
 
-  const parsedData = await csv({ noheader: false }).fromFile(mock_filepath)
-  // const parsedData = await csv({noheader:false}).fromFile(DataRef)  // this is for deployment
+  // const parsedData = await csv({ noheader: false }).fromFile(mock_filepath)
+  const parsedData = await csv({noheader:false}).fromFile(DataRef)  // this is for deployment
   parsedData.forEach((row) => {
     row["Sid"] = Sid
   })
@@ -134,8 +134,8 @@ exports.saveToTaskTable = async function (req, res) {
     await fs.appendFileSync(fileName, "\r\n");
     await fs.appendFileSync(fileName, newRows);
   };
-  await write(mock_taskDataRef, parsedHeader, parsedData)
-  // await write(taskDataRef, parsedHeader, parsedData)  // this is for deployment
+  // await write(mock_taskDataRef, parsedHeader, parsedData)
+  await write(taskDataRef, parsedHeader, parsedData)  // this is for deployment
   return res.status(200).json({
     "message": "성공적으로 추가되었습니다"
   })
