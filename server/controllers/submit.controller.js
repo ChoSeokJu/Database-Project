@@ -45,14 +45,16 @@ exports.submitContent = (req, res, next) => {
 
 exports.quantAssess = async function (req, res, next){
   const data = await csv({noheader:false}).fromFile(req.file.path)  // set this to be true for csvSanityCheck
-  const taskData = await csv({noheader:true}).fromFile(req.body.taskDataTableRef)
-  console.log(taskData);
-  // const taskDataHeader = taskData
+  const taskCol = Object.values(
+    (await csv({noheader:true}).fromFile(req.body.taskDataTableRef))[0]
+  )
+  taskCol.pop() // pop "Sid" from task data columns
 
   const dataHeader = Object.keys(data[0]);
   const { Mapping, ogSchema } = req.body
+
   if (JSON.stringify(dataHeader.sort()) != JSON.stringify(Object.keys(ogSchema))){
-    // reject if ogSchema keys do not match dataHeader (order does not matter)
+    // reject if ogSchema keys do not match submitted data columns (order does not matter)
     return res.status(404).json({
       "message": "submitted csv file does not match the schema defined in original data type"
     })
@@ -62,8 +64,6 @@ exports.quantAssess = async function (req, res, next){
   var counts = {}
   var parsedData = []
   
-  console.log(data);
-  taskCol = await Object.keys(Mapping)
   console.log(taskCol)
   data.forEach( (row) => {
       rowCount ++;
@@ -101,7 +101,7 @@ exports.quantAssess = async function (req, res, next){
 
 exports.systemAssessment = function(req, res, next){
   /* automatic system assessment */ 
-  // ! Term 
+  // ! Term --> submitted by user
 
   var submitSid, submitDid;
   
@@ -135,8 +135,8 @@ exports.systemAssessment = function(req, res, next){
                     "TotalTupleCnt": req.body.TotalTupleCnt,
                     "DuplicatedTupleCnt": req.body.DuplicatedTupleCnt,
                     "NullRatio": req.body.NullRatio,
-                    "Term": nowDate("DateTime"),
-                    "DataRef": req.file.path,
+                    "Term": nowDate("DateTime"),    // supposed to be sent from the user
+                    "DataRef": `parsed${req.file.path}`,
                     "TimeStamp": nowDate("DateTime"),
                     "Did": submitDid,
                     "Sid": submitSid
@@ -188,6 +188,7 @@ exports.assignEvaluator = function(req, res){
         order: sequelize.random(),
       }).then((user) => {
         if (user) {
+          console.log("hello")
           evaluate.create({
             "Eid": user.Uid,
             "Pid": parsing_data.Pid

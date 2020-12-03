@@ -35,15 +35,11 @@ module.exports = function(sequelize, DataTypes) {
     TimeStamp: {
       type: DataTypes.DATE,
       allowNull: true
-    },
-    Desc: {
-      type: DataTypes.TEXT,
-      allowNull: true
     }
   }, {
     sequelize,
     tableName: 'evaluate',
-    timestamps: true,
+    // timestamps: true,
     indexes: [
       {
         name: "PRIMARY",
