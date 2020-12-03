@@ -210,9 +210,9 @@ exports.getSchema = (req, res) => {
     where: { TaskName: taskName }
   })
     .then((columns) => {
-      console.log(Object.keys(columns[0].TableSchema[0])[0])
-      for (var i = 0; i < columns[0].TableSchema.length; i++) {
-        arr.push({ columnName: Object.keys(columns[0].TableSchema[i])[0] })
+      console.log(Object.keys(columns[0].TableSchema[0]))
+      for (var i = 0; i < Object.keys(columns[0].TableSchema[0]).length; i++) {
+        arr.push({ columnName: Object.keys(columns[0].TableSchema[0])[i]})
       }
       res.status(200).json({
         data: arr

@@ -5,7 +5,8 @@ const { checkValidPassword } = require('../utils/verifySignUp');
 const User = db.user;
 
 exports.changeUserInfo = (req, res) => {
-  User.findByPk(req.Uid).then((user) => {
+  const {id} = req.body
+  User.findByPk(id).then((user) => {
     const { address, phone } = req.body;
     user.set('Addr', address);
     user.set('PhoneNo', phone);
@@ -17,7 +18,8 @@ exports.changeUserInfo = (req, res) => {
 };
 
 exports.changePassword = (req, res) => {
-  User.findByPk(req.Uid).then((user) => {
+  const {id} = req.body
+  User.findByPk(id).then((user) => {
     if (user.get('UType') === 2) {
       return res.status(400).json({
         message: '관리자는 비밀번호를 변경할 수 없습니다',
@@ -34,7 +36,8 @@ exports.changePassword = (req, res) => {
 };
 
 exports.getUserInfo = (req, res) => {
-  User.findByPk(req.Uid).then((user) =>
+  const {id} = req.query
+  User.findByPk(id).then((user) =>
     res.json({
       Name: user.get('Name'),
       Bdate: user.get('Bdate'),
@@ -47,7 +50,8 @@ exports.getUserInfo = (req, res) => {
 };
 
 exports.handleWithdrawal = (req, res) => {
-  User.findByPk(req.Uid).then((user) => {
+  const {id} = req.query
+  User.findByPk(id).then((user) => {
     if (user.get('UType') === 2) {
       return res
         .status(400)
