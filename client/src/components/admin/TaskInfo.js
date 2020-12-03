@@ -53,14 +53,14 @@ export default function TaskInfo({ open, handleClose, taskName }) {
   });
 
   const handleTableDownload = () => {
-    // TODO: 태스크의 테이블 다운로드
+    // TODO: 완료! 태스크의 테이블 다운로드
     getAdmin('/task/download', {
       taskName,
     });
   };
 
   const handleParsedDataDownload = (event, rowData) => {
-    // TODO: 파싱된 데이터 다운로드
+    // TODO: 완료! 파싱된 데이터 다운로드
     getAdmin('/task/download', {
       Pid: rowData.Pid,
     });
