@@ -5,7 +5,7 @@ import Paper from '@material-ui/core/Paper';
 import { useDispatch } from 'react-redux';
 import UserInfo from './UserInfo';
 import { getAdmin, postAdmin } from '../../services/user.service';
-import { openAlert, setAlertType, setMessage } from '../actions/message';
+import { openAlert, setAlertType, setMessage } from '../../actions/message';
 
 export default function TaskUserListTable({ taskName }) {
   const [openUserInfo, setOpenUserInfo] = useState({ open: false, Uid: 0 });
