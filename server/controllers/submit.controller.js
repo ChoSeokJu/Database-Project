@@ -2,12 +2,6 @@ const db = require('../models');
 const csv = require('csvtojson');
 const json2csv = require('json2csv').parse;
 const fs = require('fs');
-<<<<<<< HEAD
-const { nowDate, typeCheck, permitState } = require("../utils/generalUtils");
-const { user, parsing_data, evaluate, works_on, AVG_SCORE, og_data_type, task } = db;
-const Sequelize = require('sequelize');
-const { Op } = db.Sequelize;
-=======
 const { nowDate, typeCheck, permitState } = require('../utils/generalUtils');
 
 const {
@@ -15,10 +9,11 @@ const {
 } = db;
 const Sequelize = require('sequelize');
 
->>>>>>> f68c84a45ef7f270edde396b879655b383ad8eea
 const sequelize = new Sequelize({
   dialect: 'mysql',
 });
+
+const { Op } = db.Sequelize;
 
 user.hasMany(works_on, { foreignKey: 'Sid'})
 works_on.belongsTo(user, { foreignKey: 'Sid'})
