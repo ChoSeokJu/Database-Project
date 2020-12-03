@@ -19,4 +19,9 @@ router.post('/password',
   [authJwt.verifyToken],
   userController.changePassword);
 
+
+router.post('/request-task',
+  [authJwt.verifyToken],
+  userController.requestTask);
+
 module.exports = router;
