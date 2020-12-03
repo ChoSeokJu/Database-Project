@@ -144,7 +144,9 @@ exports.pendingUser = (req, res) => {
   Works_on.belongsTo(User, { foreignKey: 'Sid' });
   const arr = [];
   const { taskName, per_page, page } = req.query;
-  Task.count().then(((count) => Works_on.findAll({
+  Task.count({
+    where : {TaskName: taskName}
+  }).then(((count) => Works_on.findAll({
     attributes: [],
     include: [
       {
@@ -173,7 +175,9 @@ exports.approvedUser = (req, res) => {
   Works_on.belongsTo(User, { foreignKey: 'Sid' });
   const arr = [];
   const { taskName, per_page, page } = req.query;
-  Task.count().then(((count) => Works_on.findAll({
+  Task.count({
+    where : {TaskName: taskName}
+  }).then(((count) => Works_on.findAll({
     attributes: [],
     include: [
       {
