@@ -2,7 +2,7 @@ const db = require('../models');
 const csv = require('csvtojson');
 const json2csv = require('json2csv').parse;
 const fs = require('fs');
-const { nowDate, typeCheck, permitState } = require('../utils/generalUtils');
+const { nowDate, typeCheck, permitState, returnPass } = require('../utils/generalUtils');
 
 const {
   user, parsing_data, evaluate, works_on, AVG_SCORE, og_data_type, task,
@@ -20,6 +20,12 @@ works_on.belongsTo(user, { foreignKey: 'Sid'})
 
 task.hasMany(works_on, { foreignKey: 'TaskName'})
 works_on.belongsTo(task, { foreignKey: 'TaskName'})
+
+og_data_type.hasMany(parsing_data, { foreignKey: 'Did' });
+parsing_data.belongsTo(og_data_type, { foreignKey: 'Did' });
+
+parsing_data.hasMany(evaluate, { foreignKey: 'Pid' });
+evaluate.belongsTo(parsing_data, { foreignKey: 'Pid' });
 
 
 exports.submitContent = (req, res, next) => {
@@ -398,6 +404,123 @@ exports.getOgData = (req, res) => {
     });
 };
 
-exports.getSubmitterList = (req, res) => {
+exports.getSubmitterList = (req, res, next) => {
+  const { username, taskName } = req.query
+  user.findOne({
+    where:{
+      ID: username
+    }
+  }).then((user)=>{
+    if(user){
+      req.query.Uid = user.Uid
+      parsing_data.findAll({
+        attributes: ["SubmitCnt", "TotalTupleCnt", "FinalScore", "TimeStamp"],
+        include:[
+          {
+            model: og_data_type,
+            required: true,
+            where:{
+              TaskName: taskName
+            },
+            attributes: ["Name"]
+          },
+          {
+            model: evaluate,
+            required: false,
+            attributes: ["Pass"]
+          }
+        ],
+        where: {
+          Sid: user.Uid
+        }
+      }).then((p_data)=>{
+        if (p_data){
+          // return res.status(200).json({
+          //   p_data
+          // })
+          req.body.p_data = p_data
+          next()
+          
+          console.log(p_data)
+        }
+      })
+    }
+  })
+}
+
+exports.groupSubmitterList = async (req, res) => {
+
+  const OGDataTypeList = []
+  const { p_data } = req.body
+  const { taskName, Uid } = req.query
   
+  const { TotalSubmitCnt } = await parsing_data.findOne({
+                                where:{
+                                  Sid: Uid
+                                },
+                                attributes: [[
+                                  sequelize.fn('MAX', sequelize.col('SubmitCnt')), 'TotalSubmitCnt',
+                                ]],
+                                raw: true,
+                              })
+
+
+  const { score, taskDataTableTupleCnt } = await parsing_data.findOne({
+    where: {
+      TaskName: taskName
+    },
+    attributes: [
+      [sequelize.fn('AVG', sequelize.col('FinalScore')), 'score'],
+      [sequelize.fn('SUM', sequelize.col('TotalTupleCnt')), 'taskDataTableTupleCnt']
+    ],
+    raw: true,
+  })
+
+  const count  = await parsing_data.count({
+    where: {
+      TaskName: taskName
+    }
+  })
+
+  const { Desc } = await task.findOne({
+    where: {
+      TaskName: taskName
+    }
+  })
+
+  var newOGDataType
+  for (var x of p_data){
+    if (newOGDataType && newOGDataType.OGDataTypeName == x.og_data_type.Name){
+      newOGDataType.submitData.push({
+        "submitCnt": x.SubmitCnt,
+        "TotalTupleCnt": x.TotalTupleCnt,
+        "score": x.FinalScore,
+        "date": x.TimeStamp,
+        "PNP": returnPass(x.evaluates[0])
+      })
+    } else {
+      if (newOGDataType != undefined){
+        newOGDataType.submittedDataCnt = newOGDataType.submitData.length
+        OGDataTypeList.push(newOGDataType)
+      }
+      newOGDataType = {}
+      newOGDataType.OGDataTypeName = x.og_data_type.Name
+      newOGDataType.submitData = []
+      newOGDataType.submitData.push({
+        "submitCnt": x.SubmitCnt,
+        "TotalTupleCnt": x.TotalTupleCnt,
+        "score": x.FinalScore,
+        "date": x.TimeStamp,
+        "PNP": returnPass(x.evaluates[0])
+      })
+    }
+  }
+  OGDataTypeList.push(newOGDataType)
+  res.status(200).json({
+    "data": OGDataTypeList,
+    "score": score,
+    "submittedDataCnt": count,
+    "taskDataTableTupleCnt": taskDataTableTupleCnt,
+    "taskDesc": Desc
+  })
 }
