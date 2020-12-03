@@ -69,9 +69,9 @@ exports.makeTask = (req, res) => {
           }
           const csvWriter = createCsvWriter({
             path: `${tableRef}/${taskName}.csv`,
-            header: csvHead
+            header: csvHead,
           });
-          csvWriter.writeRecords([])
+          csvWriter.writeRecords([]);
           return res.status(200).json({
             message: '테스크가 생성되었습니다.',
           });
@@ -81,13 +81,12 @@ exports.makeTask = (req, res) => {
           message: err.message,
         });
       });
-    }
-    else {
+    } else {
       return res.status(404).json({
         message: '테스크 이름이 이미 존재합니다.',
       });
     }
-  })
+  });
 };
 
 
@@ -146,11 +145,13 @@ exports.rejectUser = (req, res) => {
 };
 
 exports.pendingUser = (req, res) => {
-  User.hasMany(works_on, { foreignKey: 'Sid' });
-  works_on.belongsTo(User, { foreignKey: 'Sid' });
+  User.hasMany(Works_on, { foreignKey: 'Sid' });
+  Works_on.belongsTo(User, { foreignKey: 'Sid' });
   const arr = [];
   const { taskName, per_page, page } = req.query;
-  Task.count().then(((count) => works_on.findAll({
+  Task.count({
+    where: { TaskName: taskName }
+  }).then(((count) => Works_on.findAll({
     attributes: [],
     include: [
       {
@@ -166,7 +167,6 @@ exports.pendingUser = (req, res) => {
     for (let i = 0; i < result.length; i++) {
       arr.push(result[i].user);
     }
-    console.log(JSON.stringify(result));
     res.json({
       data: arr,
       page: parseInt(page),
@@ -176,11 +176,13 @@ exports.pendingUser = (req, res) => {
 };
 
 exports.approvedUser = (req, res) => {
-  User.hasMany(works_on, { foreignKey: 'Sid' });
-  works_on.belongsTo(User, { foreignKey: 'Sid' });
+  User.hasMany(Works_on, { foreignKey: 'Sid' });
+  Works_on.belongsTo(User, { foreignKey: 'Sid' });
   const arr = [];
   const { taskName, per_page, page } = req.query;
-  Task.count().then(((count) => works_on.findAll({
+  Task.count({
+    where: { TaskName: taskName }
+  }).then(((count) => Works_on.findAll({
     attributes: [],
     include: [
       {
@@ -212,7 +214,6 @@ exports.getSchema = (req, res) => {
     where: { TaskName: taskName },
   })
     .then((columns) => {
-      console.log(Object.keys(columns[0].TableSchema[0]));
       for (let i = 0; i < Object.keys(columns[0].TableSchema[0]).length; i++) {
         arr.push({ columnName: Object.keys(columns[0].TableSchema[0])[i] });
       }
