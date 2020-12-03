@@ -35,6 +35,7 @@ module.exports = function(sequelize, DataTypes) {
     TimeStamp: {
       type: DataTypes.DATE,
       allowNull: true
+    },
     Desc: {
       type: DataTypes.TEXT,
       allowNull: true

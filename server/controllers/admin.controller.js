@@ -56,7 +56,7 @@ exports.approveUser = (req, res) => {
         message: '해당 유저는 이미 승인 결과가 나왔습니다'
       })
     }
-})
+  })
 };
   
 
@@ -75,7 +75,7 @@ exports.rejectUser = (req, res) => {
         message: '해당 유저는 이미 승인 결과가 나왔습니다'
       })
     }
-})
+  })
 };
 
 exports.pendingUser = (req, res) => {
@@ -266,7 +266,10 @@ exports.infoSearch = (req, res) => {
           "page":page,
           "totalCount":count
         })
-      }) 
+      })
+    }
+  })
+} 
         
 exports.requestList = (req, res) => {
   const { per_page, page } = req.body
