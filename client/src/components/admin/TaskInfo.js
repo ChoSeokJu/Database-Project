@@ -15,8 +15,16 @@ import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 import GetAppIcon from '@material-ui/icons/GetApp';
+import download from 'downloadjs';
+import { useDispatch } from 'react-redux';
 import TaskUserTable from './TaskUserListTable';
-import { getAdmin } from '../../services/user.service';
+import { getAdmin, getAdminBlob } from '../../services/user.service';
+import {
+  openAlert,
+  openDialog,
+  setAlertType,
+  setMessage,
+} from '../../actions/message';
 
 const useStyles = makeStyles((theme) => ({
   title: {
@@ -32,6 +40,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function TaskInfo({ open, handleClose, taskName }) {
   const classes = useStyles();
+  const dispatch = useDispatch();
 
   // TODO: 파싱된 데이터 목록 얻어오기
   const getParsedData = (query) =>
@@ -43,9 +52,16 @@ export default function TaskInfo({ open, handleClose, taskName }) {
       }).then(
         (response) => {
           const { data, page, totalCount } = response.data;
-          console.log(response.data);
+          const parsedData = data.map((row) => ({
+            ID: row.ID,
+            OGDataType: row.OGDataType,
+            PNP: row.PNP === null ? null : row.PNP ? 'P' : 'NP',
+            date: row.date.match(/\d{4}-\d{2}-\d{2}/g)[0],
+            Pid: row.Pid,
+          }));
+          console.log(parsedData);
           resolve({
-            data,
+            data: parsedData,
             page: page - 1,
             totalCount,
           });
@@ -64,16 +80,46 @@ export default function TaskInfo({ open, handleClose, taskName }) {
 
   const handleTableDownload = () => {
     // TODO: 완료! 태스크의 테이블 다운로드
-    getAdmin('/task/download', {
+    getAdminBlob('/task/download', {
       taskName,
-    });
+    })
+      .then((blob) => {
+        const fileName = blob.headers['content-disposition'].split('"')[1];
+        download(blob.data, fileName);
+      })
+      .catch((error) => {
+        const message =
+          (error.response &&
+            error.response.data &&
+            error.response.data.message) ||
+          error.message ||
+          error.toString();
+        dispatch(setAlertType('error'));
+        dispatch(setMessage(message));
+        dispatch(openAlert());
+      });
   };
 
   const handleParsedDataDownload = (event, rowData) => {
     // TODO: 완료! 파싱된 데이터 다운로드
-    getAdmin('/task/download', {
+    getAdminBlob('/task/parsed-data/download', {
       Pid: rowData.Pid,
-    });
+    })
+      .then((blob) => {
+        const fileName = blob.headers['content-disposition'].split('"')[1];
+        download(blob.data, fileName);
+      })
+      .catch((error) => {
+        const message =
+          (error.response &&
+            error.response.data &&
+            error.response.data.message) ||
+          error.message ||
+          error.toString();
+        dispatch(setAlertType('error'));
+        dispatch(setMessage(message));
+        dispatch(openAlert());
+      });
   };
 
   return (

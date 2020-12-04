@@ -45,6 +45,13 @@ const getSubmit = (url, params = {}) =>
     params,
   });
 
+const getSubmitBlob = (url, params = {}) =>
+  axios.get(`${API_URL}submit${url}`, {
+    headers: authHeader(),
+    params,
+    responseType: 'blob',
+  });
+
 const postAdmin = (url, data) =>
   axios.post(`${API_URL}admin${url}`, data, { headers: authHeader() });
 
@@ -61,6 +68,7 @@ export {
   getAdminBlob,
   getEval,
   getSubmit,
+  getSubmitBlob,
   postAdmin,
   postEval,
   postSubmit,
