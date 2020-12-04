@@ -557,9 +557,20 @@ exports.parsedDataList = (req, res) => {
 };
 
 exports.downloadParsedData = (req, res) => {
-  Parsing_data.findByPk(req.body.Pid).then((Parsing_data) => {
-    if (Parsing_data) {
-      res.download(Parsing_data.DataRef, 'download.csv', (err) => {
+  const { Pid } = req.query
+  Parsing_data.findOne({
+    where:{
+      Pid: Pid
+    },
+    include: [{
+      model: og_data_type,
+      attributes: ['Name'],
+      required: true,
+    }]
+  }).then((parsing_data) => {
+    if (parsing_data) {
+      console.log(parsing_data.og_data_type.Name)
+      res.download(parsing_data.DataRef, `${parsing_data.og_data_type.Name}.csv`, (err) => {
         if (err) {
           res.status(404).send('잘못된 요청입니다');
         } else {

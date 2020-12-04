@@ -21,7 +21,7 @@ router.get(
 
 router.get(
   '/parsed-data/download',
-  [authJwt.verifyToken, authJwt.isEval],
+  // [authJwt.verifyToken, authJwt.isEval],
   evalController.downloadParsedData
 );
 
