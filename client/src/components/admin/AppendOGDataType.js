@@ -10,9 +10,12 @@ import TextField from '@material-ui/core/TextField';
 import Divider from '@material-ui/core/Divider';
 import Tooltip from '@material-ui/core/Tooltip';
 import IconButton from '@material-ui/core/IconButton';
+import Button from '@material-ui/core/Button';
 import AddBoxIcon from '@material-ui/icons/AddBox';
 import Chip from '@material-ui/core/Chip';
+import Box from '@material-ui/core/Box';
 import { makeStyles } from '@material-ui/core/styles';
+import { InputAdornment } from '@material-ui/core';
 import {
   openAlert,
   openDialog,
@@ -44,12 +47,11 @@ export default function AppendOGDataType(props) {
   const { data, name, columns } = useSelector((state) => state.originalData);
   const [columnName, setColumnName] = useState('');
 
-  const isDuplicated = (newData) =>
-    data.some(({ originalColumnName: oldName }) => {
-      if (oldName === newData.originalColumnName) {
-        return true;
-      }
-    });
+  const isDuplicated = (newData) => data.some(({ originalColumnName: oldName }) => {
+    if (oldName === newData.originalColumnName) {
+      return true;
+    }
+  });
 
   const handleAppendColumn = () => {
     setColumnName(columnName.trim());
@@ -82,8 +84,8 @@ export default function AppendOGDataType(props) {
             return { ...row, originalColumnName: '' };
           }
           return row;
-        })
-      )
+        }),
+      ),
     );
   };
 
@@ -95,14 +97,13 @@ export default function AppendOGDataType(props) {
             required
             label="원본 데이터 스키마 이름"
             fullWidth
-            variant="outlined"
             value={name}
             onChange={(e) => dispatch(setSchemaName(e.target.value))}
           />
         </Grid>
-        <Grid item xs={12}>
+        {/* <Grid item xs={12}>
           <Divider className={classes.divider} />
-        </Grid>
+        </Grid> */}
         <Grid item xs={12}>
           <Tooltip
             open
@@ -112,20 +113,22 @@ export default function AppendOGDataType(props) {
             <TextField
               label="원본 데이터 칼럼 추가"
               fullWidth
-              variant="outlined"
               value={columnName}
               onChange={(e) => setColumnName(e.target.value)}
               InputProps={{
                 endAdornment: (
-                  <Tooltip title="칼럼 추가">
-                    <IconButton
-                      color="inherit"
-                      position="absolute"
-                      onClick={handleAppendColumn}
-                    >
-                      <AddBoxIcon />
-                    </IconButton>
-                  </Tooltip>
+                  <InputAdornment position="end">
+                    <Tooltip title="칼럼 추가">
+                      <IconButton
+                        color="inherit"
+                        position="absolute"
+                        onClick={handleAppendColumn}
+                        size="small"
+                      >
+                        <AddBoxIcon />
+                      </IconButton>
+                    </Tooltip>
+                  </InputAdornment>
                 ),
               }}
             />
@@ -133,18 +136,16 @@ export default function AppendOGDataType(props) {
         </Grid>
         <Grid item xs={12}>
           <Paper component="ul" className={classes.root} elevation={0}>
-            {Object.keys(columns).map((name) =>
-              columns[name] === '' || name === '' ? null : (
-                <li key={name}>
-                  <Chip
-                    label={name}
-                    color="primary"
-                    onDelete={handleDeleteColumn(name)}
-                    className={classes.chip}
-                  />
-                </li>
-              )
-            )}
+            {Object.keys(columns).map((name) => (columns[name] === '' || name === '' ? null : (
+              <li key={name}>
+                <Chip
+                  label={name}
+                  color="primary"
+                  onDelete={handleDeleteColumn(name)}
+                  className={classes.chip}
+                />
+              </li>
+            )))}
           </Paper>
         </Grid>
       </Grid>
@@ -179,29 +180,28 @@ export default function AppendOGDataType(props) {
         ]}
         data={data}
         editable={{
-          onRowUpdate: (newData, oldData) =>
-            new Promise((resolve, reject) => {
-              const update = () => {
-                const dataUpdate = [...data];
-                const index = oldData.tableData.id;
-                dataUpdate[index] = newData;
-                dispatch(setOriginalData([...dataUpdate]));
-                resolve();
-              };
-              if (newData.originalColumnName === oldData.originalColumnName) {
-                update();
-              } else if (isDuplicated(newData)) {
-                dispatch(setMessage('이미 존재하는 원본 칼럼 이름입니다'));
-                dispatch(openDialog());
-                reject();
-              } else if (!newData.originalColumnName) {
-                dispatch(setMessage('값을 입력해주세요'));
-                dispatch(openDialog());
-                reject();
-              } else {
-                update();
-              }
-            }),
+          onRowUpdate: (newData, oldData) => new Promise((resolve, reject) => {
+            const update = () => {
+              const dataUpdate = [...data];
+              const index = oldData.tableData.id;
+              dataUpdate[index] = newData;
+              dispatch(setOriginalData([...dataUpdate]));
+              resolve();
+            };
+            if (newData.originalColumnName === oldData.originalColumnName) {
+              update();
+            } else if (isDuplicated(newData)) {
+              dispatch(setMessage('이미 존재하는 원본 칼럼 이름입니다'));
+              dispatch(openDialog());
+              reject();
+            } else if (!newData.originalColumnName) {
+              dispatch(setMessage('값을 입력해주세요'));
+              dispatch(openDialog());
+              reject();
+            } else {
+              update();
+            }
+          }),
         }}
       />
     </>
