@@ -440,8 +440,6 @@ exports.getSubmitterList = (req, res, next) => {
         where: {
           Sid: user.Uid
         },
-        // offset: parseInt(per_page) * (parseInt(page)-1),
-        // limit: parseInt(per_page)
       }).then((p_data)=>{
         if (p_data){
           req.body.p_data = p_data
