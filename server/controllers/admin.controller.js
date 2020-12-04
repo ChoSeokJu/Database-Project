@@ -314,7 +314,7 @@ exports.getUserinfoAll = (req, res) => {
   const arr = []
   User.count().then((count) => {
     User.findAll({
-      attributes: [['Uid', 'ID'], 'Name', 'Gender', 'UType', 'Bdate', 'PhoneNo', 'Addr'],
+      attributes: ['Uid', 'ID', 'Name', 'Gender', 'UType', 'Bdate', 'PhoneNo', 'Addr'],
       include: [
         {
           model: AVG_SCORE,
@@ -328,6 +328,7 @@ exports.getUserinfoAll = (req, res) => {
     }).then((result) => {
       for (let i = 0; i < result.length; i++) {
         arr.push({
+          Uid: result[i].Uid,
           ID: result[i].ID,
           Name: result[i].Name,
           Gender: result[i].Gender,
