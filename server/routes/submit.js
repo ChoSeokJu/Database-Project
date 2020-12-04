@@ -6,11 +6,6 @@ const router = express.Router();
 
 /* begins with /api/user/submit */
 
-router.get(
-  '/',
-  submitController.submitContent
-);
-
 router.post(
   /* user submits data */
   '/submit-data',
@@ -46,7 +41,7 @@ router.get(
 
 router.get(
   '/submitter-list',
-  // [authJwt.verifyToken],
+  [authJwt.verifyToken],
   submitController.getSubmitterList,
   submitController.groupSubmitterList
 )
