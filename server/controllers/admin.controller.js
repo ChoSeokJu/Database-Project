@@ -1,6 +1,7 @@
 const db = require('../models');
 const config = require('../config/auth.config');
 const { json } = require('body-parser');
+const csv = require('csvtojson');
 const { response } = require('express');
 const createCsvWriter = require('csv-writer').createObjectCsvWriter;
 
@@ -529,3 +530,17 @@ exports.getUserInfo = (req, res) => {
     }
   });
 };
+
+exports.getTaskInfo = async (req, res) => {
+  const { taskName } = req.query;
+  const task = await Task.findOne({
+    where: {
+      TaskName: taskName, // this is for deployment
+    },
+  });
+  const parsedData = await csv({ noheader: false }).fromFile(`${task.TableRef}/${task.TableName}`);
+  task.tupleCount = parsedData.length;
+  return res.status(200).json({
+    task
+  })
+}

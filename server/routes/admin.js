@@ -105,6 +105,12 @@ router.get(
 )
 
 router.get(
+  '/task/info',
+  // [authJwt.verifyToken, authJwt.isAdmin],
+  adminController.getTaskInfo
+)
+
+router.get(
   '/user-info',
   [authJwt.verifyToken, authJwt.isAdmin],
   adminController.getUserInfo
