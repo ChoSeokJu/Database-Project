@@ -35,7 +35,7 @@ import {
   setAlertType,
   setMessage,
 } from '../../actions/message';
-import { postEval } from '../../services/user.service';
+import { postEval, getEval } from '../../services/user.service';
 
 const useStyle = makeStyles((theme) => ({
   downloadButton: {
@@ -87,17 +87,20 @@ export default function AppendOGDataTypeDialog({ open, handleClose, Pid }) {
         handleClose();
       },
       (error) => {
-        const message =
-          (error.response &&
-            error.response.data &&
-            error.response.data.message) ||
-          error.message ||
-          error.toString();
+        const message = (error.response
+            && error.response.data
+            && error.response.data.message)
+          || error.message
+          || error.toString();
         dispatch(setAlertType('error'));
         dispatch(setMessage(message));
         dispatch(openAlert());
-      }
+      },
     );
+  };
+
+  const handleDownload = () => {
+    getEval('/parsed-data/download', { Pid });
   };
 
   return (
@@ -115,6 +118,7 @@ export default function AppendOGDataTypeDialog({ open, handleClose, Pid }) {
           variant="contained"
           endIcon={<GetAppIcon />}
           className={classes.downloadButton}
+          onClick={handleDownload}
         >
           데이터 다운로드
         </Button>
