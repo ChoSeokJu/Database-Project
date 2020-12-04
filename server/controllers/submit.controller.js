@@ -50,8 +50,9 @@ exports.submitContent = (req, res, next) => {
       }).then((task) => {
         req.body.taskDataTableRef = task.TableRef
         req.body.taskTableName = task.TableName
+        req.body.taskSchema = task.TableSchema[0]
         req.body.Mapping = og_data_type.Mapping[0]
-        req.body.ogSchema = og_data_type.Schema[0]
+        req.body.ogSchema = og_data_type.Schema
         next()
       })
     } else {
@@ -63,40 +64,39 @@ exports.submitContent = (req, res, next) => {
 };
 
 exports.quantAssess = async function (req, res, next) {
-  const data = await csv({ noheader: false }).fromFile(req.file.path)  // set this to be true for csvSanityCheck
+  const { Mapping, ogSchema, taskDataTableRef, taskTableName, taskSchema } = req.body
+  const data = await csv({ noheader: false }).fromFile(req.file.path)
   const taskCol = Object.values(
-    (await csv({ noheader: true }).fromFile(req.body.taskDataTableRef+"/"+req.body.taskTableName))[0]
+    (await csv({ noheader: true }).fromFile(`${taskDataTableRef}/${taskTableName}`))[0]
   )
   taskCol.pop() // pop "Sid" from task data columns
 
   const dataHeader = Object.keys(data[0]);
-  const { Mapping, ogSchema } = req.body
 
-  if (JSON.stringify(dataHeader.sort()) != JSON.stringify(Object.keys(ogSchema))) {
+  if (JSON.stringify(dataHeader.sort()) != JSON.stringify(ogSchema.sort())) {
     // reject if ogSchema keys do not match submitted data columns (order does not matter)
     return res.status(404).json({
       "message": "submitted csv file does not match the schema defined in original data type"
     })
   }
 
-  var dupCount = rowCount = nullCount = 0;
+  var dupCount = rowCount = 0;
   var counts = {}
   var parsedData = []
-
+  var nullCount = {}
+  taskCol.forEach((col)=>{nullCount[col]=0})
   console.log(taskCol)
   data.forEach((row) => {
     rowCount++;
     var parsedRows = {}
     taskCol.forEach((col) => {
-      if (!typeCheck(ogSchema[Mapping[col]], row[Mapping[col]])) {
+      if (!typeCheck(taskSchema[col], row[Mapping[col]])) {
         // reject if data contains wrong datatype
         return res.status(404).json({
           "message": "submitted csv file has wrong data type"
         })
       }
-      if (row[Mapping[col]] == "null" || row[Mapping[col]] === undefined) {
-        nullCount++;
-      }
+      nullCount[col] += (row[Mapping[col]] == "null" || row[Mapping[col]] == undefined || row[Mapping[col]] == "")
       parsedRows[col] = row[Mapping[col]]
     })
     counts[Object.values(row)] = (counts[Object.values(row)] || 0) + 1
@@ -108,9 +108,13 @@ exports.quantAssess = async function (req, res, next) {
       dupCount = dupCount + (count - 1)
     }
   })
+  
+  // divide each raw null counts to get ratio
+  Object.keys(nullCount).forEach((col)=>{nullCount[col] /= (rowCount * taskCol.length) })
+  req.body.NullRatio = nullCount
   req.body.TotalTupleCnt = rowCount
   req.body.DuplicatedTupleCnt = dupCount
-  req.body.NullRatio = (nullCount) / (rowCount * taskCol.length)
+
   console.log(parsedData)
   parsedData = json2csv(parsedData, { header: true })
   console.log(`parsed${req.file.path}`)

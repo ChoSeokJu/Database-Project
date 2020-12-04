@@ -1,1 +1,1019 @@
 Name,Sector,Symbol,Sid
+
+3M Company,Industrials,MMM,22
+A.O. Smith Corp,Industrials,AOS,22
+Abbott Laboratories,Health Care,ABT,22
+AbbVie Inc.,Health Care,ABBV,22
+Accenture plc,Information Technology,ACN,22
+Activision Blizzard,Information Technology,ATVI,22
+Acuity Brands Inc,Industrials,AYI,22
+Adobe Systems Inc,Information Technology,ADBE,22
+Advance Auto Parts,Consumer Discretionary,AAP,22
+Advanced Micro Devices Inc,Information Technology,AMD,22
+Advanced Micro Devices Inc,Information Technology,AMD,22
+Advanced Micro Devices Inc,Information Technology,AMD,22
+Advanced Micro Devices Inc,Information Technology,AMD,22
+null,,null,22
+AES Corp,Utilities,AES,22
+Aetna Inc,Health Care,AET,22
+Affiliated Managers Group Inc,Financials,AMG,22
+AFLAC Inc,Financials,AFL,22
+Agilent Technologies Inc,Health Care,A,22
+Air Products & Chemicals Inc,Materials,APD,22
+Akamai Technologies Inc,Information Technology,AKAM,22
+Alaska Air Group Inc,Industrials,ALK,22
+Albemarle Corp,Materials,ALB,22
+Alexandria Real Estate Equities Inc,Real Estate,ARE,22
+Alexion Pharmaceuticals,Health Care,ALXN,22
+Align Technology,Health Care,ALGN,22
+Allegion,Industrials,ALLE,22
+Allergan, Plc,Health Care,AGN,22
+Alliance Data Systems,Information Technology,ADS,22
+Alliant Energy Corp,Utilities,LNT,22
+Allstate Corp,Financials,ALL,22
+Alphabet Inc Class A,Information Technology,GOOGL,22
+Alphabet Inc Class C,Information Technology,GOOG,22
+Altria Group Inc,Consumer Staples,MO,22
+Amazon.com Inc,Consumer Discretionary,AMZN,22
+Ameren Corp,Utilities,AEE,22
+American Airlines Group,Industrials,AAL,22
+American Electric Power,Utilities,AEP,22
+American Express Co,Financials,AXP,22
+American International Group, Inc.,Financials,AIG,22
+American Tower Corp A,Real Estate,AMT,22
+American Water Works Company Inc,Utilities,AWK,22
+Ameriprise Financial,Financials,AMP,22
+AmerisourceBergen Corp,Health Care,ABC,22
+AMETEK Inc,Industrials,AME,22
+Amgen Inc,Health Care,AMGN,22
+Amphenol Corp,Information Technology,APH,22
+Anadarko Petroleum Corp,Energy,APC,22
+Analog Devices, Inc.,Information Technology,ADI,22
+Andeavor,Energy,ANDV,22
+ANSYS,Information Technology,ANSS,22
+Anthem Inc.,Health Care,ANTM,22
+Aon plc,Financials,AON,22
+Apache Corporation,Energy,APA,22
+Apartment Investment & Management,Real Estate,AIV,22
+Apple Inc.,Information Technology,AAPL,22
+Applied Materials Inc,Information Technology,AMAT,22
+Aptiv Plc,Consumer Discretionary,APTV,22
+Archer-Daniels-Midland Co,Consumer Staples,ADM,22
+Arconic Inc,Industrials,ARNC,22
+Arthur J. Gallagher & Co.,Financials,AJG,22
+Assurant Inc,Financials,AIZ,22
+AT&T Inc,Telecommunication Services,T,22
+Autodesk Inc,Information Technology,ADSK,22
+Automatic Data Processing,Information Technology,ADP,22
+AutoZone Inc,Consumer Discretionary,AZO,22
+AvalonBay Communities, Inc.,Real Estate,AVB,22
+Avery Dennison Corp,Materials,AVY,22
+Baker Hughes, a GE Company,Energy,BHGE,22
+Ball Corp,Materials,BLL,22
+Bank of America Corp,Financials,BAC,22
+Baxter International Inc.,Health Care,BAX,22
+BB&T Corporation,Financials,BBT,22
+Becton Dickinson,Health Care,BDX,22
+Berkshire Hathaway,Financials,BRK.B,22
+Best Buy Co. Inc.,Consumer Discretionary,BBY,22
+Biogen Inc.,Health Care,BIIB,22
+BlackRock,Financials,BLK,22
+Block H&R,Financials,HRB,22
+Boeing Company,Industrials,BA,22
+BorgWarner,Consumer Discretionary,BWA,22
+Boston Properties,Real Estate,BXP,22
+Boston Scientific,Health Care,BSX,22
+Brighthouse Financial Inc,Financials,BHF,22
+Bristol-Myers Squibb,Health Care,BMY,22
+Broadcom,Information Technology,AVGO,22
+Brown-Forman Corp.,Consumer Staples,BF.B,22
+C. H. Robinson Worldwide,Industrials,CHRW,22
+CA, Inc.,Information Technology,CA,22
+Cabot Oil & Gas,Energy,COG,22
+Cadence Design Systems,Information Technology,CDNS,22
+Campbell Soup,Consumer Staples,CPB,22
+Capital One Financial,Financials,COF,22
+Cardinal Health Inc.,Health Care,CAH,22
+Carmax Inc,Consumer Discretionary,KMX,22
+Carnival Corp.,Consumer Discretionary,CCL,22
+Caterpillar Inc.,Industrials,CAT,22
+CBOE Holdings,Financials,CBOE,22
+CBRE Group,Real Estate,CBG,22
+CBS Corp.,Consumer Discretionary,CBS,22
+Celgene Corp.,Health Care,CELG,22
+Centene Corporation,Health Care,CNC,22
+CenterPoint Energy,Utilities,CNP,22
+CenturyLink Inc,Telecommunication Services,CTL,22
+Cerner,Health Care,CERN,22
+CF Industries Holdings Inc,Materials,CF,22
+Charles Schwab Corporation,Financials,SCHW,22
+Charter Communications,Consumer Discretionary,CHTR,22
+Chesapeake Energy,Energy,CHK,22
+Chevron Corp.,Energy,CVX,22
+Chipotle Mexican Grill,Consumer Discretionary,CMG,22
+Chubb Limited,Financials,CB,22
+Church & Dwight,Consumer Staples,CHD,22
+CIGNA Corp.,Health Care,CI,22
+Cimarex Energy,Energy,XEC,22
+Cincinnati Financial,Financials,CINF,22
+Cintas Corporation,Industrials,CTAS,22
+Cisco Systems,Information Technology,CSCO,22
+Citigroup Inc.,Financials,C,22
+Citizens Financial Group,Financials,CFG,22
+Citrix Systems,Information Technology,CTXS,22
+CME Group Inc.,Financials,CME,22
+CMS Energy,Utilities,CMS,22
+Coca-Cola Company (The),Consumer Staples,KO,22
+Cognizant Technology Solutions,Information Technology,CTSH,22
+Colgate-Palmolive,Consumer Staples,CL,22
+Comcast Corp.,Consumer Discretionary,CMCSA,22
+Comerica Inc.,Financials,CMA,22
+Conagra Brands,Consumer Staples,CAG,22
+Concho Resources,Energy,CXO,22
+ConocoPhillips,Energy,COP,22
+Consolidated Edison,Utilities,ED,22
+Constellation Brands,Consumer Staples,STZ,22
+Corning Inc.,Information Technology,GLW,22
+Costco Wholesale Corp.,Consumer Staples,COST,22
+Coty, Inc,Consumer Staples,COTY,22
+Crown Castle International Corp.,Real Estate,CCI,22
+CSRA Inc.,Information Technology,CSRA,22
+CSX Corp.,Industrials,CSX,22
+Cummins Inc.,Industrials,CMI,22
+CVS Health,Consumer Staples,CVS,22
+D. R. Horton,Consumer Discretionary,DHI,22
+Danaher Corp.,Health Care,DHR,22
+Darden Restaurants,Consumer Discretionary,DRI,22
+DaVita Inc.,Health Care,DVA,22
+Deere & Co.,Industrials,DE,22
+Delta Air Lines Inc.,Industrials,DAL,22
+Dentsply Sirona,Health Care,XRAY,22
+Devon Energy Corp.,Energy,DVN,22
+Digital Realty Trust Inc,Real Estate,DLR,22
+Discover Financial Services,Financials,DFS,22
+Discovery Communications-A,Consumer Discretionary,DISCA,22
+Discovery Communications-C,Consumer Discretionary,DISCK,22
+Dish Network,Consumer Discretionary,DISH,22
+Dollar General,Consumer Discretionary,DG,22
+Dollar Tree,Consumer Discretionary,DLTR,22
+Dominion Energy,Utilities,D,22
+Dover Corp.,Industrials,DOV,22
+DowDuPont,Materials,DWDP,22
+Dr Pepper Snapple Group,Consumer Staples,DPS,22
+DTE Energy Co.,Utilities,DTE,22
+Duke Energy,Utilities,DUK,22
+Duke Realty Corp,Real Estate,DRE,22
+DXC Technology,Information Technology,DXC,22
+E*Trade,Financials,ETFC,22
+Eastman Chemical,Materials,EMN,22
+Eaton Corporation,Industrials,ETN,22
+eBay Inc.,Information Technology,EBAY,22
+Ecolab Inc.,Materials,ECL,22
+Edison Int'l,Utilities,EIX,22
+Edwards Lifesciences,Health Care,EW,22
+Electronic Arts,Information Technology,EA,22
+Emerson Electric Company,Industrials,EMR,22
+Entergy Corp.,Utilities,ETR,22
+Envision Healthcare,Health Care,EVHC,22
+EOG Resources,Energy,EOG,22
+EQT Corporation,Energy,EQT,22
+Equifax Inc.,Industrials,EFX,22
+Equinix,Real Estate,EQIX,22
+Equity Residential,Real Estate,EQR,22
+Essex Property Trust, Inc.,Real Estate,ESS,22
+Estee Lauder Cos.,Consumer Staples,EL,22
+Everest Re Group Ltd.,Financials,RE,22
+Eversource Energy,Utilities,ES,22
+Exelon Corp.,Utilities,EXC,22
+Expedia Inc.,Consumer Discretionary,EXPE,22
+Expeditors International,Industrials,EXPD,22
+Express Scripts,Health Care,ESRX,22
+Extra Space Storage,Real Estate,EXR,22
+Exxon Mobil Corp.,Energy,XOM,22
+F5 Networks,Information Technology,FFIV,22
+Facebook, Inc.,Information Technology,FB,22
+Fastenal Co,Industrials,FAST,22
+Federal Realty Investment Trust,Real Estate,FRT,22
+FedEx Corporation,Industrials,FDX,22
+Fidelity National Information Services,Information Technology,FIS,22
+Fifth Third Bancorp,Financials,FITB,22
+FirstEnergy Corp,Utilities,FE,22
+Fiserv Inc,Information Technology,FISV,22
+FLIR Systems,Information Technology,FLIR,22
+Flowserve Corporation,Industrials,FLS,22
+Fluor Corp.,Industrials,FLR,22
+FMC Corporation,Materials,FMC,22
+Foot Locker Inc,Consumer Discretionary,FL,22
+Ford Motor,Consumer Discretionary,F,22
+Fortive Corp,Industrials,FTV,22
+Fortune Brands Home & Security,Industrials,FBHS,22
+Franklin Resources,Financials,BEN,22
+Freeport-McMoRan Inc.,Materials,FCX,22
+Gap Inc.,Consumer Discretionary,GPS,22
+Garmin Ltd.,Consumer Discretionary,GRMN,22
+Gartner Inc,Information Technology,IT,22
+General Dynamics,Industrials,GD,22
+General Electric,Industrials,GE,22
+General Growth Properties Inc.,Real Estate,GGP,22
+General Mills,Consumer Staples,GIS,22
+General Motors,Consumer Discretionary,GM,22
+Genuine Parts,Consumer Discretionary,GPC,22
+Gilead Sciences,Health Care,GILD,22
+Global Payments Inc.,Information Technology,GPN,22
+Goldman Sachs Group,Financials,GS,22
+Goodyear Tire & Rubber,Consumer Discretionary,GT,22
+Grainger (W.W.) Inc.,Industrials,GWW,22
+Halliburton Co.,Energy,HAL,22
+Hanesbrands Inc,Consumer Discretionary,HBI,22
+Harley-Davidson,Consumer Discretionary,HOG,22
+Harris Corporation,Information Technology,HRS,22
+Hartford Financial Svc.Gp.,Financials,HIG,22
+Hasbro Inc.,Consumer Discretionary,HAS,22
+HCA Holdings,Health Care,HCA,22
+HCP Inc.,Real Estate,HCP,22
+Helmerich & Payne,Energy,HP,22
+Henry Schein,Health Care,HSIC,22
+Hess Corporation,Energy,HES,22
+Hewlett Packard Enterprise,Information Technology,HPE,22
+Hilton Worldwide Holdings Inc,Consumer Discretionary,HLT,22
+Hologic,Health Care,HOLX,22
+Home Depot,Consumer Discretionary,HD,22
+Honeywell Int'l Inc.,Industrials,HON,22
+Hormel Foods Corp.,Consumer Staples,HRL,22
+Host Hotels & Resorts,Real Estate,HST,22
+HP Inc.,Information Technology,HPQ,22
+Humana Inc.,Health Care,HUM,22
+Huntington Bancshares,Financials,HBAN,22
+Huntington Ingalls Industries,Industrials,HII,22
+IDEXX Laboratories,Health Care,IDXX,22
+IHS Markit Ltd.,Industrials,INFO,22
+Illinois Tool Works,Industrials,ITW,22
+Illumina Inc,Health Care,ILMN,22
+Incyte,Health Care,INCY,22
+Ingersoll-Rand PLC,Industrials,IR,22
+Intel Corp.,Information Technology,INTC,22
+Intercontinental Exchange,Financials,ICE,22
+International Business Machines,Information Technology,IBM,22
+International Paper,Materials,IP,22
+Interpublic Group,Consumer Discretionary,IPG,22
+Intl Flavors & Fragrances,Materials,IFF,22
+Intuit Inc.,Information Technology,INTU,22
+Intuitive Surgical Inc.,Health Care,ISRG,22
+Invesco Ltd.,Financials,IVZ,22
+IQVIA Holdings Inc.,Health Care,IQV,22
+Iron Mountain Incorporated,Real Estate,IRM,22
+J. B. Hunt Transport Services,Industrials,JBHT,22
+Jacobs Engineering Group,Industrials,JEC,22
+JM Smucker,Consumer Staples,SJM,22
+Johnson & Johnson,Health Care,JNJ,22
+Johnson Controls International,Industrials,JCI,22
+JPMorgan Chase & Co.,Financials,JPM,22
+Juniper Networks,Information Technology,JNPR,22
+Kansas City Southern,Industrials,KSU,22
+Kellogg Co.,Consumer Staples,K,22
+KeyCorp,Financials,KEY,22
+Kimberly-Clark,Consumer Staples,KMB,22
+Kimco Realty,Real Estate,KIM,22
+Kinder Morgan,Energy,KMI,22
+KLA-Tencor Corp.,Information Technology,KLAC,22
+Kohl's Corp.,Consumer Discretionary,KSS,22
+Kraft Heinz Co,Consumer Staples,KHC,22
+Kroger Co.,Consumer Staples,KR,22
+L Brands Inc.,Consumer Discretionary,LB,22
+L-3 Communications Holdings,Industrials,LLL,22
+Laboratory Corp. of America Holding,Health Care,LH,22
+Lam Research,Information Technology,LRCX,22
+Leggett & Platt,Consumer Discretionary,LEG,22
+Lennar Corp.,Consumer Discretionary,LEN,22
+Leucadia National Corp.,Financials,LUK,22
+Lilly (Eli) & Co.,Health Care,LLY,22
+Lincoln National,Financials,LNC,22
+LKQ Corporation,Consumer Discretionary,LKQ,22
+Lockheed Martin Corp.,Industrials,LMT,22
+Loews Corp.,Financials,L,22
+Lowe's Cos.,Consumer Discretionary,LOW,22
+LyondellBasell,Materials,LYB,22
+M&T Bank Corp.,Financials,MTB,22
+Macerich,Real Estate,MAC,22
+Macy's Inc.,Consumer Discretionary,M,22
+Marathon Oil Corp.,Energy,MRO,22
+Marathon Petroleum,Energy,MPC,22
+Marriott Int'l.,Consumer Discretionary,MAR,22
+Marsh & McLennan,Financials,MMC,22
+Martin Marietta Materials,Materials,MLM,22
+Masco Corp.,Industrials,MAS,22
+Mastercard Inc.,Information Technology,MA,22
+Mattel Inc.,Consumer Discretionary,MAT,22
+McCormick & Co.,Consumer Staples,MKC,22
+McDonald's Corp.,Consumer Discretionary,MCD,22
+McKesson Corp.,Health Care,MCK,22
+Medtronic plc,Health Care,MDT,22
+Merck & Co.,Health Care,MRK,22
+MetLife Inc.,Financials,MET,22
+Mettler Toledo,Health Care,MTD,22
+MGM Resorts International,Consumer Discretionary,MGM,22
+Michael Kors Holdings,Consumer Discretionary,KORS,22
+Microchip Technology,Information Technology,MCHP,22
+Micron Technology,Information Technology,MU,22
+Microsoft Corp.,Information Technology,MSFT,22
+Mid-America Apartments,Real Estate,MAA,22
+Mohawk Industries,Consumer Discretionary,MHK,22
+Molson Coors Brewing Company,Consumer Staples,TAP,22
+Mondelez International,Consumer Staples,MDLZ,22
+Monsanto Co.,Materials,MON,22
+Monster Beverage,Consumer Staples,MNST,22
+Moody's Corp,Financials,MCO,22
+Morgan Stanley,Financials,MS,22
+Motorola Solutions Inc.,Information Technology,MSI,22
+Mylan N.V.,Health Care,MYL,22
+Nasdaq, Inc.,Financials,NDAQ,22
+National Oilwell Varco Inc.,Energy,NOV,22
+Navient,Financials,NAVI,22
+NetApp,Information Technology,NTAP,22
+Netflix Inc.,Information Technology,NFLX,22
+Newell Brands,Consumer Discretionary,NWL,22
+Newfield Exploration Co,Energy,NFX,22
+Newmont Mining Corporation,Materials,NEM,22
+News Corp. Class A,Consumer Discretionary,NWSA,22
+News Corp. Class B,Consumer Discretionary,NWS,22
+NextEra Energy,Utilities,NEE,22
+Nielsen Holdings,Industrials,NLSN,22
+Nike,Consumer Discretionary,NKE,22
+NiSource Inc.,Utilities,NI,22
+Noble Energy Inc,Energy,NBL,22
+Nordstrom,Consumer Discretionary,JWN,22
+Norfolk Southern Corp.,Industrials,NSC,22
+Northern Trust Corp.,Financials,NTRS,22
+Northrop Grumman Corp.,Industrials,NOC,22
+Norwegian Cruise Line,Consumer Discretionary,NCLH,22
+NRG Energy,Utilities,NRG,22
+Nucor Corp.,Materials,NUE,22
+Nvidia Corporation,Information Technology,NVDA,22
+O'Reilly Automotive,Consumer Discretionary,ORLY,22
+Occidental Petroleum,Energy,OXY,22
+Omnicom Group,Consumer Discretionary,OMC,22
+ONEOK,Energy,OKE,22
+Oracle Corp.,Information Technology,ORCL,22
+PACCAR Inc.,Industrials,PCAR,22
+Packaging Corporation of America,Materials,PKG,22
+Parker-Hannifin,Industrials,PH,22
+Patterson Companies,Health Care,PDCO,22
+Paychex Inc.,Information Technology,PAYX,22
+PayPal,Information Technology,PYPL,22
+Pentair Ltd.,Industrials,PNR,22
+People's United Financial,Financials,PBCT,22
+PepsiCo Inc.,Consumer Staples,PEP,22
+PerkinElmer,Health Care,PKI,22
+Perrigo,Health Care,PRGO,22
+Pfizer Inc.,Health Care,PFE,22
+PG&E Corp.,Utilities,PCG,22
+Philip Morris International,Consumer Staples,PM,22
+Phillips 66,Energy,PSX,22
+Pinnacle West Capital,Utilities,PNW,22
+Pioneer Natural Resources,Energy,PXD,22
+PNC Financial Services,Financials,PNC,22
+Polo Ralph Lauren Corp.,Consumer Discretionary,RL,22
+PPG Industries,Materials,PPG,22
+PPL Corp.,Utilities,PPL,22
+Praxair Inc.,Materials,PX,22
+Priceline.com Inc,Consumer Discretionary,PCLN,22
+Principal Financial Group,Financials,PFG,22
+Procter & Gamble,Consumer Staples,PG,22
+Progressive Corp.,Financials,PGR,22
+Prologis,Real Estate,PLD,22
+Prudential Financial,Financials,PRU,22
+Public Serv. Enterprise Inc.,Utilities,PEG,22
+Public Storage,Real Estate,PSA,22
+Pulte Homes Inc.,Consumer Discretionary,PHM,22
+PVH Corp.,Consumer Discretionary,PVH,22
+Qorvo,Information Technology,QRVO,22
+QUALCOMM Inc.,Information Technology,QCOM,22
+Quanta Services Inc.,Industrials,PWR,22
+Quest Diagnostics,Health Care,DGX,22
+Range Resources Corp.,Energy,RRC,22
+Raymond James Financial Inc.,Financials,RJF,22
+Raytheon Co.,Industrials,RTN,22
+Realty Income Corporation,Real Estate,O,22
+Red Hat Inc.,Information Technology,RHT,22
+Regency Centers Corporation,Real Estate,REG,22
+Regeneron,Health Care,REGN,22
+Regions Financial Corp.,Financials,RF,22
+Republic Services Inc,Industrials,RSG,22
+ResMed,Health Care,RMD,22
+Robert Half International,Industrials,RHI,22
+Rockwell Automation Inc.,Industrials,ROK,22
+Rockwell Collins,Industrials,COL,22
+Roper Technologies,Industrials,ROP,22
+Ross Stores,Consumer Discretionary,ROST,22
+Royal Caribbean Cruises Ltd,Consumer Discretionary,RCL,22
+S&P Global, Inc.,Financials,SPGI,22
+Salesforce.com,Information Technology,CRM,22
+SBA Communications,Real Estate,SBAC,22
+SCANA Corp,Utilities,SCG,22
+Schlumberger Ltd.,Energy,SLB,22
+Scripps Networks Interactive Inc.,Consumer Discretionary,SNI,22
+Seagate Technology,Information Technology,STX,22
+Sealed Air,Materials,SEE,22
+Sempra Energy,Utilities,SRE,22
+Sherwin-Williams,Materials,SHW,22
+Signet Jewelers,Consumer Discretionary,SIG,22
+Simon Property Group Inc,Real Estate,SPG,22
+Skyworks Solutions,Information Technology,SWKS,22
+SL Green Realty,Real Estate,SLG,22
+Snap-On Inc.,Consumer Discretionary,SNA,22
+Southern Co.,Utilities,SO,22
+Southwest Airlines,Industrials,LUV,22
+Stanley Black & Decker,Consumer Discretionary,SWK,22
+Starbucks Corp.,Consumer Discretionary,SBUX,22
+State Street Corp.,Financials,STT,22
+Stericycle Inc,Industrials,SRCL,22
+Stryker Corp.,Health Care,SYK,22
+SunTrust Banks,Financials,STI,22
+Symantec Corp.,Information Technology,SYMC,22
+Synchrony Financial,Financials,SYF,22
+Synopsys Inc.,Information Technology,SNPS,22
+Sysco Corp.,Consumer Staples,SYY,22
+T. Rowe Price Group,Financials,TROW,22
+Tapestry, Inc.,Consumer Discretionary,TPR,22
+Target Corp.,Consumer Discretionary,TGT,22
+TE Connectivity Ltd.,Information Technology,TEL,22
+TechnipFMC,Energy,FTI,22
+Texas Instruments,Information Technology,TXN,22
+Textron Inc.,Industrials,TXT,22
+The Bank of New York Mellon Corp.,Financials,BK,22
+The Clorox Company,Consumer Staples,CLX,22
+The Cooper Companies,Health Care,COO,22
+The Hershey Company,Consumer Staples,HSY,22
+The Mosaic Company,Materials,MOS,22
+The Travelers Companies Inc.,Financials,TRV,22
+The Walt Disney Company,Consumer Discretionary,DIS,22
+Thermo Fisher Scientific,Health Care,TMO,22
+Tiffany & Co.,Consumer Discretionary,TIF,22
+Time Warner Inc.,Consumer Discretionary,TWX,22
+TJX Companies Inc.,Consumer Discretionary,TJX,22
+Torchmark Corp.,Financials,TMK,22
+Total System Services,Information Technology,TSS,22
+Tractor Supply Company,Consumer Discretionary,TSCO,22
+TransDigm Group,Industrials,TDG,22
+TripAdvisor,Consumer Discretionary,TRIP,22
+Twenty-First Century Fox Class A,Consumer Discretionary,FOXA,22
+Twenty-First Century Fox Class B,Consumer Discretionary,FOX,22
+Tyson Foods,Consumer Staples,TSN,22
+U.S. Bancorp,Financials,USB,22
+UDR Inc,Real Estate,UDR,22
+Ulta Salon Cosmetics & Fragrance Inc,Consumer Discretionary,ULTA,22
+Under Armour Class A,Consumer Discretionary,UAA,22
+Under Armour Class C,Consumer Discretionary,UA,22
+Union Pacific,Industrials,UNP,22
+United Continental Holdings,Industrials,UAL,22
+United Health Group Inc.,Health Care,UNH,22
+United Parcel Service,Industrials,UPS,22
+United Rentals, Inc.,Industrials,URI,22
+United Technologies,Industrials,UTX,22
+Universal Health Services, Inc.,Health Care,UHS,22
+Unum Group,Financials,UNM,22
+V.F. Corp.,Consumer Discretionary,VFC,22
+Valero Energy,Energy,VLO,22
+Varian Medical Systems,Health Care,VAR,22
+Ventas Inc,Real Estate,VTR,22
+Verisign Inc.,Information Technology,VRSN,22
+Verisk Analytics,Industrials,VRSK,22
+Verizon Communications,Telecommunication Services,VZ,22
+Vertex Pharmaceuticals Inc,Health Care,VRTX,22
+Viacom Inc.,Consumer Discretionary,VIAB,22
+Visa Inc.,Information Technology,V,22
+Vornado Realty Trust,Real Estate,VNO,22
+Vulcan Materials,Materials,VMC,22
+Wal-Mart Stores,Consumer Staples,WMT,22
+Walgreens Boots Alliance,Consumer Staples,WBA,22
+Waste Management Inc.,Industrials,WM,22
+Waters Corporation,Health Care,WAT,22
+Wec Energy Group Inc,Utilities,WEC,22
+Wells Fargo,Financials,WFC,22
+Welltower Inc.,Real Estate,HCN,22
+Western Digital,Information Technology,WDC,22
+Western Union Co,Information Technology,WU,22
+WestRock Company,Materials,WRK,22
+Weyerhaeuser Corp.,Real Estate,WY,22
+Whirlpool Corp.,Consumer Discretionary,WHR,22
+Williams Cos.,Energy,WMB,22
+Willis Towers Watson,Financials,WLTW,22
+Wyndham Worldwide,Consumer Discretionary,WYN,22
+Wynn Resorts Ltd,Consumer Discretionary,WYNN,22
+Xcel Energy Inc,Utilities,XEL,22
+Xerox Corp.,Information Technology,XRX,22
+Xilinx Inc,Information Technology,XLNX,22
+XL Capital,Financials,XL,22
+Xylem Inc.,Industrials,XYL,22
+Yum! Brands Inc,Consumer Discretionary,YUM,22
+Zimmer Biomet Holdings,Health Care,ZBH,22
+Zions Bancorp,Financials,ZION,22
+Zoetis,Health Care,ZTS,223M Company,Industrials,MMM,22
+A.O. Smith Corp,Industrials,AOS,22
+Abbott Laboratories,Health Care,ABT,22
+AbbVie Inc.,Health Care,ABBV,22
+Accenture plc,Information Technology,ACN,22
+Activision Blizzard,Information Technology,ATVI,22
+Acuity Brands Inc,Industrials,AYI,22
+Adobe Systems Inc,Information Technology,ADBE,22
+Advance Auto Parts,Consumer Discretionary,AAP,22
+Advanced Micro Devices Inc,Information Technology,AMD,22
+Advanced Micro Devices Inc,Information Technology,AMD,22
+Advanced Micro Devices Inc,Information Technology,AMD,22
+Advanced Micro Devices Inc,Information Technology,AMD,22
+null,,null,22
+AES Corp,Utilities,AES,22
+Aetna Inc,Health Care,AET,22
+Affiliated Managers Group Inc,Financials,AMG,22
+AFLAC Inc,Financials,AFL,22
+Agilent Technologies Inc,Health Care,A,22
+Air Products & Chemicals Inc,Materials,APD,22
+Akamai Technologies Inc,Information Technology,AKAM,22
+Alaska Air Group Inc,Industrials,ALK,22
+Albemarle Corp,Materials,ALB,22
+Alexandria Real Estate Equities Inc,Real Estate,ARE,22
+Alexion Pharmaceuticals,Health Care,ALXN,22
+Align Technology,Health Care,ALGN,22
+Allegion,Industrials,ALLE,22
+Allergan, Plc,Health Care,AGN,22
+Alliance Data Systems,Information Technology,ADS,22
+Alliant Energy Corp,Utilities,LNT,22
+Allstate Corp,Financials,ALL,22
+Alphabet Inc Class A,Information Technology,GOOGL,22
+Alphabet Inc Class C,Information Technology,GOOG,22
+Altria Group Inc,Consumer Staples,MO,22
+Amazon.com Inc,Consumer Discretionary,AMZN,22
+Ameren Corp,Utilities,AEE,22
+American Airlines Group,Industrials,AAL,22
+American Electric Power,Utilities,AEP,22
+American Express Co,Financials,AXP,22
+American International Group, Inc.,Financials,AIG,22
+American Tower Corp A,Real Estate,AMT,22
+American Water Works Company Inc,Utilities,AWK,22
+Ameriprise Financial,Financials,AMP,22
+AmerisourceBergen Corp,Health Care,ABC,22
+AMETEK Inc,Industrials,AME,22
+Amgen Inc,Health Care,AMGN,22
+Amphenol Corp,Information Technology,APH,22
+Anadarko Petroleum Corp,Energy,APC,22
+Analog Devices, Inc.,Information Technology,ADI,22
+Andeavor,Energy,ANDV,22
+ANSYS,Information Technology,ANSS,22
+Anthem Inc.,Health Care,ANTM,22
+Aon plc,Financials,AON,22
+Apache Corporation,Energy,APA,22
+Apartment Investment & Management,Real Estate,AIV,22
+Apple Inc.,Information Technology,AAPL,22
+Applied Materials Inc,Information Technology,AMAT,22
+Aptiv Plc,Consumer Discretionary,APTV,22
+Archer-Daniels-Midland Co,Consumer Staples,ADM,22
+Arconic Inc,Industrials,ARNC,22
+Arthur J. Gallagher & Co.,Financials,AJG,22
+Assurant Inc,Financials,AIZ,22
+AT&T Inc,Telecommunication Services,T,22
+Autodesk Inc,Information Technology,ADSK,22
+Automatic Data Processing,Information Technology,ADP,22
+AutoZone Inc,Consumer Discretionary,AZO,22
+AvalonBay Communities, Inc.,Real Estate,AVB,22
+Avery Dennison Corp,Materials,AVY,22
+Baker Hughes, a GE Company,Energy,BHGE,22
+Ball Corp,Materials,BLL,22
+Bank of America Corp,Financials,BAC,22
+Baxter International Inc.,Health Care,BAX,22
+BB&T Corporation,Financials,BBT,22
+Becton Dickinson,Health Care,BDX,22
+Berkshire Hathaway,Financials,BRK.B,22
+Best Buy Co. Inc.,Consumer Discretionary,BBY,22
+Biogen Inc.,Health Care,BIIB,22
+BlackRock,Financials,BLK,22
+Block H&R,Financials,HRB,22
+Boeing Company,Industrials,BA,22
+BorgWarner,Consumer Discretionary,BWA,22
+Boston Properties,Real Estate,BXP,22
+Boston Scientific,Health Care,BSX,22
+Brighthouse Financial Inc,Financials,BHF,22
+Bristol-Myers Squibb,Health Care,BMY,22
+Broadcom,Information Technology,AVGO,22
+Brown-Forman Corp.,Consumer Staples,BF.B,22
+C. H. Robinson Worldwide,Industrials,CHRW,22
+CA, Inc.,Information Technology,CA,22
+Cabot Oil & Gas,Energy,COG,22
+Cadence Design Systems,Information Technology,CDNS,22
+Campbell Soup,Consumer Staples,CPB,22
+Capital One Financial,Financials,COF,22
+Cardinal Health Inc.,Health Care,CAH,22
+Carmax Inc,Consumer Discretionary,KMX,22
+Carnival Corp.,Consumer Discretionary,CCL,22
+Caterpillar Inc.,Industrials,CAT,22
+CBOE Holdings,Financials,CBOE,22
+CBRE Group,Real Estate,CBG,22
+CBS Corp.,Consumer Discretionary,CBS,22
+Celgene Corp.,Health Care,CELG,22
+Centene Corporation,Health Care,CNC,22
+CenterPoint Energy,Utilities,CNP,22
+CenturyLink Inc,Telecommunication Services,CTL,22
+Cerner,Health Care,CERN,22
+CF Industries Holdings Inc,Materials,CF,22
+Charles Schwab Corporation,Financials,SCHW,22
+Charter Communications,Consumer Discretionary,CHTR,22
+Chesapeake Energy,Energy,CHK,22
+Chevron Corp.,Energy,CVX,22
+Chipotle Mexican Grill,Consumer Discretionary,CMG,22
+Chubb Limited,Financials,CB,22
+Church & Dwight,Consumer Staples,CHD,22
+CIGNA Corp.,Health Care,CI,22
+Cimarex Energy,Energy,XEC,22
+Cincinnati Financial,Financials,CINF,22
+Cintas Corporation,Industrials,CTAS,22
+Cisco Systems,Information Technology,CSCO,22
+Citigroup Inc.,Financials,C,22
+Citizens Financial Group,Financials,CFG,22
+Citrix Systems,Information Technology,CTXS,22
+CME Group Inc.,Financials,CME,22
+CMS Energy,Utilities,CMS,22
+Coca-Cola Company (The),Consumer Staples,KO,22
+Cognizant Technology Solutions,Information Technology,CTSH,22
+Colgate-Palmolive,Consumer Staples,CL,22
+Comcast Corp.,Consumer Discretionary,CMCSA,22
+Comerica Inc.,Financials,CMA,22
+Conagra Brands,Consumer Staples,CAG,22
+Concho Resources,Energy,CXO,22
+ConocoPhillips,Energy,COP,22
+Consolidated Edison,Utilities,ED,22
+Constellation Brands,Consumer Staples,STZ,22
+Corning Inc.,Information Technology,GLW,22
+Costco Wholesale Corp.,Consumer Staples,COST,22
+Coty, Inc,Consumer Staples,COTY,22
+Crown Castle International Corp.,Real Estate,CCI,22
+CSRA Inc.,Information Technology,CSRA,22
+CSX Corp.,Industrials,CSX,22
+Cummins Inc.,Industrials,CMI,22
+CVS Health,Consumer Staples,CVS,22
+D. R. Horton,Consumer Discretionary,DHI,22
+Danaher Corp.,Health Care,DHR,22
+Darden Restaurants,Consumer Discretionary,DRI,22
+DaVita Inc.,Health Care,DVA,22
+Deere & Co.,Industrials,DE,22
+Delta Air Lines Inc.,Industrials,DAL,22
+Dentsply Sirona,Health Care,XRAY,22
+Devon Energy Corp.,Energy,DVN,22
+Digital Realty Trust Inc,Real Estate,DLR,22
+Discover Financial Services,Financials,DFS,22
+Discovery Communications-A,Consumer Discretionary,DISCA,22
+Discovery Communications-C,Consumer Discretionary,DISCK,22
+Dish Network,Consumer Discretionary,DISH,22
+Dollar General,Consumer Discretionary,DG,22
+Dollar Tree,Consumer Discretionary,DLTR,22
+Dominion Energy,Utilities,D,22
+Dover Corp.,Industrials,DOV,22
+DowDuPont,Materials,DWDP,22
+Dr Pepper Snapple Group,Consumer Staples,DPS,22
+DTE Energy Co.,Utilities,DTE,22
+Duke Energy,Utilities,DUK,22
+Duke Realty Corp,Real Estate,DRE,22
+DXC Technology,Information Technology,DXC,22
+E*Trade,Financials,ETFC,22
+Eastman Chemical,Materials,EMN,22
+Eaton Corporation,Industrials,ETN,22
+eBay Inc.,Information Technology,EBAY,22
+Ecolab Inc.,Materials,ECL,22
+Edison Int'l,Utilities,EIX,22
+Edwards Lifesciences,Health Care,EW,22
+Electronic Arts,Information Technology,EA,22
+Emerson Electric Company,Industrials,EMR,22
+Entergy Corp.,Utilities,ETR,22
+Envision Healthcare,Health Care,EVHC,22
+EOG Resources,Energy,EOG,22
+EQT Corporation,Energy,EQT,22
+Equifax Inc.,Industrials,EFX,22
+Equinix,Real Estate,EQIX,22
+Equity Residential,Real Estate,EQR,22
+Essex Property Trust, Inc.,Real Estate,ESS,22
+Estee Lauder Cos.,Consumer Staples,EL,22
+Everest Re Group Ltd.,Financials,RE,22
+Eversource Energy,Utilities,ES,22
+Exelon Corp.,Utilities,EXC,22
+Expedia Inc.,Consumer Discretionary,EXPE,22
+Expeditors International,Industrials,EXPD,22
+Express Scripts,Health Care,ESRX,22
+Extra Space Storage,Real Estate,EXR,22
+Exxon Mobil Corp.,Energy,XOM,22
+F5 Networks,Information Technology,FFIV,22
+Facebook, Inc.,Information Technology,FB,22
+Fastenal Co,Industrials,FAST,22
+Federal Realty Investment Trust,Real Estate,FRT,22
+FedEx Corporation,Industrials,FDX,22
+Fidelity National Information Services,Information Technology,FIS,22
+Fifth Third Bancorp,Financials,FITB,22
+FirstEnergy Corp,Utilities,FE,22
+Fiserv Inc,Information Technology,FISV,22
+FLIR Systems,Information Technology,FLIR,22
+Flowserve Corporation,Industrials,FLS,22
+Fluor Corp.,Industrials,FLR,22
+FMC Corporation,Materials,FMC,22
+Foot Locker Inc,Consumer Discretionary,FL,22
+Ford Motor,Consumer Discretionary,F,22
+Fortive Corp,Industrials,FTV,22
+Fortune Brands Home & Security,Industrials,FBHS,22
+Franklin Resources,Financials,BEN,22
+Freeport-McMoRan Inc.,Materials,FCX,22
+Gap Inc.,Consumer Discretionary,GPS,22
+Garmin Ltd.,Consumer Discretionary,GRMN,22
+Gartner Inc,Information Technology,IT,22
+General Dynamics,Industrials,GD,22
+General Electric,Industrials,GE,22
+General Growth Properties Inc.,Real Estate,GGP,22
+General Mills,Consumer Staples,GIS,22
+General Motors,Consumer Discretionary,GM,22
+Genuine Parts,Consumer Discretionary,GPC,22
+Gilead Sciences,Health Care,GILD,22
+Global Payments Inc.,Information Technology,GPN,22
+Goldman Sachs Group,Financials,GS,22
+Goodyear Tire & Rubber,Consumer Discretionary,GT,22
+Grainger (W.W.) Inc.,Industrials,GWW,22
+Halliburton Co.,Energy,HAL,22
+Hanesbrands Inc,Consumer Discretionary,HBI,22
+Harley-Davidson,Consumer Discretionary,HOG,22
+Harris Corporation,Information Technology,HRS,22
+Hartford Financial Svc.Gp.,Financials,HIG,22
+Hasbro Inc.,Consumer Discretionary,HAS,22
+HCA Holdings,Health Care,HCA,22
+HCP Inc.,Real Estate,HCP,22
+Helmerich & Payne,Energy,HP,22
+Henry Schein,Health Care,HSIC,22
+Hess Corporation,Energy,HES,22
+Hewlett Packard Enterprise,Information Technology,HPE,22
+Hilton Worldwide Holdings Inc,Consumer Discretionary,HLT,22
+Hologic,Health Care,HOLX,22
+Home Depot,Consumer Discretionary,HD,22
+Honeywell Int'l Inc.,Industrials,HON,22
+Hormel Foods Corp.,Consumer Staples,HRL,22
+Host Hotels & Resorts,Real Estate,HST,22
+HP Inc.,Information Technology,HPQ,22
+Humana Inc.,Health Care,HUM,22
+Huntington Bancshares,Financials,HBAN,22
+Huntington Ingalls Industries,Industrials,HII,22
+IDEXX Laboratories,Health Care,IDXX,22
+IHS Markit Ltd.,Industrials,INFO,22
+Illinois Tool Works,Industrials,ITW,22
+Illumina Inc,Health Care,ILMN,22
+Incyte,Health Care,INCY,22
+Ingersoll-Rand PLC,Industrials,IR,22
+Intel Corp.,Information Technology,INTC,22
+Intercontinental Exchange,Financials,ICE,22
+International Business Machines,Information Technology,IBM,22
+International Paper,Materials,IP,22
+Interpublic Group,Consumer Discretionary,IPG,22
+Intl Flavors & Fragrances,Materials,IFF,22
+Intuit Inc.,Information Technology,INTU,22
+Intuitive Surgical Inc.,Health Care,ISRG,22
+Invesco Ltd.,Financials,IVZ,22
+IQVIA Holdings Inc.,Health Care,IQV,22
+Iron Mountain Incorporated,Real Estate,IRM,22
+J. B. Hunt Transport Services,Industrials,JBHT,22
+Jacobs Engineering Group,Industrials,JEC,22
+JM Smucker,Consumer Staples,SJM,22
+Johnson & Johnson,Health Care,JNJ,22
+Johnson Controls International,Industrials,JCI,22
+JPMorgan Chase & Co.,Financials,JPM,22
+Juniper Networks,Information Technology,JNPR,22
+Kansas City Southern,Industrials,KSU,22
+Kellogg Co.,Consumer Staples,K,22
+KeyCorp,Financials,KEY,22
+Kimberly-Clark,Consumer Staples,KMB,22
+Kimco Realty,Real Estate,KIM,22
+Kinder Morgan,Energy,KMI,22
+KLA-Tencor Corp.,Information Technology,KLAC,22
+Kohl's Corp.,Consumer Discretionary,KSS,22
+Kraft Heinz Co,Consumer Staples,KHC,22
+Kroger Co.,Consumer Staples,KR,22
+L Brands Inc.,Consumer Discretionary,LB,22
+L-3 Communications Holdings,Industrials,LLL,22
+Laboratory Corp. of America Holding,Health Care,LH,22
+Lam Research,Information Technology,LRCX,22
+Leggett & Platt,Consumer Discretionary,LEG,22
+Lennar Corp.,Consumer Discretionary,LEN,22
+Leucadia National Corp.,Financials,LUK,22
+Lilly (Eli) & Co.,Health Care,LLY,22
+Lincoln National,Financials,LNC,22
+LKQ Corporation,Consumer Discretionary,LKQ,22
+Lockheed Martin Corp.,Industrials,LMT,22
+Loews Corp.,Financials,L,22
+Lowe's Cos.,Consumer Discretionary,LOW,22
+LyondellBasell,Materials,LYB,22
+M&T Bank Corp.,Financials,MTB,22
+Macerich,Real Estate,MAC,22
+Macy's Inc.,Consumer Discretionary,M,22
+Marathon Oil Corp.,Energy,MRO,22
+Marathon Petroleum,Energy,MPC,22
+Marriott Int'l.,Consumer Discretionary,MAR,22
+Marsh & McLennan,Financials,MMC,22
+Martin Marietta Materials,Materials,MLM,22
+Masco Corp.,Industrials,MAS,22
+Mastercard Inc.,Information Technology,MA,22
+Mattel Inc.,Consumer Discretionary,MAT,22
+McCormick & Co.,Consumer Staples,MKC,22
+McDonald's Corp.,Consumer Discretionary,MCD,22
+McKesson Corp.,Health Care,MCK,22
+Medtronic plc,Health Care,MDT,22
+Merck & Co.,Health Care,MRK,22
+MetLife Inc.,Financials,MET,22
+Mettler Toledo,Health Care,MTD,22
+MGM Resorts International,Consumer Discretionary,MGM,22
+Michael Kors Holdings,Consumer Discretionary,KORS,22
+Microchip Technology,Information Technology,MCHP,22
+Micron Technology,Information Technology,MU,22
+Microsoft Corp.,Information Technology,MSFT,22
+Mid-America Apartments,Real Estate,MAA,22
+Mohawk Industries,Consumer Discretionary,MHK,22
+Molson Coors Brewing Company,Consumer Staples,TAP,22
+Mondelez International,Consumer Staples,MDLZ,22
+Monsanto Co.,Materials,MON,22
+Monster Beverage,Consumer Staples,MNST,22
+Moody's Corp,Financials,MCO,22
+Morgan Stanley,Financials,MS,22
+Motorola Solutions Inc.,Information Technology,MSI,22
+Mylan N.V.,Health Care,MYL,22
+Nasdaq, Inc.,Financials,NDAQ,22
+National Oilwell Varco Inc.,Energy,NOV,22
+Navient,Financials,NAVI,22
+NetApp,Information Technology,NTAP,22
+Netflix Inc.,Information Technology,NFLX,22
+Newell Brands,Consumer Discretionary,NWL,22
+Newfield Exploration Co,Energy,NFX,22
+Newmont Mining Corporation,Materials,NEM,22
+News Corp. Class A,Consumer Discretionary,NWSA,22
+News Corp. Class B,Consumer Discretionary,NWS,22
+NextEra Energy,Utilities,NEE,22
+Nielsen Holdings,Industrials,NLSN,22
+Nike,Consumer Discretionary,NKE,22
+NiSource Inc.,Utilities,NI,22
+Noble Energy Inc,Energy,NBL,22
+Nordstrom,Consumer Discretionary,JWN,22
+Norfolk Southern Corp.,Industrials,NSC,22
+Northern Trust Corp.,Financials,NTRS,22
+Northrop Grumman Corp.,Industrials,NOC,22
+Norwegian Cruise Line,Consumer Discretionary,NCLH,22
+NRG Energy,Utilities,NRG,22
+Nucor Corp.,Materials,NUE,22
+Nvidia Corporation,Information Technology,NVDA,22
+O'Reilly Automotive,Consumer Discretionary,ORLY,22
+Occidental Petroleum,Energy,OXY,22
+Omnicom Group,Consumer Discretionary,OMC,22
+ONEOK,Energy,OKE,22
+Oracle Corp.,Information Technology,ORCL,22
+PACCAR Inc.,Industrials,PCAR,22
+Packaging Corporation of America,Materials,PKG,22
+Parker-Hannifin,Industrials,PH,22
+Patterson Companies,Health Care,PDCO,22
+Paychex Inc.,Information Technology,PAYX,22
+PayPal,Information Technology,PYPL,22
+Pentair Ltd.,Industrials,PNR,22
+People's United Financial,Financials,PBCT,22
+PepsiCo Inc.,Consumer Staples,PEP,22
+PerkinElmer,Health Care,PKI,22
+Perrigo,Health Care,PRGO,22
+Pfizer Inc.,Health Care,PFE,22
+PG&E Corp.,Utilities,PCG,22
+Philip Morris International,Consumer Staples,PM,22
+Phillips 66,Energy,PSX,22
+Pinnacle West Capital,Utilities,PNW,22
+Pioneer Natural Resources,Energy,PXD,22
+PNC Financial Services,Financials,PNC,22
+Polo Ralph Lauren Corp.,Consumer Discretionary,RL,22
+PPG Industries,Materials,PPG,22
+PPL Corp.,Utilities,PPL,22
+Praxair Inc.,Materials,PX,22
+Priceline.com Inc,Consumer Discretionary,PCLN,22
+Principal Financial Group,Financials,PFG,22
+Procter & Gamble,Consumer Staples,PG,22
+Progressive Corp.,Financials,PGR,22
+Prologis,Real Estate,PLD,22
+Prudential Financial,Financials,PRU,22
+Public Serv. Enterprise Inc.,Utilities,PEG,22
+Public Storage,Real Estate,PSA,22
+Pulte Homes Inc.,Consumer Discretionary,PHM,22
+PVH Corp.,Consumer Discretionary,PVH,22
+Qorvo,Information Technology,QRVO,22
+QUALCOMM Inc.,Information Technology,QCOM,22
+Quanta Services Inc.,Industrials,PWR,22
+Quest Diagnostics,Health Care,DGX,22
+Range Resources Corp.,Energy,RRC,22
+Raymond James Financial Inc.,Financials,RJF,22
+Raytheon Co.,Industrials,RTN,22
+Realty Income Corporation,Real Estate,O,22
+Red Hat Inc.,Information Technology,RHT,22
+Regency Centers Corporation,Real Estate,REG,22
+Regeneron,Health Care,REGN,22
+Regions Financial Corp.,Financials,RF,22
+Republic Services Inc,Industrials,RSG,22
+ResMed,Health Care,RMD,22
+Robert Half International,Industrials,RHI,22
+Rockwell Automation Inc.,Industrials,ROK,22
+Rockwell Collins,Industrials,COL,22
+Roper Technologies,Industrials,ROP,22
+Ross Stores,Consumer Discretionary,ROST,22
+Royal Caribbean Cruises Ltd,Consumer Discretionary,RCL,22
+S&P Global, Inc.,Financials,SPGI,22
+Salesforce.com,Information Technology,CRM,22
+SBA Communications,Real Estate,SBAC,22
+SCANA Corp,Utilities,SCG,22
+Schlumberger Ltd.,Energy,SLB,22
+Scripps Networks Interactive Inc.,Consumer Discretionary,SNI,22
+Seagate Technology,Information Technology,STX,22
+Sealed Air,Materials,SEE,22
+Sempra Energy,Utilities,SRE,22
+Sherwin-Williams,Materials,SHW,22
+Signet Jewelers,Consumer Discretionary,SIG,22
+Simon Property Group Inc,Real Estate,SPG,22
+Skyworks Solutions,Information Technology,SWKS,22
+SL Green Realty,Real Estate,SLG,22
+Snap-On Inc.,Consumer Discretionary,SNA,22
+Southern Co.,Utilities,SO,22
+Southwest Airlines,Industrials,LUV,22
+Stanley Black & Decker,Consumer Discretionary,SWK,22
+Starbucks Corp.,Consumer Discretionary,SBUX,22
+State Street Corp.,Financials,STT,22
+Stericycle Inc,Industrials,SRCL,22
+Stryker Corp.,Health Care,SYK,22
+SunTrust Banks,Financials,STI,22
+Symantec Corp.,Information Technology,SYMC,22
+Synchrony Financial,Financials,SYF,22
+Synopsys Inc.,Information Technology,SNPS,22
+Sysco Corp.,Consumer Staples,SYY,22
+T. Rowe Price Group,Financials,TROW,22
+Tapestry, Inc.,Consumer Discretionary,TPR,22
+Target Corp.,Consumer Discretionary,TGT,22
+TE Connectivity Ltd.,Information Technology,TEL,22
+TechnipFMC,Energy,FTI,22
+Texas Instruments,Information Technology,TXN,22
+Textron Inc.,Industrials,TXT,22
+The Bank of New York Mellon Corp.,Financials,BK,22
+The Clorox Company,Consumer Staples,CLX,22
+The Cooper Companies,Health Care,COO,22
+The Hershey Company,Consumer Staples,HSY,22
+The Mosaic Company,Materials,MOS,22
+The Travelers Companies Inc.,Financials,TRV,22
+The Walt Disney Company,Consumer Discretionary,DIS,22
+Thermo Fisher Scientific,Health Care,TMO,22
+Tiffany & Co.,Consumer Discretionary,TIF,22
+Time Warner Inc.,Consumer Discretionary,TWX,22
+TJX Companies Inc.,Consumer Discretionary,TJX,22
+Torchmark Corp.,Financials,TMK,22
+Total System Services,Information Technology,TSS,22
+Tractor Supply Company,Consumer Discretionary,TSCO,22
+TransDigm Group,Industrials,TDG,22
+TripAdvisor,Consumer Discretionary,TRIP,22
+Twenty-First Century Fox Class A,Consumer Discretionary,FOXA,22
+Twenty-First Century Fox Class B,Consumer Discretionary,FOX,22
+Tyson Foods,Consumer Staples,TSN,22
+U.S. Bancorp,Financials,USB,22
+UDR Inc,Real Estate,UDR,22
+Ulta Salon Cosmetics & Fragrance Inc,Consumer Discretionary,ULTA,22
+Under Armour Class A,Consumer Discretionary,UAA,22
+Under Armour Class C,Consumer Discretionary,UA,22
+Union Pacific,Industrials,UNP,22
+United Continental Holdings,Industrials,UAL,22
+United Health Group Inc.,Health Care,UNH,22
+United Parcel Service,Industrials,UPS,22
+United Rentals, Inc.,Industrials,URI,22
+United Technologies,Industrials,UTX,22
+Universal Health Services, Inc.,Health Care,UHS,22
+Unum Group,Financials,UNM,22
+V.F. Corp.,Consumer Discretionary,VFC,22
+Valero Energy,Energy,VLO,22
+Varian Medical Systems,Health Care,VAR,22
+Ventas Inc,Real Estate,VTR,22
+Verisign Inc.,Information Technology,VRSN,22
+Verisk Analytics,Industrials,VRSK,22
+Verizon Communications,Telecommunication Services,VZ,22
+Vertex Pharmaceuticals Inc,Health Care,VRTX,22
+Viacom Inc.,Consumer Discretionary,VIAB,22
+Visa Inc.,Information Technology,V,22
+Vornado Realty Trust,Real Estate,VNO,22
+Vulcan Materials,Materials,VMC,22
+Wal-Mart Stores,Consumer Staples,WMT,22
+Walgreens Boots Alliance,Consumer Staples,WBA,22
+Waste Management Inc.,Industrials,WM,22
+Waters Corporation,Health Care,WAT,22
+Wec Energy Group Inc,Utilities,WEC,22
+Wells Fargo,Financials,WFC,22
+Welltower Inc.,Real Estate,HCN,22
+Western Digital,Information Technology,WDC,22
+Western Union Co,Information Technology,WU,22
+WestRock Company,Materials,WRK,22
+Weyerhaeuser Corp.,Real Estate,WY,22
+Whirlpool Corp.,Consumer Discretionary,WHR,22
+Williams Cos.,Energy,WMB,22
+Willis Towers Watson,Financials,WLTW,22
+Wyndham Worldwide,Consumer Discretionary,WYN,22
+Wynn Resorts Ltd,Consumer Discretionary,WYNN,22
+Xcel Energy Inc,Utilities,XEL,22
+Xerox Corp.,Information Technology,XRX,22
+Xilinx Inc,Information Technology,XLNX,22
+XL Capital,Financials,XL,22
+Xylem Inc.,Industrials,XYL,22
+Yum! Brands Inc,Consumer Discretionary,YUM,22
+Zimmer Biomet Holdings,Health Care,ZBH,22
+Zions Bancorp,Financials,ZION,22
+Zoetis,Health Care,ZTS,22

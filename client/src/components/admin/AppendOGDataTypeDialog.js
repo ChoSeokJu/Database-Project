@@ -14,6 +14,7 @@ import {
   setAlertType,
   setMessage,
 } from '../../actions/message';
+import { getAdmin, postAdmin } from '../../services/user.service';
 
 export default function AppendOGDataTypeDialog({
   open,
@@ -21,19 +22,19 @@ export default function AppendOGDataTypeDialog({
   taskName,
 }) {
   const dispatch = useDispatch();
-  const { data, name } = useSelector((state) => state.originalData);
+  const { data, name, columns } = useSelector((state) => state.originalData);
 
   useEffect(() => {
+    dispatch(clearOriginalData());
     if (open) {
-      dispatch(clearOriginalData());
-      /* TODO: task에 대한 scheme 다운로드해서 setTaskData에 넣음. */
-      dispatch(
-        setOriginalData([
-          { columnName: '스키마1', originalColumnName: '' },
-          { columnName: '스키마2', originalColumnName: '' },
-          { columnName: '스키마3', originalColumnName: '' },
-        ]),
-      );
+      /* TODO: 완료! task에 대한 scheme 다운로드해서 setTaskData에 넣음. */
+      getAdmin('/task/schema', { taskName }).then((response) => {
+        const { data } = response.data;
+        data.forEach((row) => {
+          row.originalColumnName = '';
+        });
+        dispatch(setOriginalData(data));
+      });
     }
   }, [open]);
 
@@ -50,8 +51,44 @@ export default function AppendOGDataTypeDialog({
       dispatch(setMessage('비어있는 데이터 스키마는 전부 NULL로 들어갑니다'));
       dispatch(openDialog());
     }
-    // TODO: 원본 데이터 스키마 제출하기
-    handleClose();
+
+    const newColumns = Object.entries(columns)
+      .filter((column) => column[0] === column[1])
+      .map((column) => column[0]);
+
+    const mapping = {};
+    data
+      .filter((row) => row.originalColumnName !== '')
+      .forEach((row) => {
+        mapping[row.columnName] = row.originalColumnName;
+      });
+
+    postAdmin('/task/og-data', {
+      taskName,
+      OGDataType: name,
+      OGDataColumn: newColumns,
+      OGDataMapping: mapping,
+    }).then(
+      () => {
+        dispatch(setAlertType('success'));
+        dispatch(setMessage('데이터가 성공적으로 추가되었습니다'));
+        dispatch(openAlert());
+        handleClose();
+      },
+      (error) => {
+        const message =
+          (error.response &&
+            error.response.data &&
+            error.response.data.message) ||
+          error.message ||
+          error.toString();
+        dispatch(setAlertType('error'));
+        dispatch(setMessage(message));
+        dispatch(openAlert());
+        handleClose();
+      }
+    );
+    // TODO: 완료! 원본 데이터 스키마 제출하기
   };
 
   return (
@@ -63,8 +100,7 @@ export default function AppendOGDataTypeDialog({
       aria-labelledby="form-dialog-title"
     >
       <DialogTitle id="form-dialog-title">
-        {taskName}
-        에 원본 데이터 스키마 추가
+        {taskName}에 원본 데이터 스키마 추가
       </DialogTitle>
       <DialogContent>
         <AppendOGDataType />

@@ -44,7 +44,7 @@ export default function TaskRequest({ readOnly = false, title, content }) {
     setTaskContent(e.target.value);
   };
 
-  // TODO: 태스크 요청
+  // TODO: 완료! 태스크 요청
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
