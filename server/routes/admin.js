@@ -70,7 +70,7 @@ router.get(
 router.get(
   '/user-info/all',
   [authJwt.verifyToken, authJwt.isAdmin],
-  adminController.getUserinfo
+  adminController.getUserinfoAll
 );
 
 router.get(
