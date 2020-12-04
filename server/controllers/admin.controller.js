@@ -244,23 +244,29 @@ exports.getSchema = (req, res) => {
 };
 
 exports.addOgData = (req, res) => {
-  const { taskName, OGDataType, data, desc, schema } = req.body;
+  const { taskName, OGDataType, OGDataColumn, OGDataMapping } = req.body;
   Task.findOne({
     where: { TaskName: taskName },
-  }).then((schema) => {
-    if (schema) {
+  }).then((task) => {
+    if (task) {
       ogData
         .create({
           Name: OGDataType,
-          Mapping: data,
-          TaskName: taskName,
-          Schema: schema,
-          Desc: desc,
+          Schema: OGDataColumn,
+          Mapping: OGDataMapping,
+          TaskName: taskName
         })
         .then((ogdata) => {
-          res.status(200).json({
-            message: '원본데이터가 생성 되었습니다',
-          });
+          if (ogdata) {
+            res.status(200).json({
+              message: '원본데이터가 생성 되었습니다',
+            });
+          }
+          else {
+            res.status(400).json({
+              message: '원본데이터를 생성하지 못하였습니다',
+            });
+          }
         });
     } else {
       return res.status(400).json({
@@ -299,20 +305,44 @@ exports.evaluatedData = (req, res) => {
   });
 };
 
-exports.getUserinfo = (req, res) => {
+exports.getUserinfoAll = (req, res) => {
+  User.hasMany(AVG_SCORE, { foreignKey: 'Sid' });
+  AVG_SCORE.belongsTo(User, { foreignKey: 'Sid' });
   const { per_page, page } = req.query;
-  User.count().then((count) =>
+  const arr = []
+  User.count().then((count) => {
     User.findAll({
-      offset: parseInt(per_page) * parseInt(page - 1),
-      limit: parseInt(per_page),
-    }).then((user) => {
-      res.status(200).json({
-        data: user,
-        page,
-        totalCount: count,
-      });
+      attributes: [['Uid', 'ID'], 'Name', 'Gender', 'UType', 'Bdate', 'PhoneNo', 'Addr'],
+      include: [
+        {
+          model: AVG_SCORE,
+          required: false,
+          attributes: ['Score']
+        }
+      ],
+      raw: true,
+      offset: parseInt(per_page) * (parseInt(page) - 1),
+      limit: parseInt(per_page)
+    }).then((result) => {
+      for (let i = 0; i < result.length; i++) {
+        arr.push({
+          ID: result[i].ID,
+          Name: result[i].Name,
+          Gender: result[i].Gender,
+          UType: result[i].UType,
+          Bdate: result[i].Bdate,
+          PhoneNo: result[i].PhoneNo,
+          Addr: result[i].Addr,
+          Score: result[i]['AVG_SCOREs.Score'],
+        });
+      }
+      return res.json({
+        data: arr,
+        page: parseInt(page),
+        totalCount: count
+      })
     })
-  );
+  })
 };
 
 exports.infoSearch = (req, res) => {
