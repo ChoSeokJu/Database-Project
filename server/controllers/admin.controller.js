@@ -358,7 +358,45 @@ exports.getUserinfoAll = (req, res) => {
 
 exports.infoSearch = (req, res) => {
   const {search, searchCriterion, per_page, page} = req.query;
-  if (searchCriterion == 'ID') {
+  if(searchCriterion == 'all') {
+    User.hasMany(Parsing_data, { foreignKey: 'Sid' });
+    Parsing_data.belongsTo(User, { foreignKey: 'Sid' });
+    User.findAndCountAll({
+      where: {
+        [Op.or]:[
+          {ID: { [Op.substring]: search }},
+          {Gender: { [Op.substring]: search }},
+          {Name: { [Op.substring]: search }}
+        ]
+      }
+    }).then((result1) => {
+      User.findAndCountAll({
+        include: [
+          {
+            model: Parsing_data,
+            attributes: [],
+            where: { TaskName: { [Op.substring]: search } },
+            required: true,
+          },
+        ]
+      }).then((result2) =>{
+        var total = result1.count + result2.count
+        var data2 = result1.rows.concat(result2).slice(parseInt(page)-1,parseInt(page)-1+parseInt(per_page));
+        if (total !== 0) {
+          return res.status(200).json({
+            data: data2,
+            page,
+            totalCount: total
+          });
+        };
+        return res.status(404).json({
+          data: [],
+          page,
+          totalCount:0
+        });
+      })
+    })
+  } else if (searchCriterion == 'ID') {
     User.findAndCountAll({
       where: {
         ID: { [Op.substring]: search }
