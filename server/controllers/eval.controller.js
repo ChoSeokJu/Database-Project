@@ -86,11 +86,22 @@ exports.saveToTaskTable = async function (req, res) {
     return res.status(400).json({
       message: '제출된 자료가 정성적 평가를 통과하지 못하였습니다',
     });
-  } if (req.body.totalScore < 10) {
+  }
+
+  const { TableRef, TableName, PassCriteria } = await task.findOne({
+    where: {
+      // TaskName: "Fundamentals",
+      TaskName: TaskName, // this is for deployment
+    },
+    attributes: ['TableRef','TableName', 'PassCriteria'],
+  });
+
+  if (req.body.totalScore < PassCriteria) {
     return res.status(400).json({
       message: '제출된 자료가 정량적 평가를 통과하지 못하였습니다',
     });
   }
+
 
   const p_data = await parsing_data.findOne({
     where: {
@@ -107,14 +118,6 @@ exports.saveToTaskTable = async function (req, res) {
       Did,
     },
     attributes: ['Mapping'],
-  });
-
-  const { TableRef, TableName } = await task.findOne({
-    where: {
-      // TaskName: "Fundamentals",
-      TaskName: TaskName, // this is for deployment
-    },
-    attributes: ['TableRef','TableName'],
   });
 
   const parsedData = await csv({ noheader: false }).fromFile(DataRef); // this is for deployment
