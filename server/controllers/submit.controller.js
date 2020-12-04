@@ -305,7 +305,7 @@ exports.getTaskList = function (req, res, next) {
           results.forEach((result)=>{
             amendedResults.push({
               "taskName": result.task.TaskName,
-              "permit": permitState(result.Permit)
+              "permit": result.Permit
             })
           })
           req.body.response = {
@@ -409,14 +409,17 @@ exports.getOgData = (req, res) => {
 };
 
 exports.getSubmitterList = (req, res, next) => {
-  const { username, taskName } = req.query
+  const { Uid, taskName } = req.query
+  if (Uid == undefined){
+    Uid = req.Uid 
+  }
+  
   user.findOne({
     where:{
-      ID: username
+      Uid: Uid
     }
   }).then((user)=>{
     if(user){
-      req.query.Uid = user.Uid
       parsing_data.findAll({
         attributes: ["SubmitCnt", "TotalTupleCnt", "FinalScore", "TimeStamp"],
         include:[
@@ -445,6 +448,10 @@ exports.getSubmitterList = (req, res, next) => {
           
           console.log(p_data)
         }
+      })
+    } else {
+      return res.status(404).json({
+        "message": "유저를 찾지 못했습니다"
       })
     }
   })
