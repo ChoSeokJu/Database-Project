@@ -389,10 +389,10 @@ exports.infoSearch = (req, res) => {
             totalCount: total
           });
         };
-        return res.status(404).json({
+        return res.json({
           data: [],
           page,
-          totalCount:0
+          totalCount: 0
         });
       })
     })
@@ -416,7 +416,7 @@ exports.infoSearch = (req, res) => {
               totalCount: count.rows.length
             });
           };
-          return res.status(404).json({
+          return res.json({
             data: result.rows,
             page,
             totalCount: count.rows.length
@@ -456,7 +456,7 @@ exports.infoSearch = (req, res) => {
             totalCount: count.rows.length
           });
         };
-        return res.status(404).json({
+        return res.json({
           data: result.rows,
           page,
           totalCount: count.rows.length
@@ -477,13 +477,13 @@ exports.infoSearch = (req, res) => {
         },
       }).then((count)=> {
         if (result.rows.length !== 0) {
-          return res.status(200).json({
+          return res.json({
             data: result.rows,
             page,
             totalCount: count.rows.length
           });
         };
-        return res.status(404).json({
+        return res.json({
           data: result.rows,
           page,
           totalCount: count.rows.length
@@ -492,8 +492,10 @@ exports.infoSearch = (req, res) => {
     })
   } else if (searchCriterion == 'age'){
     if (isNaN(parseInt(search))) {
-      return res.status(400).json({
-        'message': '숫자를 입력해야 합니다'
+      return res.json({
+        data: [],
+        page: 1,
+        totalCount: 0
       })
     }
     else {
@@ -506,7 +508,8 @@ exports.infoSearch = (req, res) => {
       for (let i = 0; i < result.length; i++) {
         const check = new Date(result[i].Bdate)
         const age = Math.floor(today.getFullYear() - check.getFullYear() + 1);
-        if (Math.floor(age/10)*10 > search + 9 || Math.floor(age/10)*10 < search) {
+        console.log(Math.floor(age/10)*10)
+        if (Math.floor(age/10)*10 != parseInt(search)) {
           continue;
         }
         len += 1
@@ -521,7 +524,7 @@ exports.infoSearch = (req, res) => {
         });
       }
       if (temp_arr.length === 0) {
-        return res.status(400).json({
+        return res.json({
           data: temp_arr.slice(offset, offset+limit),
           page: page,
           totalCount: len
