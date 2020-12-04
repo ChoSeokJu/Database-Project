@@ -56,6 +56,7 @@ exports.makeTask = (req, res) => {
     tableName,
     tableSchema,
     timeStamp,
+    passCriteria
   } = req.body;
   const tableRef = './task_data_table';
   const date = new Date();
@@ -72,6 +73,7 @@ exports.makeTask = (req, res) => {
         TableSchema: tableSchema,
         TableRef: tableRef,
         TimeStamp: timestampToDate,
+        PassCriteria: passCriteria
       })
         .then((new_task) => {
           if (new_task) {
