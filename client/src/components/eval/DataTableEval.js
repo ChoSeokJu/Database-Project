@@ -3,6 +3,7 @@ import MaterialTable from 'material-table';
 import Button from '@material-ui/core/Button';
 import Container from '@material-ui/core/Container';
 import DataEvalDialog from './DataEvalDialog';
+import { getEval } from '../../services/user.service';
 
 export default function TaskTableSubmit() {
   const [openEvalDialog, setOpenEvalDialog] = useState({
@@ -34,61 +35,38 @@ export default function TaskTableSubmit() {
       );
     }
     return (
-      <Button
-        variant="contained"
-        disabled
-      >
+      <Button variant="contained" disabled>
         평가완료
       </Button>
     );
   };
 
-  const getTask = (query) => new Promise((resolve, reject) => {
-    setTimeout(
-      () => resolve({
-        data: [
-          {
-            Pid: 1,
-            taskName: '태스크1',
-            submitID: 'babo1',
-            OGDataType: '스키마1',
-            evaluated: false,
-          },
-          {
-            Pid: 2,
-            taskName: '태스크2',
-            submitID: 'babo1',
-            OGDataType: '스키마2',
-            evaluated: false,
-          },
-          {
-            Pid: 3,
-            taskName: '태스크3',
-            submitID: 'babo1',
-            OGDataType: '스키마3',
-            evaluated: false,
-          },
-          {
-            Pid: 4,
-            taskName: '태스크4',
-            submitID: 'babo1',
-            OGDataType: '스키마4',
-            evaluated: true,
-          },
-          {
-            Pid: 5,
-            taskName: '태스크1',
-            submitID: 'babo1',
-            OGDataType: '스키마1',
-            evaluated: true,
-          },
-        ],
-        page: query.page,
-        totalCount: 100,
-      }),
-      500,
-    );
-  });
+  // TODO: 완료! 평가자 데이터 목록 불러오기
+  const getTask = (query) =>
+    new Promise((resolve, reject) => {
+      getEval('/', {
+        per_page: query.pageSize,
+        page: query.page + 1,
+      }).then(
+        (response) => {
+          const { data, page, totalCount } = response.data;
+          resolve({
+            data,
+            page: page - 1,
+            totalCount,
+          });
+        },
+        (error) => {
+          const message =
+            (error.response &&
+              error.response.data &&
+              error.response.data.message) ||
+            error.message ||
+            error.toString();
+          reject(message);
+        }
+      );
+    });
 
   return (
     <>
@@ -126,7 +104,6 @@ export default function TaskTableSubmit() {
         handleClose={handleClose}
         Pid={openEvalDialog.Pid}
       />
-
     </>
   );
 }

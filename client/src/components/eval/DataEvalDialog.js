@@ -82,18 +82,22 @@ export default function AppendOGDataTypeDialog({ open, handleClose, Pid }) {
       Score: score,
       Desc: opinion,
       PNP: PNP ? 'P' : 'NP',
-    }).then(() => {
-      handleClose();
-    }, (error) => {
-      const message = (error.response
-        && error.response.data
-        && error.response.data.message)
-        || error.message
-        || error.toString();
-      dispatch(setAlertType('error'));
-      dispatch(setMessage(message));
-      dispatch(openAlert());
-    });
+    }).then(
+      () => {
+        handleClose();
+      },
+      (error) => {
+        const message =
+          (error.response &&
+            error.response.data &&
+            error.response.data.message) ||
+          error.message ||
+          error.toString();
+        dispatch(setAlertType('error'));
+        dispatch(setMessage(message));
+        dispatch(openAlert());
+      }
+    );
   };
 
   return (
