@@ -46,7 +46,7 @@ router.get(
 router.get(
   '/task/approved', 
   [authJwt.verifyToken, authJwt.isAdmin],
-  adminController.pendingUser
+  adminController.approvedUser
 );
 
 router.get(
