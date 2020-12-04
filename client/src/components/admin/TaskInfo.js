@@ -23,8 +23,10 @@ const useStyles = makeStyles((theme) => ({
     marginTop: theme.spacing(2),
     marginBottom: theme.spacing(2),
   },
-  button: {
-    marginLeft: theme.spacing(2),
+  downloadButton: {
+    position: 'absolute',
+    right: theme.spacing(1),
+    top: theme.spacing(1),
   },
 }));
 
@@ -82,23 +84,19 @@ export default function TaskInfo({ open, handleClose, taskName }) {
       fullWidth
       aria-labelledby="form-dialog-title"
     >
-      <DialogContent>
-        <Typography variant="h5" component="h2" className={classes.title}>
-          {taskName}의 데이터 테이블
-        </Typography>
+      <DialogTitle id="form-dialog-title">
+        {taskName}의 태스크 상세정보
         <Button
           variant="contained"
           color="primary"
-          className={classes.button}
+          className={classes.downloadButton}
           endIcon={<GetAppIcon />}
-          className={classes.button}
           onClick={handleTableDownload}
         >
-          다운로드
+          데이터 테이블 다운로드
         </Button>
-        <Typography variant="h5" component="h2" className={classes.title}>
-          파싱된 원본 데이터
-        </Typography>
+      </DialogTitle>
+      <DialogContent>
         <MaterialTable
           components={{
             Container: (props) => <Paper {...props} elevation={0} />,
