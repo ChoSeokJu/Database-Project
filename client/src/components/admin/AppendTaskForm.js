@@ -21,6 +21,7 @@ import {
   setMinPeriod,
   setPassCriteria,
   setDescription,
+  setTableName,
 } from '../../actions/taskData';
 
 const useStyles = makeStyles((theme) => ({
@@ -29,15 +30,20 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const types = { int: 'INT', float: 'FLOAT', char: 'VARCHAR' };
+const types = { INT: 'INT', FLOAT: 'FLOAT', CHAR: 'VARCHAR' };
 
 export default function AppendTaskForm() {
   const dispatch = useDispatch();
   const classes = useStyles();
 
-  const { data, taskName, minPeriod, passCriteria, description } = useSelector(
-    (state) => state.taskData
-  );
+  const {
+    data,
+    taskName,
+    tableName,
+    minPeriod,
+    passCriteria,
+    description,
+  } = useSelector((state) => state.taskData);
 
   const isDuplicated = (newData) =>
     data.some(({ columnName: oldName }) => {
@@ -49,13 +55,22 @@ export default function AppendTaskForm() {
   return (
     <>
       <Grid container spacing={3}>
-        <Grid item xs={12}>
+        <Grid item xs={12} sm={6}>
           <TextField
             required
             label="태스크 이름"
             fullWidth
             value={taskName}
             onChange={(e) => dispatch(setTaskName(e.target.value))}
+          />
+        </Grid>
+        <Grid item xs={12} sm={6}>
+          <TextField
+            required
+            label="테이블 제목"
+            fullWidth
+            value={tableName}
+            onChange={(e) => dispatch(setTableName(e.target.value))}
           />
         </Grid>
         <Grid item xs={12} sm={6}>

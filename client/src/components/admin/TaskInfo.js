@@ -31,26 +31,34 @@ const useStyles = makeStyles((theme) => ({
 export default function TaskInfo({ open, handleClose, taskName }) {
   const classes = useStyles();
 
-  // TODO: 완료! 파싱된 데이터 목록 얻어오기
-  const getParsedData = (query) => new Promise((resolve, reject) => {
-    getAdmin('/task/parsed-data', {
-      taskName,
-      per_page: query.pageSize,
-      page: query.page + 1,
-    }).then((response) => {
-      const { data, page, totalCount } = response.data;
-      resolve({
-        data, page: page - 1, totalCount,
-      });
-    }, (error) => {
-      const message = (error.response
-        && error.response.data
-        && error.response.data.message)
-        || error.message
-        || error.toString();
-      reject(message);
+  // TODO: 파싱된 데이터 목록 얻어오기
+  const getParsedData = (query) =>
+    new Promise((resolve, reject) => {
+      getAdmin('/task/parsed-data', {
+        taskName,
+        per_page: query.pageSize,
+        page: query.page + 1,
+      }).then(
+        (response) => {
+          const { data, page, totalCount } = response.data;
+          console.log(response.data);
+          resolve({
+            data,
+            page: page - 1,
+            totalCount,
+          });
+        },
+        (error) => {
+          const message =
+            (error.response &&
+              error.response.data &&
+              error.response.data.message) ||
+            error.message ||
+            error.toString();
+          reject(message);
+        }
+      );
     });
-  });
 
   const handleTableDownload = () => {
     // TODO: 완료! 태스크의 테이블 다운로드
@@ -76,8 +84,7 @@ export default function TaskInfo({ open, handleClose, taskName }) {
     >
       <DialogContent>
         <Typography variant="h5" component="h2" className={classes.title}>
-          {taskName}
-          의 데이터 테이블
+          {taskName}의 데이터 테이블
         </Typography>
         <Button
           variant="contained"

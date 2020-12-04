@@ -5,6 +5,7 @@ import {
   SET_MIN_PERIOD,
   SET_PASS_CRITERIA,
   SET_DESCRIPTION,
+  SET_TABLE_NAME,
 } from './ActionTypes';
 
 export const setTaskData = (data) => ({
@@ -34,4 +35,9 @@ export const setPassCriteria = (criteria) => ({
 export const setDescription = (description) => ({
   type: SET_DESCRIPTION,
   payload: description,
+});
+
+export const setTableName = (tableName) => ({
+  type: SET_TABLE_NAME,
+  payload: tableName,
 });
