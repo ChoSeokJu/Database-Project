@@ -19,4 +19,10 @@ router.get(
   evalController.evalContent
 );
 
+router.get(
+  '/parsed-data/download',
+  [authJwt.verifyToken, authJwt.isEval],
+  evalController.downloadParsedData
+);
+
 module.exports = router;
