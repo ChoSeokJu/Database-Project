@@ -38,7 +38,10 @@ export default function Requests() {
         (response) => {
           const { data, page, totalCount } = response.data;
           resolve({
-            data,
+            data: data.map((row) => ({
+              ...row,
+              date: row.date.match(/\d{4}-\d{2}-\d{2}/g)[0],
+            })),
             page: page - 1,
             totalCount,
           });
@@ -86,7 +89,7 @@ export default function Requests() {
                 whiteSpace: 'nowrap',
                 overflow: 'hidden',
                 maxWidth: 100,
-                width: '35%',
+                width: '30%',
               },
             },
             {
