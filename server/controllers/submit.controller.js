@@ -525,14 +525,26 @@ exports.groupSubmitterList = async (req, res) => {
       })
     }
   }
-  newOGDataType.submittedDataCnt = newOGDataType.submitData.length
-  OGDataTypeList.push(newOGDataType)
-  var offset = parseInt(per_page)*(parseInt(page)-1)
-  res.status(200).json({
-    "data": OGDataTypeList.slice(offset, offset+parseInt(per_page)),
-    "score": score,
-    "submittedDataCnt": count,
-    "taskDataTableTupleCnt": taskDataTableTupleCnt,
-    "taskDesc": Desc
-  })
+
+  if (newOGDataType == undefined){
+    return res.status(200).json({
+      "data": [],
+      "score": null,
+      "submittedDataCnt": null,
+      "taskDataTableTupleCnt": null,
+      "taskDesc": Desc
+    })
+  } else {
+    newOGDataType.submittedDataCnt = newOGDataType.submitData.length
+    OGDataTypeList.push(newOGDataType)
+    var offset = parseInt(per_page)*(parseInt(page)-1)
+    return res.status(200).json({
+      "data": OGDataTypeList.slice(offset, offset+parseInt(per_page)),
+      "score": score,
+      "submittedDataCnt": count,
+      "taskDataTableTupleCnt": taskDataTableTupleCnt,
+      "taskDesc": Desc
+    })
+  }
+  
 }

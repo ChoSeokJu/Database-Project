@@ -555,7 +555,9 @@ exports.parsedDataList = (req, res) => {
         });
       });
       return res.status(200).json({
-        output,
+        data: output,
+        page: parseInt(page),
+        totalCount: output.length
       });
     }
     return res.status(400).json({
