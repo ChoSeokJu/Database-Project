@@ -1,7 +1,7 @@
 /* jshint indent: 2 */
 
 const Sequelize = require('sequelize');
-module.exports = function(sequelize, DataTypes) {
+module.exports = function (sequelize, DataTypes) {
   return sequelize.define('task', {
     TaskName: {
       type: DataTypes.STRING(255),
@@ -33,6 +33,10 @@ module.exports = function(sequelize, DataTypes) {
     },
     TimeStamp: {
       type: DataTypes.DATE,
+      allowNull: false
+    },
+    PassCriteria: {
+      type: DataTypes.INTEGER,
       allowNull: false
     }
   }, {

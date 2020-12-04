@@ -72,7 +72,7 @@ exports.makeTask = (req, res) => {
         TableSchema: tableSchema,
         TableRef: tableRef,
         TimeStamp: timestampToDate,
-        passCriteria: passCriteria
+        PassCriteria: passCriteria
       })
         .then((new_task) => {
           if (new_task) {
