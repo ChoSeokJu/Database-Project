@@ -54,7 +54,6 @@ exports.makeTask = (req, res) => {
     minTerm,
     tableName,
     tableSchema,
-    timeStamp,
     passCriteria
   } = req.body;
   const tableRef = './task_data_table';
