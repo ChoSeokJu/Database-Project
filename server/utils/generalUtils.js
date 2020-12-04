@@ -51,7 +51,7 @@ exports.finalScore = function (x) {
     const { Score, Pass } = x.evaluates[0];
 
     return {
-        totalScore: (SubmitCnt + TotalTupleCnt + DuplicatedTupleCnt + NullRatio + Score),
+        totalScore: (SubmitCnt + TotalTupleCnt + DuplicatedTupleCnt + Object.values(NullRatio).reduce((a,b)=>a+b, 0) + Score),
         Pass,
     };
 };

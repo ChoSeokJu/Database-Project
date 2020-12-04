@@ -109,20 +109,14 @@ exports.saveToTaskTable = async function (req, res) {
     attributes: ['Mapping'],
   });
 
-  const taskDataRef = await task.findOne({
+  const { TableRef, TableName } = await task.findOne({
     where: {
       // TaskName: "Fundamentals",
-      TaskName, // this is for deployment
+      TaskName: TaskName, // this is for deployment
     },
-    attributes: ['TableRef'],
+    attributes: ['TableRef','TableName'],
   });
 
-  console.log(taskDataRef.TableRef);
-  console.log(mapping.Mapping);
-
-  // const mock_filepath = "parseduploads/f5f7c6037bb2ed0ef7a0e1f78115f16c"
-
-  // const parsedData = await csv({ noheader: false }).fromFile(mock_filepath)
   const parsedData = await csv({ noheader: false }).fromFile(DataRef); // this is for deployment
   parsedData.forEach((row) => {
     row.Sid = Sid;
@@ -130,19 +124,17 @@ exports.saveToTaskTable = async function (req, res) {
 
   const parsedHeader = Object.keys(parsedData[0]); // or Object.values(mapping.Mapping)
 
-  mock_taskDataRef = 'task_data_table/f5f7c6037bb2ed0ef7a0e1f78115f16c';
-
   const write = async (fileName, fields, data) => {
     // ! take note that here, the data is being appended in the order in which they are written and not in the correct "mapping".
     // ! make sure that they are written in order when they are saved
     rows = json2csv(data, { header: false });
     const newRows = rows.replace(/[\\"]/g, '');
 
-    await fs.appendFileSync(fileName, '\r\n');
     await fs.appendFileSync(fileName, newRows);
+    await fs.appendFileSync(fileName, '\r\n');
   };
-  // await write(mock_taskDataRef, parsedHeader, parsedData)
-  await write(taskDataRef, parsedHeader, parsedData); // this is for deployment
+
+  await write(`${TableRef}/${TableName}`, parsedHeader, parsedData); // this is for deployment
   return res.status(200).json({
     message: '성공적으로 추가되었습니다',
   });

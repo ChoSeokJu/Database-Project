@@ -50,9 +50,9 @@ exports.submitContent = (req, res, next) => {
       }).then((task) => {
         req.body.taskDataTableRef = task.TableRef
         req.body.taskTableName = task.TableName
-        req.body.taskSchema = task.Schema
+        req.body.taskSchema = task.TableSchema[0]
         req.body.Mapping = og_data_type.Mapping[0]
-        req.body.ogSchema = og_data_type.Schema[0]
+        req.body.ogSchema = og_data_type.Schema
         next()
       })
     } else {
@@ -65,7 +65,7 @@ exports.submitContent = (req, res, next) => {
 
 exports.quantAssess = async function (req, res, next) {
   const { Mapping, ogSchema, taskDataTableRef, taskTableName, taskSchema } = req.body
-  const data = await csv({ noheader: false }).fromFile(req.file.path)  // set this to be true for csvSanityCheck
+  const data = await csv({ noheader: false }).fromFile(req.file.path)
   const taskCol = Object.values(
     (await csv({ noheader: true }).fromFile(`${taskDataTableRef}/${taskTableName}`))[0]
   )
@@ -96,7 +96,7 @@ exports.quantAssess = async function (req, res, next) {
           "message": "submitted csv file has wrong data type"
         })
       }
-      nullCount[col] += (row[Mapping[col]] == "null" || row[Mapping[col]] === undefined)
+      nullCount[col] += (row[Mapping[col]] == "null" || row[Mapping[col]] == undefined || row[Mapping[col]] == "")
       parsedRows[col] = row[Mapping[col]]
     })
     counts[Object.values(row)] = (counts[Object.values(row)] || 0) + 1
@@ -111,6 +111,7 @@ exports.quantAssess = async function (req, res, next) {
   
   // divide each raw null counts to get ratio
   Object.keys(nullCount).forEach((col)=>{nullCount[col] /= (rowCount * taskCol.length) })
+  req.body.NullRatio = nullCount
   req.body.TotalTupleCnt = rowCount
   req.body.DuplicatedTupleCnt = dupCount
 

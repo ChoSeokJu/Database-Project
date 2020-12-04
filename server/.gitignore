@@ -22,3 +22,9 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
+uploads/*
+!uploads/.git_keep
+parseduploads/*
+!parseduploads/.git_keep
+task_data_table/*
+!task_data_table/.git_keep
