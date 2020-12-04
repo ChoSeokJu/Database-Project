@@ -14,7 +14,7 @@ router.get(
 router.post(
   /* user submits data */
   '/submit-data',
-  // [authJwt.verifyToken, authJwt.isSubmit],
+  [authJwt.verifyToken, authJwt.isSubmit],
   upload.single('csv'),
   submitController.submitContent,
   submitController.quantAssess,
@@ -25,7 +25,7 @@ router.post(
 router.get(
   /* list of tasks user is approved for */
   '/task-list',
-  // [authJwt.verifyToken, authJwt.isSubmit],
+  [authJwt.verifyToken, authJwt.isSubmit],
   submitController.getTaskList,
   submitController.getAvgScore
 )
@@ -46,7 +46,7 @@ router.get(
 
 router.get(
   '/submitter-list',
-  // [authJwt.verifyToken, authJwt.isSubmit],
+  // [authJwt.verifyToken],
   submitController.getSubmitterList,
   submitController.groupSubmitterList
 )
