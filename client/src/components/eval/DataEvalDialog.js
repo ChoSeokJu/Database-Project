@@ -29,13 +29,14 @@ import CardContent from '@material-ui/core/CardContent';
 import CardMedia from '@material-ui/core/CardMedia';
 import { green, red, grey } from '@material-ui/core/colors';
 import CloseIcon from '@material-ui/icons/Close';
+import download from 'downloadjs';
 import {
   openAlert,
   openDialog,
   setAlertType,
   setMessage,
 } from '../../actions/message';
-import { postEval, getEval } from '../../services/user.service';
+import { postEval, getEvalBlob } from '../../services/user.service';
 
 const useStyle = makeStyles((theme) => ({
   downloadButton: {
@@ -56,7 +57,7 @@ const useStyle = makeStyles((theme) => ({
   },
 }));
 
-export default function AppendOGDataTypeDialog({ open, handleClose, Pid }) {
+export default function DataEvalDialog({ open, handleClose, Pid }) {
   const dispatch = useDispatch();
   const classes = useStyle();
   const [score, setScore] = useState(10);
@@ -87,20 +88,34 @@ export default function AppendOGDataTypeDialog({ open, handleClose, Pid }) {
         handleClose();
       },
       (error) => {
-        const message = (error.response
-            && error.response.data
-            && error.response.data.message)
-          || error.message
-          || error.toString();
+        const message =
+          (error.response &&
+            error.response.data &&
+            error.response.data.message) ||
+          error.message ||
+          error.toString();
         dispatch(setAlertType('error'));
         dispatch(setMessage(message));
         dispatch(openAlert());
-      },
+      }
     );
   };
 
   const handleDownload = () => {
-    getEval('/parsed-data/download', { Pid });
+    console.log(Pid);
+    getEvalBlob('/parsed-data/download', { Pid })
+      .then((blob) => download(blob))
+      .catch((error) => {
+        const message =
+          (error.response &&
+            error.response.data &&
+            error.response.data.message) ||
+          error.message ||
+          error.toString();
+        dispatch(setAlertType('error'));
+        dispatch(setMessage(message));
+        dispatch(openAlert());
+      });
   };
 
   return (
