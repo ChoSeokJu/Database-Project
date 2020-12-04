@@ -540,8 +540,9 @@ exports.getTaskInfo = async (req, res) => {
     },
   });
   const parsedData = await csv({ noheader: false }).fromFile(`${task.TableRef}/${task.TableName}`);
-  task.tupleCount = parsedData.length;
+  console.log(task.tupleCount)
   return res.status(200).json({
-    task
+    task,
+    tupleCount: parsedData.length
   })
 }
