@@ -50,8 +50,14 @@ export default function TaskTableSubmit() {
       }).then(
         (response) => {
           const { data, page, totalCount } = response.data;
+          const dataParsed = data.map((row) => ({
+            taskName: row.TaskName,
+            OGDataType: row.og_data_type.Name,
+            submitID: row.user.ID,
+            submitDate: row.TimeStamp.match(/\d{4}-\d{2}-\d{2}/g)[0],
+          }));
           resolve({
-            data,
+            data: dataParsed,
             page: page - 1,
             totalCount,
           });
@@ -89,8 +95,9 @@ export default function TaskTableSubmit() {
           }}
           columns={[
             { title: '태스크', field: 'taskName' },
-            { title: '제출자ID', field: 'submitID' },
             { title: '데이터 스키마', field: 'OGDataType' },
+            { title: '제출자ID', field: 'submitID' },
+            { title: '제출 일자', field: 'submitDate' },
             {
               field: 'evaluated',
               align: 'right',
