@@ -189,3 +189,22 @@ exports.evalContent = (req, res) => {
     }
   });
 };
+
+exports.downloadParsedData = (req, res) => {
+  const { Pid } = req.query
+  parsing_data.findByPk(Pid).then((parsing_data) => {
+    if (parsing_data) {
+      res.download(parsing_data.DataRef, 'download.csv', (err) => {
+        if (err) {
+          res.status(404).send('잘못된 요청입니다');
+        } else {
+          console.log(res.headersSent);
+        }
+      });
+    } else {
+      res.status(400).json({
+        message: '파싱데이터를 찾을 수 없습니다',
+      });
+    }
+  });
+};

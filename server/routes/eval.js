@@ -8,15 +8,21 @@ const router = express.Router();
 
 router.post(
   '/',
-  // [authJwt.verifyToken, authJwt.isEval],
+  [authJwt.verifyToken, authJwt.isEval],
   evalController.evaluate,
   evalController.saveToTaskTable
 )
 
 router.get(
   '/',
-  // [authJwt.verifyToken, authJwt.isEval],
+  [authJwt.verifyToken, authJwt.isEval],
   evalController.evalContent
+);
+
+router.get(
+  '/parsed-data/download',
+  [authJwt.verifyToken, authJwt.isEval],
+  evalController.downloadParsedData
 );
 
 module.exports = router;

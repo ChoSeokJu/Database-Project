@@ -409,7 +409,7 @@ exports.getOgData = (req, res) => {
 };
 
 exports.getSubmitterList = (req, res, next) => {
-  const { Uid, taskName } = req.query
+  const { Uid, taskName, per_page, page } = req.query
   if (Uid == undefined){
     Uid = req.Uid 
   }
@@ -429,7 +429,6 @@ exports.getSubmitterList = (req, res, next) => {
             where:{
               TaskName: taskName
             },
-            // add order by taskName
             attributes: ["Name"]
           },
           {
@@ -440,7 +439,9 @@ exports.getSubmitterList = (req, res, next) => {
         ],
         where: {
           Sid: user.Uid
-        }
+        },
+        offset: parseInt(per_page) * (parseInt(page)-1),
+        limit: parseInt(per_page)
       }).then((p_data)=>{
         if (p_data){
           req.body.p_data = p_data
@@ -526,6 +527,7 @@ exports.groupSubmitterList = async (req, res) => {
       })
     }
   }
+  newOGDataType.submittedDataCnt = newOGDataType.submitData.length
   OGDataTypeList.push(newOGDataType)
   res.status(200).json({
     "data": OGDataTypeList,
