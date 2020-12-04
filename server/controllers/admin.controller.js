@@ -385,7 +385,7 @@ exports.requestList = (req, res) => {
 };
 
 exports.parsedDataList = (req, res) => {
-  const { taskName, per_page, page } = req.body;
+  const { taskName, per_page, page } = req.query;
   const output = [];
   Parsing_data.findAll({
     include: [
@@ -405,8 +405,8 @@ exports.parsedDataList = (req, res) => {
     where: {
       TaskName: taskName,
     },
-    offset: per_page * (page - 1),
-    limit: per_page,
+    offset: parseInt(per_page) * (parseInt(page) - 1),
+    limit: parseInt(per_page),
   }).then((parsing_data) => {
     if (parsing_data) {
       parsing_data.forEach((p_data) => {
