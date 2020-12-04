@@ -29,6 +29,7 @@ const searchCriteria = [
   { label: '전체', value: 'all' },
   { label: '아이디', value: 'ID' },
   { label: '참여중인 태스크', value: 'task' },
+  { label: '나이대', value: 'age' },
   { label: '성별', value: 'Gender' },
 ];
 
