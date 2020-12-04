@@ -506,7 +506,8 @@ exports.infoSearch = (req, res) => {
       for (let i = 0; i < result.length; i++) {
         const check = new Date(result[i].Bdate)
         const age = Math.floor(today.getFullYear() - check.getFullYear() + 1);
-        if (Math.floor(age/10)*10 > search + 9 || Math.floor(age/10)*10 < search) {
+        console.log(Math.floor(age/10)*10)
+        if (Math.floor(age/10)*10 != parseInt(search)) {
           continue;
         }
         len += 1
