@@ -50,11 +50,13 @@ export default function TaskTableSubmit() {
       }).then(
         (response) => {
           const { data, page, totalCount } = response.data;
+          console.log(data);
           const dataParsed = data.map((row) => ({
             taskName: row.TaskName,
             OGDataType: row.og_data_type.Name,
             submitID: row.user.ID,
             submitDate: row.TimeStamp.match(/\d{4}-\d{2}-\d{2}/g)[0],
+            Pid: row.Pid,
           }));
           resolve({
             data: dataParsed,

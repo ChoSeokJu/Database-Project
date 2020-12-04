@@ -19,10 +19,24 @@ const getAdmin = (url, params = {}) =>
     params,
   });
 
+const getAdminBlob = (url, params = {}) =>
+  axios.get(`${API_URL}admin${url}`, {
+    headers: authHeader(),
+    params,
+    responseType: 'blob',
+  });
+
 const getEval = (url, params = {}) =>
   axios.get(`${API_URL}eval${url}`, {
     headers: authHeader(),
     params,
+  });
+
+const getEvalBlob = (url, params = {}) =>
+  axios.get(`${API_URL}eval${url}`, {
+    headers: authHeader(),
+    params,
+    responseType: 'blob',
   });
 
 const getSubmit = (url, params = {}) =>
@@ -44,9 +58,11 @@ export {
   getUser,
   postUser,
   getAdmin,
+  getAdminBlob,
   getEval,
   getSubmit,
   postAdmin,
   postEval,
   postSubmit,
+  getEvalBlob,
 };
