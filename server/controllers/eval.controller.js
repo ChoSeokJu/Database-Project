@@ -195,9 +195,19 @@ exports.evalContent = (req, res) => {
 
 exports.downloadParsedData = (req, res) => {
   const { Pid } = req.query
-  parsing_data.findByPk(Pid).then((parsing_data) => {
+  parsing_data.findOne({
+    where:{
+      Pid: Pid
+    },
+    include: [{
+      model: og_data_type,
+      attributes: ['Name'],
+      required: true,
+    }]
+  }).then((parsing_data) => {
     if (parsing_data) {
-      res.download(parsing_data.DataRef, 'download.csv', (err) => {
+      console.log(parsing_data.og_data_type.Name)
+      res.download(parsing_data.DataRef, `${parsing_data.og_data_type.Name}.csv`, (err) => {
         if (err) {
           res.status(404).send('잘못된 요청입니다');
         } else {

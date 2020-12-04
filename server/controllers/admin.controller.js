@@ -358,7 +358,45 @@ exports.getUserinfoAll = (req, res) => {
 
 exports.infoSearch = (req, res) => {
   const {search, searchCriterion, per_page, page} = req.query;
-  if (searchCriterion == 'ID') {
+  if(searchCriterion == 'all') {
+    User.hasMany(Parsing_data, { foreignKey: 'Sid' });
+    Parsing_data.belongsTo(User, { foreignKey: 'Sid' });
+    User.findAndCountAll({
+      where: {
+        [Op.or]:[
+          {ID: { [Op.substring]: search }},
+          {Gender: { [Op.substring]: search }},
+          {Name: { [Op.substring]: search }}
+        ]
+      }
+    }).then((result1) => {
+      User.findAndCountAll({
+        include: [
+          {
+            model: Parsing_data,
+            attributes: [],
+            where: { TaskName: { [Op.substring]: search } },
+            required: true,
+          },
+        ]
+      }).then((result2) =>{
+        var total = result1.count + result2.count
+        var data2 = result1.rows.concat(result2).slice(parseInt(page)-1,parseInt(page)-1+parseInt(per_page));
+        if (total !== 0) {
+          return res.status(200).json({
+            data: data2,
+            page,
+            totalCount: total
+          });
+        };
+        return res.status(404).json({
+          data: [],
+          page,
+          totalCount:0
+        });
+      })
+    })
+  } else if (searchCriterion == 'ID') {
     User.findAndCountAll({
       where: {
         ID: { [Op.substring]: search }
@@ -555,7 +593,9 @@ exports.parsedDataList = (req, res) => {
         });
       });
       return res.status(200).json({
-        output,
+        data: output,
+        page: parseInt(page),
+        totalCount: output.length
       });
     }
     return res.status(400).json({
@@ -565,9 +605,20 @@ exports.parsedDataList = (req, res) => {
 };
 
 exports.downloadParsedData = (req, res) => {
-  Parsing_data.findByPk(req.body.Pid).then((Parsing_data) => {
-    if (Parsing_data) {
-      res.download(Parsing_data.DataRef, 'download.csv', (err) => {
+  const { Pid } = req.query
+  Parsing_data.findOne({
+    where:{
+      Pid: Pid
+    },
+    include: [{
+      model: og_data_type,
+      attributes: ['Name'],
+      required: true,
+    }]
+  }).then((parsing_data) => {
+    if (parsing_data) {
+      console.log(parsing_data.og_data_type.Name)
+      res.download(parsing_data.DataRef, `${parsing_data.og_data_type.Name}.csv`, (err) => {
         if (err) {
           res.status(404).send('잘못된 요청입니다');
         } else {
