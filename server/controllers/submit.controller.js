@@ -305,7 +305,7 @@ exports.getTaskList = function (req, res, next) {
           results.forEach((result)=>{
             amendedResults.push({
               "taskName": result.task.TaskName,
-              "permit": permitState(result.Permit)
+              "permit": result.Permit
             })
           })
           req.body.response = {
