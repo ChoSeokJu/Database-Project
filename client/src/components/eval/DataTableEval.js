@@ -3,6 +3,7 @@ import MaterialTable from 'material-table';
 import Button from '@material-ui/core/Button';
 import Container from '@material-ui/core/Container';
 import DataEvalDialog from './DataEvalDialog';
+import { getEval } from '../../services/user.service';
 
 export default function TaskTableSubmit() {
   const [openEvalDialog, setOpenEvalDialog] = useState({
@@ -34,61 +35,44 @@ export default function TaskTableSubmit() {
       );
     }
     return (
-      <Button
-        variant="contained"
-        disabled
-      >
+      <Button variant="contained" disabled>
         평가완료
       </Button>
     );
   };
 
-  const getTask = (query) => new Promise((resolve, reject) => {
-    setTimeout(
-      () => resolve({
-        data: [
-          {
-            Pid: 1,
-            taskName: '태스크1',
-            submitID: 'babo1',
-            OGDataType: '스키마1',
-            evaluated: false,
-          },
-          {
-            Pid: 2,
-            taskName: '태스크2',
-            submitID: 'babo1',
-            OGDataType: '스키마2',
-            evaluated: false,
-          },
-          {
-            Pid: 3,
-            taskName: '태스크3',
-            submitID: 'babo1',
-            OGDataType: '스키마3',
-            evaluated: false,
-          },
-          {
-            Pid: 4,
-            taskName: '태스크4',
-            submitID: 'babo1',
-            OGDataType: '스키마4',
-            evaluated: true,
-          },
-          {
-            Pid: 5,
-            taskName: '태스크1',
-            submitID: 'babo1',
-            OGDataType: '스키마1',
-            evaluated: true,
-          },
-        ],
-        page: query.page,
-        totalCount: 100,
-      }),
-      500,
-    );
-  });
+  // TODO: 완료! 평가자 데이터 목록 불러오기
+  const getTask = (query) =>
+    new Promise((resolve, reject) => {
+      getEval('/', {
+        per_page: query.pageSize,
+        page: query.page + 1,
+      }).then(
+        (response) => {
+          const { data, page, totalCount } = response.data;
+          const dataParsed = data.map((row) => ({
+            taskName: row.TaskName,
+            OGDataType: row.og_data_type.Name,
+            submitID: row.user.ID,
+            submitDate: row.TimeStamp.match(/\d{4}-\d{2}-\d{2}/g)[0],
+          }));
+          resolve({
+            data: dataParsed,
+            page: page - 1,
+            totalCount,
+          });
+        },
+        (error) => {
+          const message =
+            (error.response &&
+              error.response.data &&
+              error.response.data.message) ||
+            error.message ||
+            error.toString();
+          reject(message);
+        }
+      );
+    });
 
   return (
     <>
@@ -111,8 +95,9 @@ export default function TaskTableSubmit() {
           }}
           columns={[
             { title: '태스크', field: 'taskName' },
-            { title: '제출자ID', field: 'submitID' },
             { title: '데이터 스키마', field: 'OGDataType' },
+            { title: '제출자ID', field: 'submitID' },
+            { title: '제출 일자', field: 'submitDate' },
             {
               field: 'evaluated',
               align: 'right',
@@ -126,7 +111,6 @@ export default function TaskTableSubmit() {
         handleClose={handleClose}
         Pid={openEvalDialog.Pid}
       />
-
     </>
   );
 }

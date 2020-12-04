@@ -129,7 +129,7 @@ export default function AppendTask(props) {
         dispatch(openAlert());
         return;
       }
-      // TODO: 최종 제출. 제출할 때 Number로 바꿔야 함에 유의하자.
+      // TODO: 완료! 최종 제출. 제출할 때 Number로 바꿔야 함에 유의하자.
       const tableSchema = {};
       data.forEach((row) => {
         tableSchema[row.columnName] = row.type;

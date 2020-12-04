@@ -11,7 +11,7 @@ router.post(
   [authJwt.verifyToken, authJwt.isEval],
   evalController.evaluate,
   evalController.saveToTaskTable
-)
+);
 
 router.get(
   '/',

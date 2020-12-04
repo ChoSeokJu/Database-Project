@@ -55,7 +55,7 @@ exports.makeTask = (req, res) => {
     minTerm,
     tableName,
     tableSchema,
-    passCriteria
+    passCriteria,
   } = req.body;
   const tableRef = './task_data_table';
   const date = new Date();
@@ -72,7 +72,7 @@ exports.makeTask = (req, res) => {
         TableSchema: tableSchema,
         TableRef: tableRef,
         TimeStamp: timestampToDate,
-        PassCriteria: passCriteria
+        PassCriteria: passCriteria,
       })
         .then((new_task) => {
           if (new_task) {
@@ -256,15 +256,14 @@ exports.addOgData = (req, res) => {
           Name: OGDataType,
           Schema: OGDataColumn,
           Mapping: OGDataMapping,
-          TaskName: taskName
+          TaskName: taskName,
         })
         .then((ogdata) => {
           if (ogdata) {
             res.status(200).json({
               message: '원본데이터가 생성 되었습니다',
             });
-          }
-          else {
+          } else {
             res.status(400).json({
               message: '원본데이터를 생성하지 못하였습니다',
             });
@@ -311,20 +310,29 @@ exports.getUserinfoAll = (req, res) => {
   User.hasMany(AVG_SCORE, { foreignKey: 'Sid' });
   AVG_SCORE.belongsTo(User, { foreignKey: 'Sid' });
   const { per_page, page } = req.query;
-  const arr = []
+  const arr = [];
   User.count().then((count) => {
     User.findAll({
-      attributes: ['Uid', 'ID', 'Name', 'Gender', 'UType', 'Bdate', 'PhoneNo', 'Addr'],
+      attributes: [
+        'Uid',
+        'ID',
+        'Name',
+        'Gender',
+        'UType',
+        'Bdate',
+        'PhoneNo',
+        'Addr',
+      ],
       include: [
         {
           model: AVG_SCORE,
           required: false,
-          attributes: ['Score']
-        }
+          attributes: ['Score'],
+        },
       ],
       raw: true,
       offset: parseInt(per_page) * (parseInt(page) - 1),
-      limit: parseInt(per_page)
+      limit: parseInt(per_page),
     }).then((result) => {
       for (let i = 0; i < result.length; i++) {
         arr.push({
@@ -342,31 +350,57 @@ exports.getUserinfoAll = (req, res) => {
       return res.json({
         data: arr,
         page: parseInt(page),
-        totalCount: count
-      })
-    })
-  })
+        totalCount: count,
+      });
+    });
+  });
 };
 
 exports.infoSearch = (req, res) => {
-  const { search, searchCriterion, per_page, page } = req.body;
-  User.count().then((count) => {
-    if (searchCriterion == 'ID') {
-      User.findAll({
+  const { search, searchCriterion, per_page, page } = req.query;
+  if (searchCriterion == 'ID') {
+    User.count().then((count) => {
+      User.findAndCountAll({
         where: {
           ID: { [Op.substring]: search },
         },
-      }).then((result) =>
-        res.status(200).json({
-          result,
-          page,
-          totalCount: count,
-        })
-      );
-    } else if (searchCriterion == 'task') {
-      User.hasMany(Parsing_data, { foreignKey: 'Sid' });
-      Parsing_data.belongsTo(User, { foreignKey: 'Sid' });
-      User.findAll({
+        offset: parseInt(per_page) * parseInt(page - 1),
+        limit: parseInt(per_page),
+      }).then((result) => {
+        User.findAndCountAll({
+          where: {
+            ID: { [Op.substring]: search },
+          },
+        }).then((count) => {
+          if (result.rows.length !== 0) {
+            return res.status(200).json({
+              data: result.rows,
+              page,
+              totalCount: count.rows.length,
+            });
+          }
+          return res.status(404).json({
+            message: '검색 결과가 없습니다.',
+          });
+        });
+      });
+    });
+  } else if (searchCriterion == 'task') {
+    User.hasMany(Parsing_data, { foreignKey: 'Sid' });
+    Parsing_data.belongsTo(User, { foreignKey: 'Sid' });
+    User.findAndCountAll({
+      include: [
+        {
+          model: Parsing_data,
+          attributes: [],
+          where: { TaskName: { [Op.substring]: search } },
+          required: true,
+        },
+      ],
+      offset: parseInt(per_page) * parseInt(page - 1),
+      limit: parseInt(per_page),
+    }).then((result) => {
+      User.findAndCountAll({
         include: [
           {
             model: Parsing_data,
@@ -375,29 +409,89 @@ exports.infoSearch = (req, res) => {
             required: true,
           },
         ],
-      }).then((result) =>
-        res.status(200).json({
-          result,
-          page,
-          totalCount: count,
-        })
-      );
-    } else if (searchCriterion == 'Gender') {
-      User.findAll({
+      }).then((count) => {
+        console.log(count);
+        if (result.rows.lenght !== 0) {
+          return res.status(200).json({
+            data: result.rows,
+            page,
+            totalCount: count.rows.length,
+          });
+        }
+        return res.status(404).json({
+          message: '검색 결과가 없습니다.',
+        });
+      });
+    });
+  } else if (searchCriterion == 'Gender') {
+    User.findAndCountAll({
+      where: {
+        Gender: { [Op.substring]: search },
+      },
+      offset: parseInt(per_page) * parseInt(page - 1),
+      limit: parseInt(per_page),
+    }).then((result) => {
+      User.count({
         where: {
           Gender: { [Op.substring]: search },
         },
-        offset: per_page * (page - 1),
-        limit: per_page,
-      }).then((result) =>
-        res.status(200).json({
-          result,
-          page,
-          totalCount: count,
-        })
-      );
+      }).then((count) => {
+        if (result.rows.length !== 0) {
+          return res.status(200).json({
+            data: result.rows,
+            page,
+            totalCount: result.count,
+          });
+        }
+        return res.status(404).json({
+          message: '검색 결과가 없습니다.',
+        });
+      });
+    });
+  } else if (searchCriterion == 'age') {
+    if (isNaN(parseInt(search))) {
+      return res.status(400).json({
+        message: '숫자를 입력해야 합니다',
+      });
     }
-  });
+
+    const today = new Date();
+    User.findAll().then((result) => {
+      offset = parseInt(per_page) * (parseInt(page) - 1);
+      limit = parseInt(per_page);
+      let len = new Number(0);
+      const temp_arr = [];
+      for (let i = 0; i < result.length; i++) {
+        const check = new Date(result[i].Bdate);
+        const age = today.getFullYear() - check.getFullYear() + 1;
+        if (age > search + 9 || age < search) {
+          continue;
+        }
+        len += 1;
+        temp_arr.push({
+          Uid: result[i].Uid,
+          ID: result[i].ID,
+          Name: result[i].Name,
+          Gender: result[i].Gender,
+          UType: result[i].UType,
+          Bdate: result[i].Bdate,
+          Age: age,
+        });
+      }
+      console.log(temp_arr);
+      if (temp_arr.length === 0) {
+        return res.status(400).json({
+          message: '검색 결과가 없습니다',
+        });
+      }
+      temp_arr.sort((a, b) => a.Age - b.Age);
+      return res.json({
+        data: temp_arr.slice(offset, offset + limit),
+        page,
+        totalCount: len,
+      });
+    });
+  }
 };
 
 exports.requestList = (req, res) => {
@@ -407,6 +501,7 @@ exports.requestList = (req, res) => {
       attributes: ['title', 'content', 'date'],
       offset: parseInt(per_page) * (parseInt(page) - 1),
       limit: parseInt(per_page),
+      order: [['date', 'DESC']],
     }).then((result) => {
       res.status(200).json({
         data: result,
@@ -539,10 +634,12 @@ exports.getTaskInfo = async (req, res) => {
       TaskName: taskName, // this is for deployment
     },
   });
-  const parsedData = await csv({ noheader: false }).fromFile(`${task.TableRef}/${task.TableName}`);
-  console.log(task.tupleCount)
+  const parsedData = await csv({ noheader: false }).fromFile(
+    `${task.TableRef}/${task.TableName}`
+  );
+  console.log(task.tupleCount);
   return res.status(200).json({
     task,
-    tupleCount: parsedData.length
-  })
-}
+    tupleCount: parsedData.length,
+  });
+};
