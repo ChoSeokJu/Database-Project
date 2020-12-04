@@ -244,23 +244,29 @@ exports.getSchema = (req, res) => {
 };
 
 exports.addOgData = (req, res) => {
-  const { taskName, OGDataType, data, desc, schema } = req.body;
+  const { taskName, OGDataType, OGDataColumn, OGDataMapping } = req.body;
   Task.findOne({
     where: { TaskName: taskName },
-  }).then((schema) => {
-    if (schema) {
+  }).then((task) => {
+    if (task) {
       ogData
         .create({
           Name: OGDataType,
-          Mapping: data,
-          TaskName: taskName,
-          Schema: schema,
-          Desc: desc,
+          Schema: OGDataColumn,
+          Mapping: OGDataMapping,
+          TaskName: taskName
         })
         .then((ogdata) => {
-          res.status(200).json({
-            message: '원본데이터가 생성 되었습니다',
-          });
+          if (ogdata) {
+            res.status(200).json({
+              message: '원본데이터가 생성 되었습니다',
+            });
+          }
+          else {
+            res.status(400).json({
+              message: '원본데이터를 생성하지 못하였습니다',
+            });
+          }
         });
     } else {
       return res.status(400).json({
@@ -409,7 +415,7 @@ exports.requestList = (req, res) => {
 };
 
 exports.parsedDataList = (req, res) => {
-  const { taskName, per_page, page } = req.body;
+  const { taskName, per_page, page } = req.query;
   const output = [];
   Parsing_data.findAll({
     include: [
@@ -429,8 +435,8 @@ exports.parsedDataList = (req, res) => {
     where: {
       TaskName: taskName,
     },
-    offset: per_page * (page - 1),
-    limit: per_page,
+    offset: parseInt(per_page) * (parseInt(page) - 1),
+    limit: parseInt(per_page),
   }).then((parsing_data) => {
     if (parsing_data) {
       parsing_data.forEach((p_data) => {

@@ -29,7 +29,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const types = { int: 'INT', float: 'FLOAT', char: 'CHAR' };
+const types = { int: 'INT', float: 'FLOAT', char: 'VARCHAR' };
 
 export default function AppendTaskForm() {
   const dispatch = useDispatch();
