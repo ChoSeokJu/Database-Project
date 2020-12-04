@@ -141,10 +141,11 @@ exports.saveToTaskTable = async function (req, res) {
 };
 
 exports.evalContent = (req, res) => {
-  const { username, per_page, page } = req.query;
+  const { per_page, page } = req.query;
+  const { Uid } = req;
   user.findOne({
     where: {
-      ID: username,
+      Uid: Uid
     },
     attributes: ['Uid'],
   }).then((user_id) => {
@@ -177,6 +178,8 @@ exports.evalContent = (req, res) => {
       }).then((parsing_data) => {
         res.status(200).json({
           data: parsing_data,
+          page: page,
+          totalCount: parsing_data.length
         });
       });
     } else {
