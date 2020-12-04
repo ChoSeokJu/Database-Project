@@ -10,10 +10,18 @@ import { getAdmin } from '../../services/user.service';
 
 export default function Requests() {
   const [selectedRow, setSelectedRow] = useState(null);
-  const [openRequest, setOpenRequest] = useState({ open: false, title: '', content: '' });
+  const [openRequest, setOpenRequest] = useState({
+    open: false,
+    title: '',
+    content: '',
+  });
 
   const onRowClick = (event, rowData) => {
-    setOpenRequest({ open: true, title: rowData.title, content: rowData.content });
+    setOpenRequest({
+      open: true,
+      title: rowData.title,
+      content: rowData.content,
+    });
   };
 
   const handleClose = () => {
@@ -21,24 +29,31 @@ export default function Requests() {
   };
 
   // TODO: 완료! Request 목록 받아오기
-  const getRequests = (query) => new Promise((resolve, reject) => {
-    getAdmin('/request', {
-      per_page: query.pageSize,
-      page: query.page + 1,
-    }).then((response) => {
-      const { data, page, totalCount } = response.data;
-      resolve({
-        data, page: page - 1, totalCount,
-      });
-    }, (error) => {
-      const message = (error.response
-        && error.response.data
-        && error.response.data.message)
-        || error.message
-        || error.toString();
-      reject(message);
+  const getRequests = (query) =>
+    new Promise((resolve, reject) => {
+      getAdmin('/request', {
+        per_page: query.pageSize,
+        page: query.page + 1,
+      }).then(
+        (response) => {
+          const { data, page, totalCount } = response.data;
+          resolve({
+            data,
+            page: page - 1,
+            totalCount,
+          });
+        },
+        (error) => {
+          const message =
+            (error.response &&
+              error.response.data &&
+              error.response.data.message) ||
+            error.message ||
+            error.toString();
+          reject(message);
+        }
+      );
     });
-  });
 
   return (
     <>
@@ -52,7 +67,8 @@ export default function Requests() {
             toolbar: false,
             sorting: false,
             rowStyle: (rowData) => ({
-              backgroundColor: (selectedRow === rowData.tableData.id) ? '#EEE' : '#FFF',
+              backgroundColor:
+                selectedRow === rowData.tableData.id ? '#EEE' : '#FFF',
             }),
           }}
           localization={{
@@ -65,12 +81,23 @@ export default function Requests() {
               title: '제목',
               field: 'title',
               search: false,
+              cellStyle: {
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+                overflow: 'hidden',
+                maxWidth: 100,
+                width: '35%',
+              },
             },
             {
               title: '내용',
               field: 'content',
               cellStyle: {
-                textOverflow: 'ellipsis', whiteSpace: 'nowrap', overflow: 'hidden', maxWidth: 500, width: '60%',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+                overflow: 'hidden',
+                maxWidth: 500,
+                width: '50%',
               },
               search: false,
             },
@@ -100,7 +127,11 @@ export default function Requests() {
         fullWidth
       >
         <DialogContent>
-          <TaskRequest readOnly title={openRequest.title} content={openRequest.content} />
+          <TaskRequest
+            readOnly
+            title={openRequest.title}
+            content={openRequest.content}
+          />
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose} color="primary" variant="contained">

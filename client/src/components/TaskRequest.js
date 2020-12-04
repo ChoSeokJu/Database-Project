@@ -6,7 +6,15 @@ import CssBaseline from '@material-ui/core/CssBaseline';
 import Grid from '@material-ui/core/Grid';
 import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
+import { useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
+import { postUser } from '../services/user.service';
+import {
+  setMessage,
+  openAlert,
+  setAlertType,
+  openDialog,
+} from '../actions/message';
 
 const useStyles = makeStyles((theme) => ({
   submit: {
@@ -16,28 +24,44 @@ const useStyles = makeStyles((theme) => ({
 
 export default function TaskRequest({ readOnly = false, title, content }) {
   const classes = useStyles();
+  const dispatch = useDispatch();
 
-  const [tasktitle, setTasktitle] = useState('');
-  const [taskcontent, setTaskcontent] = useState('');
+  const [taskTitle, setTaskTitle] = useState('');
+  const [taskContent, setTaskContent] = useState('');
 
   useEffect(() => {
     if (readOnly) {
-      setTasktitle(title);
-      setTaskcontent(content);
+      setTaskTitle(title);
+      setTaskContent(content);
     }
   }, [readOnly, title, content]);
 
   const onTasktitleChange = (e) => {
-    setTasktitle(e.target.value);
+    setTaskTitle(e.target.value);
   };
 
   const onTaskcontentChange = (e) => {
-    setTaskcontent(e.target.value);
+    setTaskContent(e.target.value);
   };
 
   // TODO: 태스크 요청
-  const handleSubmit = (e) => {
-    alert('태스크를 요청하시겠습니까?');
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await postUser('/request-task', {
+        title: taskTitle,
+        content: taskContent,
+      });
+      setTaskTitle('');
+      setTaskContent('');
+      dispatch(setAlertType('success'));
+      dispatch(setMessage('태스크를 요청했습니다'));
+      dispatch(openAlert());
+    } catch (error) {
+      dispatch(setAlertType('error'));
+      dispatch(setMessage(error.message));
+      dispatch(openAlert());
+    }
   };
 
   return (
@@ -46,7 +70,7 @@ export default function TaskRequest({ readOnly = false, title, content }) {
         <Typography component="h1" variant="h4" align="left">
           {!readOnly && '태스크 요청'}
         </Typography>
-        <form noValidate onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit}>
           <TextField
             variant="standard"
             margin="normal"
@@ -58,7 +82,7 @@ export default function TaskRequest({ readOnly = false, title, content }) {
             autoComplete="tasktitle"
             autoFocus
             onChange={onTasktitleChange}
-            value={tasktitle}
+            value={taskTitle}
             InputProps={{
               readOnly,
             }}
@@ -72,7 +96,7 @@ export default function TaskRequest({ readOnly = false, title, content }) {
             name="taskcontent"
             autoComplete="taskcontent"
             onChange={onTaskcontentChange}
-            value={taskcontent}
+            value={taskContent}
             placeholder={`태스크 설명을 입력해주세요.${'\n\n'}- 데이터 개요${'\n'}- 데이터 제출 최소 주기${'\n'}- 데이터 스키마${'\n'}- 기타`}
             multiline
             rows={10}
