@@ -242,7 +242,7 @@ exports.submitApply = function (req, res) {
     works_on.create({
       Sid: user.Uid,
       TaskName: taskName,
-      Permit: 0
+      Permit: "pending"
     }).then((works_on) => {
       if (works_on) {
         return res.status(200).json({
@@ -422,6 +422,7 @@ exports.getSubmitterList = (req, res, next) => {
             where:{
               TaskName: taskName
             },
+            // add order by taskName
             attributes: ["Name"]
           },
           {
@@ -435,9 +436,6 @@ exports.getSubmitterList = (req, res, next) => {
         }
       }).then((p_data)=>{
         if (p_data){
-          // return res.status(200).json({
-          //   p_data
-          // })
           req.body.p_data = p_data
           next()
           

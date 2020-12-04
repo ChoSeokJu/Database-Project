@@ -14,7 +14,7 @@ router.get(
 router.post(
   /* user submits data */
   '/submit-data',
-  [authJwt.verifyToken, authJwt.isSubmit],
+  // [authJwt.verifyToken, authJwt.isSubmit],
   upload.single('csv'),
   submitController.submitContent,
   submitController.quantAssess,
