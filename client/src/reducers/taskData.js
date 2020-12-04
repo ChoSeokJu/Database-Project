@@ -1,4 +1,12 @@
-import { SET_TASK_DATA, CLEAR_TASK_DATA } from '../actions/ActionTypes';
+import {
+  SET_TASK_DATA,
+  CLEAR_TASK_DATA,
+  SET_TASK_NAME,
+  SET_MIN_PERIOD,
+  SET_PASS_CRITERIA,
+  SET_DESCRIPTION,
+  SET_TABLE_NAME,
+} from '../actions/ActionTypes';
 
 const initialState = {
   data: [],
@@ -6,12 +14,8 @@ const initialState = {
   minPeriod: '',
   passCriteria: '',
   description: '',
+  tableName: '',
 };
-
-export const SET_TASK_NAME = 'SET_TASK_NAME';
-export const SET_MIN_PERIOD = 'SET_MIN_PERIOD';
-export const SET_PASS_CRITERIA = 'SET_PASS_CRITERIA';
-export const SET_DESCRIPTION = 'SET_DESCRIPTION';
 
 export default function (state = initialState, action) {
   const { type, payload } = action;
@@ -43,6 +47,11 @@ export default function (state = initialState, action) {
       return {
         ...state,
         description: payload,
+      };
+    case SET_TABLE_NAME:
+      return {
+        ...state,
+        tableName: payload,
       };
     default:
       return state;
