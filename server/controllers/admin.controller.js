@@ -31,24 +31,35 @@ exports.adminContent = (req, res) => {
 
 exports.getTask = (req, res) => {
   const { per_page, page } = req.query;
-  Task.count().then((count) => Task.findAll({ attributes: ['taskName'], offset: parseInt(per_page) * (parseInt(page) - 1), limit: parseInt(per_page) })
-    .then((task) => {
+  Task.count().then((count) =>
+    Task.findAll({
+      attributes: ['taskName'],
+      offset: parseInt(per_page) * (parseInt(page) - 1),
+      limit: parseInt(per_page),
+    }).then((task) => {
       res.status(200).json({
         data: task,
         page: parseInt(page),
         totalCount: count,
       });
-    }));
+    })
+  );
 };
 
 exports.makeTask = (req, res) => {
   // make task & csv file
-  const { taskName, desc, minTerm, tableName, tableSchema, timeStamp } = req.body;
-  const tableRef = "./task_data_table";
+  const {
+    taskName,
+    desc,
+    minTerm,
+    tableName,
+    tableSchema,
+    timeStamp,
+  } = req.body;
+  const tableRef = './task_data_table';
   const date = new Date();
   const dateToTimestamp = date.getTime();
   const timestampToDate = new Date(dateToTimestamp);
-
 
   Task.findOne({ where: { TaskName: taskName } }).then((task) => {
     if (!task) {
@@ -59,29 +70,31 @@ exports.makeTask = (req, res) => {
         TableName: tableName,
         TableSchema: tableSchema,
         TableRef: tableRef,
-        TimeStamp: timestampToDate
-      }).then((new_task) => {
-        if (new_task) {
-          var csvHead = []
-          columns = Object.keys(tableSchema[0])
-          columns.push("Sid")
-          for (var i = 0; i < columns.length; i++) {
-            csvHead.push({ id: columns[i], title: columns[i] })
+        TimeStamp: timestampToDate,
+      })
+        .then((new_task) => {
+          if (new_task) {
+            const csvHead = [];
+            columns = Object.keys(tableSchema[0]);
+            columns.push('Sid');
+            for (let i = 0; i < columns.length; i++) {
+              csvHead.push({ id: columns[i], title: columns[i] });
+            }
+            const csvWriter = createCsvWriter({
+              path: `${tableRef}/${taskName}.csv`,
+              header: csvHead,
+            });
+            csvWriter.writeRecords([]);
+            return res.status(200).json({
+              message: '테스크가 생성되었습니다.',
+            });
           }
-          const csvWriter = createCsvWriter({
-            path: `${tableRef}/${taskName}.csv`,
-            header: csvHead,
+        })
+        .catch((err) => {
+          res.status(500).json({
+            message: err.message,
           });
-          csvWriter.writeRecords([]);
-          return res.status(200).json({
-            message: '테스크가 생성되었습니다.',
-          });
-        }
-      }).catch((err) => {
-        res.status(500).json({
-          message: err.message,
         });
-      });
     } else {
       return res.status(404).json({
         message: '테스크 이름이 이미 존재합니다.',
@@ -90,59 +103,62 @@ exports.makeTask = (req, res) => {
   });
 };
 
-
 exports.approveUser = (req, res) => {
   const { taskName, Uid } = req.body;
-  Works_on.findOne({ where: { TaskName: taskName, Sid: Uid } }).then((result) => {
-    if (result.get('Permit') === "pending") {
-      result.set('Permit', "approved");
-      result.save();
-      return res.status(200).json({
-        message: '해당 Task의 참여를 승인했습니다',
+  Works_on.findOne({ where: { TaskName: taskName, Sid: Uid } })
+    .then((result) => {
+      if (result.get('Permit') === 'pending') {
+        result.set('Permit', 'approved');
+        result.save();
+        return res.status(200).json({
+          message: '해당 Task의 참여를 승인했습니다',
+        });
+      }
+      if (result.get('Permit') === 'approved') {
+        return res.status(400).json({
+          message: '해당 유저는 이미 승인 되었습니다',
+        });
+      }
+      if (result.get('Permit') === 'rejected') {
+        return res.status(400).json({
+          message: '해당 유저는 이미 거절 되었습니다',
+        });
+      }
+    })
+    .catch((err) => {
+      res.status(500).json({
+        message: '해당 정보는 존재하지 않습니다',
       });
-    }
-    if (result.get('Permit') === "approved") {
-      return res.status(400).json({
-        message: '해당 유저는 이미 승인 되었습니다',
-      });
-    }
-    if (result.get('Permit') === "rejected") {
-      return res.status(400).json({
-        message: '해당 유저는 이미 거절 되었습니다',
-      });
-    }
-  }).catch((err) => {
-    res.status(500).json({
-      message: '해당 정보는 존재하지 않습니다',
     });
-  });
 };
 
 exports.rejectUser = (req, res) => {
   const { taskName, Uid } = req.body;
-  Works_on.findOne({ where: { TaskName: taskName, Sid: Uid } }).then((result) => {
-    if (result.get('Permit') === "pending") {
-      result.set('Permit', "rejected");
-      result.save();
-      return res.status(200).json({
-        message: '해당 Task의 참여를 거절했습니다',
+  Works_on.findOne({ where: { TaskName: taskName, Sid: Uid } })
+    .then((result) => {
+      if (result.get('Permit') === 'pending') {
+        result.set('Permit', 'rejected');
+        result.save();
+        return res.status(200).json({
+          message: '해당 Task의 참여를 거절했습니다',
+        });
+      }
+      if (result.get('Permit') === 'approved') {
+        return res.status(400).json({
+          message: '해당 유저는 이미 승인 되었습니다',
+        });
+      }
+      if (result.get('Permit') === 'rejected') {
+        return res.status(400).json({
+          message: '해당 유저는 이미 거절 되었습니다',
+        });
+      }
+    })
+    .catch((err) => {
+      res.status(500).json({
+        message: '해당 정보는 존재하지 않습니다',
       });
-    }
-    if (result.get('Permit') === "approved") {
-      return res.status(400).json({
-        message: '해당 유저는 이미 승인 되었습니다',
-      });
-    }
-    if (result.get('Permit') === "rejected") {
-      return res.status(400).json({
-        message: '해당 유저는 이미 거절 되었습니다',
-      });
-    }
-  }).catch((err) => {
-    res.status(500).json({
-      message: '해당 정보는 존재하지 않습니다',
     });
-  });
 };
 
 exports.pendingUser = (req, res) => {
@@ -151,29 +167,31 @@ exports.pendingUser = (req, res) => {
   const arr = [];
   const { taskName, per_page, page } = req.query;
   Task.count({
-    where: { TaskName: taskName }
-  }).then(((count) => Works_on.findAll({
-    attributes: [],
-    include: [
-      {
-        model: User,
-        attributes: ['Uid', 'ID', 'Name'],
-        required: true,
-      },
-    ],
-    where: { TaskName: taskName, Permit: "pending" },
-    offset: parseInt(per_page) * (parseInt(page) - 1),
-    limit: parseInt(per_page),
-  }).then((result) => {
-    for (let i = 0; i < result.length; i++) {
-      arr.push(result[i].user);
-    }
-    res.json({
-      data: arr,
-      page: parseInt(page),
-      totalCount: count,
-    });
-  })));
+    where: { TaskName: taskName },
+  }).then((count) =>
+    Works_on.findAll({
+      attributes: [],
+      include: [
+        {
+          model: User,
+          attributes: ['Uid', 'ID', 'Name'],
+          required: true,
+        },
+      ],
+      where: { TaskName: taskName, Permit: 'pending' },
+      offset: parseInt(per_page) * (parseInt(page) - 1),
+      limit: parseInt(per_page),
+    }).then((result) => {
+      for (let i = 0; i < result.length; i++) {
+        arr.push(result[i].user);
+      }
+      res.json({
+        data: arr,
+        page: parseInt(page),
+        totalCount: count,
+      });
+    })
+  );
 };
 
 exports.approvedUser = (req, res) => {
@@ -182,29 +200,31 @@ exports.approvedUser = (req, res) => {
   const arr = [];
   const { taskName, per_page, page } = req.query;
   Task.count({
-    where: { TaskName: taskName }
-  }).then(((count) => Works_on.findAll({
-    attributes: [],
-    include: [
-      {
-        model: User,
-        attributes: ['Uid', 'ID', 'Name'],
-        required: true,
-      },
-    ],
-    where: { TaskName: taskName, Permit: "approved" },
-    offset: parseInt(per_page) * (parseInt(page) - 1),
-    limit: parseInt(per_page),
-  }).then((result) => {
-    for (let i = 0; i < result.length; i++) {
-      arr.push(result[i].user);
-    }
-    res.json({
-      data: arr,
-      page: parseInt(page),
-      totalCount: count,
-    });
-  })));
+    where: { TaskName: taskName },
+  }).then((count) =>
+    Works_on.findAll({
+      attributes: [],
+      include: [
+        {
+          model: User,
+          attributes: ['Uid', 'ID', 'Name'],
+          required: true,
+        },
+      ],
+      where: { TaskName: taskName, Permit: 'approved' },
+      offset: parseInt(per_page) * (parseInt(page) - 1),
+      limit: parseInt(per_page),
+    }).then((result) => {
+      for (let i = 0; i < result.length; i++) {
+        arr.push(result[i].user);
+      }
+      res.json({
+        data: arr,
+        page: parseInt(page),
+        totalCount: count,
+      });
+    })
+  );
 };
 
 exports.getSchema = (req, res) => {
@@ -213,36 +233,35 @@ exports.getSchema = (req, res) => {
   Task.findAll({
     attributes: ['TableSchema'],
     where: { TaskName: taskName },
-  })
-    .then((columns) => {
-      for (let i = 0; i < Object.keys(columns[0].TableSchema[0]).length; i++) {
-        arr.push({ columnName: Object.keys(columns[0].TableSchema[0])[i] });
-      }
-      res.status(200).json({
-        data: arr,
-      });
+  }).then((columns) => {
+    for (let i = 0; i < Object.keys(columns[0].TableSchema[0]).length; i++) {
+      arr.push({ columnName: Object.keys(columns[0].TableSchema[0])[i] });
+    }
+    res.status(200).json({
+      data: arr,
     });
+  });
 };
 
 exports.addOgData = (req, res) => {
-  const {
-    taskName, OGDataType, data, desc, schema,
-  } = req.body;
+  const { taskName, OGDataType, data, desc, schema } = req.body;
   Task.findOne({
     where: { TaskName: taskName },
   }).then((schema) => {
     if (schema) {
-      ogData.create({
-        Name: OGDataType,
-        Mapping: data,
-        TaskName: taskName,
-        Schema: schema,
-        Desc: desc,
-      }).then((ogdata) => {
-        res.status(200).json({
-          message: '원본데이터가 생성 되었습니다',
+      ogData
+        .create({
+          Name: OGDataType,
+          Mapping: data,
+          TaskName: taskName,
+          Schema: schema,
+          Desc: desc,
+        })
+        .then((ogdata) => {
+          res.status(200).json({
+            message: '원본데이터가 생성 되었습니다',
+          });
         });
-      });
     } else {
       return res.status(400).json({
         message: '해당 Task가 없습니다',
@@ -256,15 +275,17 @@ exports.evaluatedData = (req, res) => {
   const { Uid, per_page, page } = req.query;
 
   Evaluate.findAll({
-    include: [{
-      model: Parsing_data,
-      required: true,
-    }],
+    include: [
+      {
+        model: Parsing_data,
+        required: true,
+      },
+    ],
     where: {
       Eid: parseInt(Uid),
       Pass: { [Op.ne]: null },
     },
-    offset: (parseInt(per_page) * (parseInt(page) - 1)),
+    offset: parseInt(per_page) * (parseInt(page) - 1),
     limit: parseInt(per_page),
   }).then((evaluate) => {
     if (evaluate) {
@@ -279,47 +300,55 @@ exports.evaluatedData = (req, res) => {
 };
 
 exports.getUserinfo = (req, res) => {
-  const { per_page, page } = req.body;
-  User.count().then((count) => User.findAll({ offset: parseInt(per_page) * parseInt((page - 1)), limit: parseInt(per_page) })
-    .then((user) => {
+  const { per_page, page } = req.query;
+  User.count().then((count) =>
+    User.findAll({
+      offset: parseInt(per_page) * parseInt(page - 1),
+      limit: parseInt(per_page),
+    }).then((user) => {
       res.status(200).json({
         data: user,
-        page: page,
+        page,
         totalCount: count,
       });
-    }));
+    })
+  );
 };
 
 exports.infoSearch = (req, res) => {
-  const {
-    search, searchCriterion, per_page, page,
-  } = req.body;
+  const { search, searchCriterion, per_page, page } = req.body;
   User.count().then((count) => {
     if (searchCriterion == 'ID') {
       User.findAll({
         where: {
           ID: { [Op.substring]: search },
         },
-      }).then((result) => res.status(200).json({
-        result,
-        page,
-        totalCount: count,
-      }));
+      }).then((result) =>
+        res.status(200).json({
+          result,
+          page,
+          totalCount: count,
+        })
+      );
     } else if (searchCriterion == 'task') {
       User.hasMany(Parsing_data, { foreignKey: 'Sid' });
       Parsing_data.belongsTo(User, { foreignKey: 'Sid' });
       User.findAll({
-        include: [{
-          model: Parsing_data,
-          attributes: [],
-          where: { TaskName: { [Op.substring]: search } },
-          required: true,
-        }],
-      }).then((result) => res.status(200).json({
-        result,
-        page,
-        totalCount: count,
-      }));
+        include: [
+          {
+            model: Parsing_data,
+            attributes: [],
+            where: { TaskName: { [Op.substring]: search } },
+            required: true,
+          },
+        ],
+      }).then((result) =>
+        res.status(200).json({
+          result,
+          page,
+          totalCount: count,
+        })
+      );
     } else if (searchCriterion == 'Gender') {
       User.findAll({
         where: {
@@ -327,45 +356,52 @@ exports.infoSearch = (req, res) => {
         },
         offset: per_page * (page - 1),
         limit: per_page,
-      }).then((result) => res.status(200).json({
-        result,
-        page,
-        totalCount: count,
-      }));
+      }).then((result) =>
+        res.status(200).json({
+          result,
+          page,
+          totalCount: count,
+        })
+      );
     }
   });
 };
 
 exports.requestList = (req, res) => {
   const { per_page, page } = req.query;
-  Requests.count().then((count) => Requests.findAll({
-    attributes: ['title', 'content', 'date'],
-    offset: parseInt(per_page) * (parseInt(page) - 1),
-    limit: parseInt(per_page),
-  })
-    .then((result) => {
+  Requests.count().then((count) =>
+    Requests.findAll({
+      attributes: ['title', 'content', 'date'],
+      offset: parseInt(per_page) * (parseInt(page) - 1),
+      limit: parseInt(per_page),
+    }).then((result) => {
       res.status(200).json({
         data: result,
         page: parseInt(page),
         totalCount: count,
       });
-    }));
+    })
+  );
 };
 
 exports.parsedDataList = (req, res) => {
   const { taskName, per_page, page } = req.body;
   const output = [];
   Parsing_data.findAll({
-    include: [{
-      model: Evaluate,
-      required: true,
-    }, {
-      model: User,
-      required: true,
-    }, {
-      model: og_data_type,
-      required: true,
-    }],
+    include: [
+      {
+        model: Evaluate,
+        required: true,
+      },
+      {
+        model: User,
+        required: true,
+      },
+      {
+        model: og_data_type,
+        required: true,
+      },
+    ],
     where: {
       TaskName: taskName,
     },
@@ -393,9 +429,7 @@ exports.parsedDataList = (req, res) => {
 };
 
 exports.downloadParsedData = (req, res) => {
-  Parsing_data.findByPk(
-    req.body.Pid,
-  ).then((Parsing_data) => {
+  Parsing_data.findByPk(req.body.Pid).then((Parsing_data) => {
     if (Parsing_data) {
       res.download(Parsing_data.DataRef, 'download.csv', (err) => {
         if (err) {
@@ -414,9 +448,7 @@ exports.downloadParsedData = (req, res) => {
 
 exports.downloadTaskData = (req, res) => {
   const { taskName } = req.query;
-  Task.findByPk(
-    taskName,
-  ).then((Task) => {
+  Task.findByPk(taskName).then((Task) => {
     if (Task) {
       fileRef = `${Task.TableRef}/${taskName}.csv`;
       res.download(fileRef, `${Task.TableName}.csv`, (err) => {
@@ -442,9 +474,7 @@ exports.getUserInfo = (req, res) => {
     },
   }).then((User) => {
     if (User) {
-      AVG_SCORE.findByPk(
-        req.body.Uid,
-      ).then((AVG_SCORE) => {
+      AVG_SCORE.findByPk(req.body.Uid).then((AVG_SCORE) => {
         if (AVG_SCORE) {
           return res.status(200).json({
             ID: User.ID,

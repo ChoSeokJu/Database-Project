@@ -19,38 +19,46 @@ export default function TaskUserListTable({ taskName }) {
     postAdmin('/task/approve', {
       taskName,
       Uid: rowData.Uid,
-    }).then((response) => {
-      pendingTableRef.current && pendingTableRef.current.onQueryChange();
-      approvedTableRef.current && approvedTableRef.current.onQueryChange();
-    }, (error) => {
-      const message = (error.response
-        && error.response.data
-        && error.response.data.message)
-        || error.message
-        || error.toString();
-      dispatch(setAlertType('error'));
-      dispatch(setMessage(message));
-      dispatch(openAlert());
-    });
+    }).then(
+      (response) => {
+        pendingTableRef.current && pendingTableRef.current.onQueryChange();
+        approvedTableRef.current && approvedTableRef.current.onQueryChange();
+      },
+      (error) => {
+        const message =
+          (error.response &&
+            error.response.data &&
+            error.response.data.message) ||
+          error.message ||
+          error.toString();
+        dispatch(setAlertType('error'));
+        dispatch(setMessage(message));
+        dispatch(openAlert());
+      }
+    );
   };
   // TODO: 완료! 유저 거절
   const handleRejection = (event, rowData) => {
     postAdmin('/task/reject', {
       taskName,
       Uid: rowData.Uid,
-    }).then((response) => {
-      pendingTableRef.current && pendingTableRef.current.onQueryChange();
-      approvedTableRef.current && approvedTableRef.current.onQueryChange();
-    }, (error) => {
-      const message = (error.response
-        && error.response.data
-        && error.response.data.message)
-        || error.message
-        || error.toString();
-      dispatch(setAlertType('error'));
-      dispatch(setMessage(message));
-      dispatch(openAlert());
-    });
+    }).then(
+      (response) => {
+        pendingTableRef.current && pendingTableRef.current.onQueryChange();
+        approvedTableRef.current && approvedTableRef.current.onQueryChange();
+      },
+      (error) => {
+        const message =
+          (error.response &&
+            error.response.data &&
+            error.response.data.message) ||
+          error.message ||
+          error.toString();
+        dispatch(setAlertType('error'));
+        dispatch(setMessage(message));
+        dispatch(openAlert());
+      }
+    );
   };
 
   const handleUserInfo = (event, rowData) => {
@@ -62,52 +70,67 @@ export default function TaskUserListTable({ taskName }) {
   };
 
   // TODO: 완료! 대기중인 유저 목록 받아오기
-  const getPendingUserList = (query) => new Promise((resolve, reject) => {
-    getAdmin('/task/pending', {
-      taskName,
-      per_page: query.pageSize,
-      page: query.page + 1,
-    }).then((response) => {
-      const { data, page, totalCount } = response.data;
-      resolve({
-        data, page: page - 1, totalCount,
-      });
-    }, (error) => {
-      const message = (error.response
-        && error.response.data
-        && error.response.data.message)
-        || error.message
-        || error.toString();
-      reject(message);
+  const getPendingUserList = (query) =>
+    new Promise((resolve, reject) => {
+      getAdmin('/task/pending', {
+        taskName,
+        per_page: query.pageSize,
+        page: query.page + 1,
+      }).then(
+        (response) => {
+          const { data, page, totalCount } = response.data;
+          resolve({
+            data,
+            page: page - 1,
+            totalCount,
+          });
+        },
+        (error) => {
+          const message =
+            (error.response &&
+              error.response.data &&
+              error.response.data.message) ||
+            error.message ||
+            error.toString();
+          reject(message);
+        }
+      );
     });
-  });
 
   // TODO: 완료! 승인된 유저의 목록 받아오기
-  const getApprovedUserList = (query) => new Promise((resolve, reject) => {
-    getAdmin('/task/approved', {
-      taskName,
-      per_page: query.pageSize,
-      page: query.page + 1,
-    }).then((response) => {
-      const { data, page, totalCount } = response.data;
-      resolve({
-        data, page: page - 1, totalCount,
-      });
-    }, (error) => {
-      const message = (error.response
-        && error.response.data
-        && error.response.data.message)
-        || error.message
-        || error.toString();
-      reject(message);
+  const getApprovedUserList = (query) =>
+    new Promise((resolve, reject) => {
+      getAdmin('/task/approved', {
+        taskName,
+        per_page: query.pageSize,
+        page: query.page + 1,
+      }).then(
+        (response) => {
+          const { data, page, totalCount } = response.data;
+          resolve({
+            data,
+            page: page - 1,
+            totalCount,
+          });
+        },
+        (error) => {
+          const message =
+            (error.response &&
+              error.response.data &&
+              error.response.data.message) ||
+            error.message ||
+            error.toString();
+          reject(message);
+        }
+      );
     });
-  });
 
   const MaterialTableFixed = (props) => (
     <MaterialTable
       {...props}
       components={{
         Container: (props) => <Paper {...props} elevation={0} />,
+        OverlayLoading: (props) => null,
       }}
       options={{
         pageSize: 3,
