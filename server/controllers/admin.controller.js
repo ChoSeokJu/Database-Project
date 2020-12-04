@@ -470,11 +470,11 @@ exports.downloadTaskData = (req, res) => {
 exports.getUserInfo = (req, res) => {
   User.findOne({
     where: {
-      Uid: req.body.Uid,
+      Uid: req.query.Uid,
     },
   }).then((User) => {
     if (User) {
-      AVG_SCORE.findByPk(req.body.Uid).then((AVG_SCORE) => {
+      AVG_SCORE.findByPk(req.query.Uid).then((AVG_SCORE) => {
         if (AVG_SCORE) {
           return res.status(200).json({
             ID: User.ID,
