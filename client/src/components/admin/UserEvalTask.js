@@ -7,8 +7,18 @@ import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
+import { useDispatch } from 'react-redux';
+import download from 'downloadjs';
+import {
+  openAlert,
+  openDialog,
+  setAlertType,
+  setMessage,
+} from '../../actions/message';
+import { getAdmin, getAdminBlob } from '../../services/user.service';
 
-export default function UserSubmitTask({ open, handleClose, Uid, ID }) {
+export default function UserEvalTask({ open, handleClose, Uid, ID }) {
+  const dispatch = useDispatch();
   // TODO: 유저가 제출한 파싱 데이터 목록을 가져오기.
   const getParsedData = (query) =>
     new Promise((resolve, reject) => {
@@ -46,8 +56,25 @@ export default function UserSubmitTask({ open, handleClose, Uid, ID }) {
     });
 
   const handleParsedDataDownload = (event, rowData) => {
-    // TODO: 파싱된 데이터 다운로드 Pid를 요청에 넣어야함.
-    alert(`${rowData.ID}가 올린 파싱된 데이터를 다운`);
+    // TODO: 완료! 파싱된 데이터 다운로드 Pid를 요청에 넣어야함.
+    getAdminBlob('/task/parsed-data/download', {
+      Pid: rowData.Pid,
+    })
+      .then((blob) => {
+        const fileName = blob.headers['content-disposition'].split('"')[1];
+        download(blob.data, fileName);
+      })
+      .catch((error) => {
+        const message =
+          (error.response &&
+            error.response.data &&
+            error.response.data.message) ||
+          error.message ||
+          error.toString();
+        dispatch(setAlertType('error'));
+        dispatch(setMessage(message));
+        dispatch(openAlert());
+      });
   };
 
   return (

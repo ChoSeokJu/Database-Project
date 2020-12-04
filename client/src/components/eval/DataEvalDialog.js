@@ -102,9 +102,12 @@ export default function DataEvalDialog({ open, handleClose, Pid }) {
   };
 
   const handleDownload = () => {
-    console.log(Pid);
     getEvalBlob('/parsed-data/download', { Pid })
-      .then((blob) => download(blob))
+      .then((blob) => {
+        const fileName = blob.headers['content-disposition'].split('"')[1];
+        console.log(blob);
+        download(blob.data, fileName);
+      })
       .catch((error) => {
         const message =
           (error.response &&

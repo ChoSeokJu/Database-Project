@@ -83,7 +83,10 @@ export default function TaskInfo({ open, handleClose, taskName }) {
     getAdminBlob('/task/download', {
       taskName,
     })
-      .then((blob) => download(blob))
+      .then((blob) => {
+        const fileName = blob.headers['content-disposition'].split('"')[1];
+        download(blob.data, fileName);
+      })
       .catch((error) => {
         const message =
           (error.response &&
@@ -102,7 +105,10 @@ export default function TaskInfo({ open, handleClose, taskName }) {
     getAdminBlob('/task/parsed-data/download', {
       Pid: rowData.Pid,
     })
-      .then((blob) => download(blob))
+      .then((blob) => {
+        const fileName = blob.headers['content-disposition'].split('"')[1];
+        download(blob.data, fileName);
+      })
       .catch((error) => {
         const message =
           (error.response &&
