@@ -349,24 +349,52 @@ exports.getUserinfoAll = (req, res) => {
 };
 
 exports.infoSearch = (req, res) => {
-  const { search, searchCriterion, per_page, page } = req.body;
-  User.count().then((count) => {
-    if (searchCriterion == 'ID') {
-      User.findAll({
+  const {
+    search, searchCriterion, per_page, page,
+  } = req.query;
+  if (searchCriterion == 'ID') {
+    User.count().then((count) => {
+      User.findAndCountAll({
         where: {
-          ID: { [Op.substring]: search },
+          ID: { [Op.substring]: search }
         },
-      }).then((result) =>
-        res.status(200).json({
-          result,
-          page,
-          totalCount: count,
+        offset: parseInt(per_page) * parseInt((page - 1)),
+        limit: parseInt(per_page),
+      }).then(result => {
+        User.findAndCountAll({
+          where: {
+            ID: { [Op.substring]: search }
+          },
+        }).then((count) => {
+          if (result.rows.length !== 0) {
+            return res.status(200).json({
+              data: result.rows,
+              page,
+              totalCount: count.rows.length
+            });
+          };
+          return res.status(404).json({
+            message: '검색 결과가 없습니다.'
+          });
         })
-      );
-    } else if (searchCriterion == 'task') {
-      User.hasMany(Parsing_data, { foreignKey: 'Sid' });
-      Parsing_data.belongsTo(User, { foreignKey: 'Sid' });
-      User.findAll({
+      })
+    })  
+  } else if (searchCriterion == 'task') {
+    User.hasMany(Parsing_data, { foreignKey: 'Sid' });
+    Parsing_data.belongsTo(User, { foreignKey: 'Sid' });
+    User.findAndCountAll({
+      include: [
+        {
+          model: Parsing_data,
+          attributes: [],
+          where: { TaskName: { [Op.substring]: search } },
+          required: true,
+        },
+      ],
+      offset: parseInt(per_page) * parseInt((page - 1)),
+      limit: parseInt(per_page)
+    }).then((result) =>{
+      User.findAndCountAll({
         include: [
           {
             model: Parsing_data,
@@ -375,29 +403,92 @@ exports.infoSearch = (req, res) => {
             required: true,
           },
         ],
-      }).then((result) =>
-        res.status(200).json({
-          result,
-          page,
-          totalCount: count,
-        })
-      );
-    } else if (searchCriterion == 'Gender') {
-      User.findAll({
+      }).then((count)=> {
+        console.log(count)
+        if (result.rows.lenght !== 0) {
+          return res.status(200).json({
+            data: result.rows,
+            page,
+            totalCount: count.rows.length
+          });
+        };
+        return res.status(404).json({
+          message: '검색 결과가 없습니다.'
+        });
+      })
+    })
+  } else if (searchCriterion == 'Gender') {
+    User.findAndCountAll({
+      where: {
+        Gender: { [Op.substring]: search },
+      },
+      offset: parseInt(per_page) * parseInt((page - 1)),
+      limit: parseInt(per_page)
+    }).then((result) =>{
+      User.count({
         where: {
           Gender: { [Op.substring]: search },
         },
-        offset: per_page * (page - 1),
-        limit: per_page,
-      }).then((result) =>
-        res.status(200).json({
-          result,
-          page,
-          totalCount: count,
-        })
-      );
+      }).then((count)=> {
+        if (result.rows.length !== 0) {
+          return res.status(200).json({
+            data: result.rows,
+            page,
+            totalCount: result.count
+          });
+        };
+        return res.status(404).json({
+          message: '검색 결과가 없습니다.'
+        });
+      });
+    })
+  } else if (searchCriterion == 'age'){
+    if (isNaN(parseInt(search))) {
+      return res.status(400).json({
+        'message': '숫자를 입력해야 합니다'
+      })
     }
-  });
+    else {
+    const today = new Date();
+    User.findAll().then((result) => {
+      offset = parseInt(per_page) * (parseInt(page) - 1);
+      limit = parseInt(per_page);
+      var len = new Number(0)
+      const temp_arr = []
+      for (let i = 0; i < result.length; i++) {
+        const check = new Date(result[i].Bdate)
+        const age = today.getFullYear() - check.getFullYear() + 1;
+        if (age > search + 9 || age < search) {
+          continue;
+        }
+        len += 1
+        temp_arr.push({
+          Uid: result[i].Uid,
+          ID: result[i].ID,
+          Name: result[i].Name,
+          Gender: result[i].Gender,
+          UType: result[i].UType,
+          Bdate: result[i].Bdate,
+          Age: age,
+        });
+      }
+      console.log(temp_arr)
+      if (temp_arr.length === 0) {
+        return res.status(400).json({
+          'message': '검색 결과가 없습니다'
+        })
+      };
+      temp_arr.sort(function(a,b){
+        return a.Age - b.Age
+      });
+      return res.json({
+        data: temp_arr.slice(offset, offset+limit),
+        page: page,
+        totalCount: len
+      })
+    });
+    };
+  };
 };
 
 exports.requestList = (req, res) => {
@@ -408,6 +499,12 @@ exports.requestList = (req, res) => {
       offset: parseInt(per_page) * (parseInt(page) - 1),
       limit: parseInt(per_page),
     }).then((result) => {
+      function data_descending(a, b) {
+        var dateA = new Date(a['date']).getTime();
+        var dateB = new Date(b['date']).getTime();
+        return dateA < dateB ? 1 : -1;
+        };
+      result.sort(data_descending);
       res.status(200).json({
         data: result,
         page: parseInt(page),
