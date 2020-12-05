@@ -281,7 +281,7 @@ exports.evaluatedData = (req, res) => {
   // ! req.query? req.body? req?
   const { Uid, per_page, page } = req.query;
 
-  Evaluate.findAll({
+  Evaluate.count({
     include: [
       {
         model: Parsing_data,
@@ -291,19 +291,34 @@ exports.evaluatedData = (req, res) => {
     where: {
       Eid: parseInt(Uid),
       Pass: { [Op.ne]: null },
-    },
-    offset: parseInt(per_page) * (parseInt(page) - 1),
-    limit: parseInt(per_page),
-  }).then((evaluate) => {
-    if (evaluate) {
-      return res.status(200).json({
-        evaluatedData: evaluate,
-      });
     }
-    return res.status(404).json({
-      message: '평가자에게 할당된 데이터가 없습니다',
+  }).then((count)=> {
+    Evaluate.findAll({
+      include: [
+        {
+          model: Parsing_data,
+          required: true,
+        },
+      ],
+      where: {
+        Eid: parseInt(Uid),
+        Pass: { [Op.ne]: null },
+      },
+      offset: parseInt(per_page) * (parseInt(page) - 1),
+      limit: parseInt(per_page),
+    }).then((evaluate) => {
+      if (evaluate) {
+        return res.status(200).json({
+          data: evaluate,
+          page: page,
+          totalCount: count
+        });
+      }
+      return res.status(404).json({
+        message: '평가자에게 할당된 데이터가 없습니다',
+      });
     });
-  });
+  })
 };
 
 exports.getUserinfoAll = (req, res) => {
