@@ -710,7 +710,7 @@ exports.getTaskInfo = async (req, res) => {
   });
 
   const parsedData = await csv({ noheader: false }).fromFile(
-    `${task.TableRef}/${task.TableName}`
+    `${task.TableRef}/${task.TaskName}.csv`
   ).on('done', (error)=>{
     return res.status(200).json({"message": "File does not exist in the given path"
   })});
