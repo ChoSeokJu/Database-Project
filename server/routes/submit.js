@@ -46,4 +46,10 @@ router.get(
   submitController.groupSubmitterList
 )
 
+router.get(
+  '/task-details',
+  // [authJwt.verifyToken, authJwt.isSubmit],
+  submitController.getSubmitterTaskDetails
+)
+
 module.exports = router;

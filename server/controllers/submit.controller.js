@@ -68,7 +68,7 @@ exports.quantAssess = async function (req, res, next) {
   const { Mapping, ogSchema, taskDataTableRef, taskTableName, taskSchema } = req.body
   const data = await csv({ noheader: false }).fromFile(req.file.path)
   const taskCol = Object.values(
-    (await csv({ noheader: true }).fromFile(`${taskDataTableRef}/${taskTableName}`))[0]
+    (await csv({ noheader: true }).fromFile(`./task_data_table/${taskTableName}`))[0]
   )
   taskCol.pop() // pop "Sid" from task data columns
 
@@ -530,4 +530,53 @@ exports.groupSubmitterList = async (req, res) => {
       "page": parseInt(page)
     })
   }
+}
+
+
+exports.getSubmitterTaskDetails = (req, res) => {
+  const { taskName } = req.query
+  const { Uid } = req
+  parsing_data.findOne({
+    where: {
+      TaskName: taskName,
+      Sid: Uid
+    },
+    attributes: [
+      [sequelize.fn('AVG', sequelize.col('FinalScore')), 'score'],
+      [sequelize.fn('SUM', sequelize.col('TotalTupleCnt')), 'taskDataTableTupleCnt']
+    ],
+    raw: true,
+  }).then((p_data)=>{
+    if (p_data){
+      parsing_data.count({
+        where: {
+          TaskName: taskName,
+          Sid: Uid
+        }
+      }).then((parsing_data)=>{
+        task.findOne({
+          where: {
+            TaskName: taskName
+          }
+        }).then((task)=>{
+          if (task){
+            return res.status(200).json({
+              "score": p_data.score,
+              "submittedDataCnt": parsing_data,
+              "taskDataTableTupleCnt": p_data.taskDataTableTupleCnt,
+              "taskDesc": task.Desc,
+            })
+          } else {
+            return res.status(200).json({
+              "message": "no task found using the given taskname"
+            })
+          }
+        })
+      })
+    } else {
+      return res.status(200).json({
+        "message": "no parsing_data found with the given taskname and Uid"
+      })
+    }
+  })
 }
