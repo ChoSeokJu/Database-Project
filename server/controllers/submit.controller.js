@@ -68,7 +68,7 @@ exports.quantAssess = async function (req, res, next) {
   const { Mapping, ogSchema, taskDataTableRef, taskTableName, taskSchema } = req.body
   const data = await csv({ noheader: false }).fromFile(req.file.path)
   const taskCol = Object.values(
-    (await csv({ noheader: true }).fromFile(`${taskDataTableRef}/${taskTableName}`))[0]
+    (await csv({ noheader: true }).fromFile(`./task_data_table/${taskTableName}`))[0]
   )
   taskCol.pop() // pop "Sid" from task data columns
 
