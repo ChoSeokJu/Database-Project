@@ -168,8 +168,15 @@ exports.pendingUser = (req, res) => {
   Works_on.belongsTo(User, { foreignKey: 'Sid' });
   const arr = [];
   const { taskName, per_page, page } = req.query;
-  Task.count({
-    where: { TaskName: taskName },
+  Works_on.count({
+    include: [
+      {
+        model: User,
+        attributes: ['Uid', 'ID', 'Name'],
+        required: true,
+      },
+    ],
+    where: { TaskName: taskName, Permit: 'approved' },
   }).then((count) =>
     Works_on.findAll({
       attributes: [],
@@ -201,8 +208,15 @@ exports.approvedUser = (req, res) => {
   Works_on.belongsTo(User, { foreignKey: 'Sid' });
   const arr = [];
   const { taskName, per_page, page } = req.query;
-  Task.count({
-    where: { TaskName: taskName },
+  Works_on.count({
+    include: [
+      {
+        model: User,
+        attributes: ['Uid', 'ID', 'Name'],
+        required: true,
+      },
+    ],
+    where: { TaskName: taskName, Permit: 'approved' },
   }).then((count) =>
     Works_on.findAll({
       attributes: [],
@@ -708,12 +722,16 @@ exports.getTaskInfo = async (req, res) => {
       TaskName: taskName, // this is for deployment
     },
   });
+
   const parsedData = await csv({ noheader: false }).fromFile(
     `${task.TableRef}/${task.TableName}`
-  );
+  ).on('done', (error)=>{
+    return res.status(200).json({"message": "File does not exist in the given path"
+  })});
   console.log(task.tupleCount);
   return res.status(200).json({
     task,
     tupleCount: parsedData.length,
   });
 };
+
