@@ -16,7 +16,7 @@ import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import CloseIcon from '@material-ui/icons/Close';
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
-import { getSubmit, postSubmit } from '../../services/user.service';
+import { getSubmit, postSubmitUpload } from '../../services/user.service';
 import {
   setMessage,
   openAlert,
@@ -42,7 +42,6 @@ const useStyles = makeStyles((theme) => ({
 export default function OGDataSubmit({ open, handleClose, taskName }) {
   const classes = useStyles();
 
-  const [taskTitle, setTaskTitle] = useState(taskName);
   const [dataFile, setDataFile] = useState(null);
   const [ogDataType, setOgDataType] = useState('');
   const [ogDataTypes, setOgDataTypes] = useState([]);
@@ -53,24 +52,32 @@ export default function OGDataSubmit({ open, handleClose, taskName }) {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    getSubmit('/og-data', {
-      taskName,
-    }).then(
-      (response) => {
-        console.log(response);
-        setOgDataTypes(response.data.data);
-        setTaskTitle(taskName);
-      },
-      (error) => {
-        const message =
-          (error.response &&
-            error.response.data &&
-            error.response.data.message) ||
-          error.message ||
-          error.toString();
-        console.log(message);
-      }
-    );
+    setDataFile(null);
+    setOgDataType('');
+    setOgDataTypes([]);
+    setSubmitCnt('');
+    setSubmitTermStart('');
+    setSubmitTermEnd('');
+
+    if (open) {
+      getSubmit('/og-data', {
+        taskName,
+      }).then(
+        (response) => {
+          console.log(response);
+          setOgDataTypes(response.data.data);
+        },
+        (error) => {
+          const message =
+            (error.response &&
+              error.response.data &&
+              error.response.data.message) ||
+            error.message ||
+            error.toString();
+          console.log(message);
+        }
+      );
+    }
   }, [open]);
 
   const onOgDataTypeChange = (e) => {
@@ -119,26 +126,26 @@ export default function OGDataSubmit({ open, handleClose, taskName }) {
       // const data = new FormData();
       // data.append('file', dataFile);
       try {
-        await postSubmit('/submit-data', {
-          taskName: taskTitle,
-          ogDataName: ogDataType,
-          termStart: submitTermStart,
-          termEnd: submitTermEnd,
-          // data,
-        });
-        setDataFile(null);
-        setOgDataType('');
-        setOgDataTypes([]);
-        setSubmitCnt('');
-        setSubmitTermStart('');
-        setSubmitTermEnd('');
+        const formData = new FormData();
+        formData.append('file', dataFile, dataFile.name);
+        formData.append('taskName', taskName);
+        formData.append('ogDataType', ogDataType);
+
+        await postSubmitUpload('/submit-data', formData);
+
         dispatch(setAlertType('success'));
         dispatch(setMessage('원본 데이터를  성공적으로 제출했습니다'));
         dispatch(openAlert());
+        handleClose();
       } catch (error) {
-        console.log(error);
+        const message =
+          (error.response &&
+            error.response.data &&
+            error.response.data.message) ||
+          error.message ||
+          error.toString();
         dispatch(setAlertType('error'));
-        dispatch(setMessage(error.message));
+        dispatch(setMessage(message));
         dispatch(openAlert());
         handleClose();
       }
@@ -149,7 +156,7 @@ export default function OGDataSubmit({ open, handleClose, taskName }) {
     <Dialog
       open={open}
       onClose={handleClose}
-      maxWidth="md"
+      maxWidth="sm"
       fullWidth
       aria-labelledby="form-dialog-title"
     >
@@ -200,9 +207,10 @@ export default function OGDataSubmit({ open, handleClose, taskName }) {
               <input
                 accept=".csv"
                 className={classes.upload}
-                id="ogdata"
                 multiple
+                hidden
                 type="file"
+                name="file"
                 onChange={onDataFileChange}
               />
             </Button>
