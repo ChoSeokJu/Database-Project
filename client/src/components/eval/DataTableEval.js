@@ -6,6 +6,7 @@ import DataEvalDialog from './DataEvalDialog';
 import { getEval } from '../../services/user.service';
 
 export default function TaskTableSubmit() {
+  const tableRef = React.createRef();
   const [openEvalDialog, setOpenEvalDialog] = useState({
     open: false,
     Pid: null,
@@ -13,6 +14,7 @@ export default function TaskTableSubmit() {
 
   const handleClose = () => {
     setOpenEvalDialog({ open: false, Pid: null });
+    tableRef.current && tableRef.current.onQueryChange();
   };
 
   const handleEvalDialog = (Pid) => () => {
@@ -81,6 +83,7 @@ export default function TaskTableSubmit() {
     <>
       <Container component="main" maxWidth="md">
         <MaterialTable
+          tableRef={tableRef}
           title="태스크 목록"
           data={getTask}
           options={{
