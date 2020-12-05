@@ -88,6 +88,16 @@ exports.saveToTaskTable = async function (req, res) {
     });
   }
 
+  const p_data = await parsing_data.findOne({
+    where: {
+      Pid: req.body.Pid,
+    },
+  });
+
+  const {
+    Sid, Did, TaskName, DataRef,
+  } = p_data;
+
   const { TableRef, TableName, PassCriteria } = await task.findOne({
     where: {
       // TaskName: "Fundamentals",
@@ -101,17 +111,6 @@ exports.saveToTaskTable = async function (req, res) {
       message: '제출된 자료가 정량적 평가를 통과하지 못하였습니다',
     });
   }
-
-
-  const p_data = await parsing_data.findOne({
-    where: {
-      Pid: req.body.Pid,
-    },
-  });
-
-  const {
-    Sid, Did, TaskName, DataRef,
-  } = p_data;
 
   const mapping = await og_data_type.findOne({
     where: {
