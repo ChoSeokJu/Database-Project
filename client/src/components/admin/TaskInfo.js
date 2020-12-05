@@ -24,7 +24,7 @@ import GetAppIcon from '@material-ui/icons/GetApp';
 import download from 'downloadjs';
 import { useDispatch } from 'react-redux';
 import TaskUserTable from './TaskUserListTable';
-import { getAdmin, getAdminBlob } from '../../services/user.service';
+import { getAdmin, downloadAdmin } from '../../services/user.service';
 import {
   openAlert,
   openDialog,
@@ -118,46 +118,14 @@ export default function TaskInfo({ open, handleClose, taskName }) {
 
   const handleTableDownload = () => {
     // TODO: 완료! 태스크의 테이블 다운로드
-    getAdminBlob('/task/download', {
-      taskName,
-    })
-      .then((blob) => {
-        const fileName = blob.headers['content-disposition'].split('"')[1];
-        download(blob.data, fileName);
-      })
-      .catch((error) => {
-        const message =
-          (error.response &&
-            error.response.data &&
-            error.response.data.message) ||
-          error.message ||
-          error.toString();
-        dispatch(setAlertType('error'));
-        dispatch(setMessage(message));
-        dispatch(openAlert());
-      });
+    downloadAdmin('/task/download', { taskName });
   };
 
   const handleParsedDataDownload = (event, rowData) => {
     // TODO: 완료! 파싱된 데이터 다운로드
-    getAdminBlob('/task/parsed-data/download', {
+    downloadAdmin('/task/parsed-data/download', {
       Pid: rowData.Pid,
-    })
-      .then((blob) => {
-        const fileName = blob.headers['content-disposition'].split('"')[1];
-        download(blob.data, fileName);
-      })
-      .catch((error) => {
-        const message =
-          (error.response &&
-            error.response.data &&
-            error.response.data.message) ||
-          error.message ||
-          error.toString();
-        dispatch(setAlertType('error'));
-        dispatch(setMessage(message));
-        dispatch(openAlert());
-      });
+    });
   };
 
   const ListInfo = ({ key, value }) => (

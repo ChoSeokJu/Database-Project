@@ -29,14 +29,13 @@ import CardContent from '@material-ui/core/CardContent';
 import CardMedia from '@material-ui/core/CardMedia';
 import { green, red, grey } from '@material-ui/core/colors';
 import CloseIcon from '@material-ui/icons/Close';
-import download from 'downloadjs';
 import {
   openAlert,
   openDialog,
   setAlertType,
   setMessage,
 } from '../../actions/message';
-import { postEval, getEvalBlob } from '../../services/user.service';
+import { postEval, downloadEval } from '../../services/user.service';
 
 const useStyle = makeStyles((theme) => ({
   downloadButton: {
@@ -102,23 +101,7 @@ export default function DataEvalDialog({ open, handleClose, Pid }) {
   };
 
   const handleDownload = () => {
-    getEvalBlob('/parsed-data/download', { Pid })
-      .then((blob) => {
-        const fileName = blob.headers['content-disposition'].split('"')[1];
-        console.log(blob);
-        download(blob.data, fileName);
-      })
-      .catch((error) => {
-        const message =
-          (error.response &&
-            error.response.data &&
-            error.response.data.message) ||
-          error.message ||
-          error.toString();
-        dispatch(setAlertType('error'));
-        dispatch(setMessage(message));
-        dispatch(openAlert());
-      });
+    downloadEval('/parsed-data/download', { Pid });
   };
 
   return (

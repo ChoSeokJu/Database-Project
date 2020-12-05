@@ -55,9 +55,7 @@ export default function AppendOGDataType(props) {
     });
 
   const handleAppendColumn = () => {
-    setColumnName(columnName.trim());
-
-    if (columnName === '') {
+    if (columnName.trim() === '') {
       dispatch(setAlertType('error'));
       dispatch(setMessage('칼럼 이름은 빈칸이 될 수 없습니다'));
       dispatch(openAlert());

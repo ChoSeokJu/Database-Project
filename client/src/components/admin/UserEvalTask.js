@@ -15,7 +15,7 @@ import {
   setAlertType,
   setMessage,
 } from '../../actions/message';
-import { getAdmin, getAdminBlob } from '../../services/user.service';
+import { getAdmin, downloadAdmin } from '../../services/user.service';
 
 export default function UserEvalTask({ open, handleClose, Uid, ID }) {
   const dispatch = useDispatch();
@@ -57,24 +57,9 @@ export default function UserEvalTask({ open, handleClose, Uid, ID }) {
 
   const handleParsedDataDownload = (event, rowData) => {
     // TODO: 완료! 파싱된 데이터 다운로드 Pid를 요청에 넣어야함.
-    getAdminBlob('/task/parsed-data/download', {
+    downloadAdmin('/task/parsed-data/download', {
       Pid: rowData.Pid,
-    })
-      .then((blob) => {
-        const fileName = blob.headers['content-disposition'].split('"')[1];
-        download(blob.data, fileName);
-      })
-      .catch((error) => {
-        const message =
-          (error.response &&
-            error.response.data &&
-            error.response.data.message) ||
-          error.message ||
-          error.toString();
-        dispatch(setAlertType('error'));
-        dispatch(setMessage(message));
-        dispatch(openAlert());
-      });
+    });
   };
 
   return (
