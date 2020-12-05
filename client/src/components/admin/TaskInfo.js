@@ -66,17 +66,20 @@ export default function TaskInfo({ open, handleClose, taskName }) {
           TableSchema,
           TimeStamp,
           PassCriteria,
-        } = response.data;
+        } = response.data.task;
+        console.log(response.data);
         setTaskInfos({
           TaskName,
           Desc,
           MinTerm,
           TableName,
-          TableSchema: TableSchema.join(', '),
+          TableSchema: Object.keys(TableSchema[0]).join(', '),
           TimeStamp: TimeStamp.match(/\d{4}-\d{2}-\d{2}/g)[0],
           PassCriteria,
         });
       });
+    } else {
+      setTaskInfos({});
     }
   }, [open]);
 
@@ -97,7 +100,6 @@ export default function TaskInfo({ open, handleClose, taskName }) {
             date: row.date.match(/\d{4}-\d{2}-\d{2}/g)[0],
             Pid: row.Pid,
           }));
-          console.log(parsedData);
           resolve({
             data: parsedData,
             page: page - 1,

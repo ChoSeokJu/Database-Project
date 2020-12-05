@@ -160,7 +160,6 @@ export default function AppendTask(props) {
               error.response.data.message) ||
             error.message ||
             error.toString();
-          dispatch(setAlertType('success'));
           dispatch(setMessage(message));
           dispatch(openDialog());
         }
