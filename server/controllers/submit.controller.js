@@ -15,11 +15,11 @@ const sequelize = new Sequelize({
 
 const { Op } = db.Sequelize;
 
-user.hasMany(works_on, { foreignKey: 'Sid'})
-works_on.belongsTo(user, { foreignKey: 'Sid'})
+user.hasMany(works_on, { foreignKey: 'Sid' })
+works_on.belongsTo(user, { foreignKey: 'Sid' })
 
-task.hasMany(works_on, { foreignKey: 'TaskName'})
-works_on.belongsTo(task, { foreignKey: 'TaskName'})
+task.hasMany(works_on, { foreignKey: 'TaskName' })
+works_on.belongsTo(task, { foreignKey: 'TaskName' })
 
 og_data_type.hasMany(parsing_data, { foreignKey: 'Did' });
 parsing_data.belongsTo(og_data_type, { foreignKey: 'Did' });
@@ -85,7 +85,7 @@ exports.quantAssess = async function (req, res, next) {
   var counts = {}
   var parsedData = []
   var nullCount = {}
-  taskCol.forEach((col)=>{nullCount[col]=0})
+  taskCol.forEach((col) => { nullCount[col] = 0 })
   console.log(taskCol)
   data.forEach((row) => {
     rowCount++;
@@ -109,9 +109,9 @@ exports.quantAssess = async function (req, res, next) {
       dupCount = dupCount + (count - 1)
     }
   })
-  
+
   // divide each raw null counts to get ratio
-  Object.keys(nullCount).forEach((col)=>{nullCount[col] /= (rowCount * taskCol.length) })
+  Object.keys(nullCount).forEach((col) => { nullCount[col] /= (rowCount * taskCol.length) })
   req.body.NullRatio = nullCount
   req.body.TotalTupleCnt = rowCount
   req.body.DuplicatedTupleCnt = dupCount
@@ -238,16 +238,13 @@ exports.assignEvaluator = function (req, res) {
 };
 
 exports.submitApply = function (req, res) {
-  const { username, taskName } = req.body;
-  user.findOne({
-    where: {
-      ID: username,
-    },
-  }).then((user) => {
+  const { taskName } = req.body;
+  const { Uid } = req;
+  user.findByPk(Uid).then((user_id) => {
     works_on.create({
-      Sid: user.Uid,
+      Sid: Uid,
       TaskName: taskName,
-      Permit: "pending"
+      Permit: 'pending'
     }).then((works_on) => {
       if (works_on) {
         return res.status(200).json({
@@ -262,28 +259,25 @@ exports.submitApply = function (req, res) {
 };
 
 exports.getTaskList = function (req, res, next) {
-  const { username, per_page, page } = req.query
-  user.findOne({
-    where: {
-      ID: username
-    },
-    attributes: ["Uid"]
-  }).then((user_id) => {
+  const { per_page, page } = req.query
+  const { Uid } = req
+  user.findByPk(Uid).then((user_id) => {
     if (user_id) {
-      console.log(user_id.Uid)
       works_on.findAll({
         attributes: ["Permit"],
         include: [{
           model: user,
           attributes: [],
           required: true,
-          where: { 
-            [Op.or]:[
-              {Uid :
-                {[Op.eq]: user_id.Uid}
+          where: {
+            [Op.or]: [
+              {
+                Uid:
+                  { [Op.eq]: Uid }
               },
-              {Uid :
-                {[Op.is]: null}
+              {
+                Uid:
+                  { [Op.is]: null }
               }
             ]
           },
@@ -298,12 +292,12 @@ exports.getTaskList = function (req, res, next) {
         ],
         offset: parseInt(per_page) * parseInt((page - 1)),
         limit: parseInt(per_page)
-      }).then((results)=>{
-        if (results){
+      }).then((results) => {
+        if (results) {
           console.log(results)
           var amendedResults = []
           var counts = results.length
-          results.forEach((result)=>{
+          results.forEach((result) => {
             amendedResults.push({
               "taskName": result.task.TaskName,
               "permit": result.Permit
@@ -331,23 +325,17 @@ exports.getTaskList = function (req, res, next) {
 
 exports.getAvgScore = function (req, res) {
   /* get average score and total tuple cnt */
-  const { username } = req.query;
-  user.findOne({
-    where: {
-      ID: username,
-    },
-  }).then((user) => {
-    if (user) {
+  const { Uid } = req
+  user.findByPk(Uid).then((user_id) => {
+    if (user_id) {
       parsing_data.count({
         where: {
-          Sid: user.Uid,
+          Sid: Uid,
         },
       }).then((p_data) => {
         if (p_data) {
           req.body.response.submittedDataCnt = p_data
-          AVG_SCORE.findByPk(
-            user.Uid,
-          ).then((AVG_SCORE) => {
+          AVG_SCORE.findByPk(Uid).then((AVG_SCORE) => {
             if (AVG_SCORE) {
               req.body.response.score = AVG_SCORE.Score
               parsing_data.findOne({
@@ -355,7 +343,7 @@ exports.getAvgScore = function (req, res) {
                   sequelize.fn('SUM', sequelize.col('TotalTupleCnt')), 'TotalTupleCnt',
                 ]],
                 where: {
-                  Sid: user.Uid,
+                  Sid: Uid,
                   Appended: 1,
                 },
                 raw: true,
@@ -410,24 +398,17 @@ exports.getOgData = (req, res) => {
 };
 
 exports.getSubmitterList = (req, res, next) => {
-  const { Uid, taskName } = req.query
-  if (Uid == undefined){
-    Uid = req.Uid 
-  }
-  
-  user.findOne({
-    where:{
-      Uid: Uid
-    }
-  }).then((user)=>{
-    if(user){
+  const { taskName } = req.query
+  const { Uid } = req
+  user.findByPk(Uid).then((user_id) => {
+    if (user_id) {
       parsing_data.findAll({
         attributes: ["SubmitCnt", "TotalTupleCnt", "FinalScore", "TimeStamp"],
-        include:[
+        include: [
           {
             model: og_data_type,
             required: true,
-            where:{
+            where: {
               TaskName: taskName
             },
             attributes: ["Name"]
@@ -439,13 +420,16 @@ exports.getSubmitterList = (req, res, next) => {
           }
         ],
         where: {
-          Sid: user.Uid
-        },
-      }).then((p_data)=>{
-        if (p_data){
+          Sid: Uid
+        }
+      }).then((p_data) => {
+        if (p_data) {
+          // return res.status(200).json({
+          //   p_data
+          // })
           req.body.p_data = p_data
           next()
-          
+
           console.log(p_data)
         }
       })
@@ -461,17 +445,18 @@ exports.groupSubmitterList = async (req, res) => {
 
   const OGDataTypeList = []
   const { p_data } = req.body
-  const { taskName, Uid, per_page, page } = req.query
-  
+  const { taskName, per_page, page } = req.query
+  const { Uid } = req
+
   const { TotalSubmitCnt } = await parsing_data.findOne({
-                                where:{
-                                  Sid: Uid
-                                },
-                                attributes: [[
-                                  sequelize.fn('MAX', sequelize.col('SubmitCnt')), 'TotalSubmitCnt',
-                                ]],
-                                raw: true,
-                              })
+    where: {
+      Sid: Uid
+    },
+    attributes: [[
+      sequelize.fn('MAX', sequelize.col('SubmitCnt')), 'TotalSubmitCnt',
+    ]],
+    raw: true,
+  })
 
 
   const { score, taskDataTableTupleCnt } = await parsing_data.findOne({
@@ -486,7 +471,7 @@ exports.groupSubmitterList = async (req, res) => {
     raw: true,
   })
 
-  const count  = await parsing_data.count({
+  const count = await parsing_data.count({
     where: {
       TaskName: taskName,
       Sid: Uid
@@ -500,8 +485,8 @@ exports.groupSubmitterList = async (req, res) => {
   })
 
   var newOGDataType
-  for (var x of p_data){
-    if (newOGDataType && newOGDataType.OGDataTypeName == x.og_data_type.Name){
+  for (var x of p_data) {
+    if (newOGDataType && newOGDataType.OGDataTypeName == x.og_data_type.Name) {
       newOGDataType.submitData.push({
         "submitCnt": x.SubmitCnt,
         "TotalTupleCnt": x.TotalTupleCnt,
@@ -510,7 +495,7 @@ exports.groupSubmitterList = async (req, res) => {
         "PNP": returnPass(x.evaluates[0])
       })
     } else {
-      if (newOGDataType != undefined){
+      if (newOGDataType != undefined) {
         newOGDataType.submittedDataCnt = newOGDataType.submitData.length
         OGDataTypeList.push(newOGDataType)
       }
@@ -527,7 +512,7 @@ exports.groupSubmitterList = async (req, res) => {
     }
   }
 
-  if (newOGDataType == undefined){
+  if (newOGDataType == undefined) {
     return res.status(200).json({
       "data": [],
       "score": null,
@@ -538,14 +523,14 @@ exports.groupSubmitterList = async (req, res) => {
   } else {
     newOGDataType.submittedDataCnt = newOGDataType.submitData.length
     OGDataTypeList.push(newOGDataType)
-    var offset = parseInt(per_page)*(parseInt(page)-1)
+    var offset = parseInt(per_page) * (parseInt(page) - 1)
     return res.status(200).json({
-      "data": OGDataTypeList.slice(offset, offset+parseInt(per_page)),
+      "data": OGDataTypeList.slice(offset, offset + parseInt(per_page)),
       "score": score,
       "submittedDataCnt": count,
       "taskDataTableTupleCnt": taskDataTableTupleCnt,
       "taskDesc": Desc
     })
   }
-  
+
 }

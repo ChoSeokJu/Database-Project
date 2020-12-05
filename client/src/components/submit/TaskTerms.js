@@ -1,17 +1,40 @@
 import React from 'react';
+import { useDispatch } from 'react-redux';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Typography from '@material-ui/core/Typography';
+import { postSubmit } from '../../services/user.service';
+import { openAlert, setAlertType, setMessage } from '../../actions/message';
 
 export default function TaskTerms({
   open,
   handleClose,
-  handleConfirm,
   taskName,
 }) {
+  const dispatch = useDispatch();
+
+  const handleApply = () => {
+    postSubmit('/apply', {
+      taskName: taskName,
+    }).then((response) => {
+      console.log(response);
+    }, (error) => {
+      const message = (error.response
+        && error.response.data
+        && error.response.data.message)
+        || error.message
+        || error.toString();
+      console.log(message);
+      dispatch(setAlertType('error'));
+      dispatch(setMessage(message));
+      dispatch(openAlert());
+    });
+    handleClose();
+  };
+
   return (
     <Dialog
       open={open}
@@ -40,7 +63,7 @@ export default function TaskTerms({
         <Button onClick={handleClose} color="default" variant="contained">
           취소
         </Button>
-        <Button onClick={handleConfirm} color="primary" variant="contained">
+        <Button onClick={handleApply} color="primary" variant="contained">
           동의 및 참가 신청
         </Button>
       </DialogActions>
