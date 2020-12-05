@@ -369,11 +369,11 @@ exports.getAvgScore = function (req, res) {
                 req.body.response
               )
             }
-          });
+          })
         } else {
           /* 아무런 데이터를 제출 하지 않음 */
           req.body.response.submittedDataCnt = null
-          req.body.response.score = nullx
+          req.body.response.score = null
           req.body.response.taskDataTableTupleCnt = null
           return res.status(200).json(
             req.body.response
