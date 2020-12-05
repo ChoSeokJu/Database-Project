@@ -45,6 +45,8 @@ export default function OGDataSubmit({ open, handleClose, taskName }) {
   const [dataFile, setDataFile] = useState(null);
   const [ogDataType, setOgDataType] = useState('');
   const [ogDataTypes, setOgDataTypes] = useState([]);
+  const [ogDataSchema, setOgDataSchema] = useState('');
+  const [ogDataMapping, setOgDataMapping] = useState('');
   const [submitCnt, setSubmitCnt] = useState('');
   const [submitTermStart, setSubmitTermStart] = useState('');
   const [submitTermEnd, setSubmitTermEnd] = useState('');
@@ -55,6 +57,8 @@ export default function OGDataSubmit({ open, handleClose, taskName }) {
     setDataFile(null);
     setOgDataType('');
     setOgDataTypes([]);
+    setOgDataSchema('');
+    setOgDataMapping('');
     setSubmitCnt('');
     setSubmitTermStart('');
     setSubmitTermEnd('');
@@ -82,6 +86,9 @@ export default function OGDataSubmit({ open, handleClose, taskName }) {
 
   const onOgDataTypeChange = (e) => {
     setOgDataType(e.target.value);
+    let og = ogDataTypes.find((item) => item.Name === e.target.value);
+    setOgDataSchema(og.Schema.toString());
+    setOgDataMapping(JSON.stringify(og.Mapping));
   };
 
   const onDataFileChange = (e) => {
@@ -190,6 +197,11 @@ export default function OGDataSubmit({ open, handleClose, taskName }) {
                 </MenuItem>
               ))}
             </Select>
+            {ogDataType &&
+              <>
+                <Typography variant="body2">스키마: {ogDataSchema}</Typography>
+                <Typography variant="body2">매핑: {ogDataMapping}</Typography>
+              </>}
           </Grid>
           <Grid item xs={12}>
             <InputLabel required shrink id="ogdata">
