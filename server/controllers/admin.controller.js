@@ -708,15 +708,21 @@ exports.getTaskInfo = async (req, res) => {
       TaskName: taskName, // this is for deployment
     },
   });
-
-  const parsedData = await csv({ noheader: false }).fromFile(
-    `${task.TableRef}/${task.TaskName}.csv`
-  ).on('done', (error)=>{
-    return res.status(200).json({"message": "File does not exist in the given path"
-  })});
-  console.log(task.tupleCount);
-  return res.status(200).json({
-    task,
-    tupleCount: parsedData.length,
-  });
+  if (task != undefined){
+    const parsedData = await csv({ noheader: false }).fromFile(
+      `${task.TableRef}/${task.TaskName}.csv`
+    ).on('done', (error)=>{
+      return res.status(200).json({"message": "File does not exist in the given path"
+    })});
+    console.log(task.tupleCount);
+    return res.status(200).json({
+      task,
+      tupleCount: parsedData.length,
+    });
+  } else {
+    return res.status(404).json({
+      "message": "no data with the taskname was found"
+    })
+  }
+  
 };

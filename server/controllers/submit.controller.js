@@ -373,7 +373,7 @@ exports.getAvgScore = function (req, res) {
         } else {
           /* 아무런 데이터를 제출 하지 않음 */
           req.body.response.submittedDataCnt = null
-          req.body.response.score = null
+          req.body.response.score = nullx
           req.body.response.taskDataTableTupleCnt = null
           return res.status(200).json(
             req.body.response
@@ -424,9 +424,6 @@ exports.getSubmitterList = (req, res, next) => {
         }
       }).then((p_data) => {
         if (p_data) {
-          // return res.status(200).json({
-          //   p_data
-          // })
           req.body.p_data = p_data
           next()
 
@@ -529,8 +526,8 @@ exports.groupSubmitterList = async (req, res) => {
       "score": score,
       "submittedDataCnt": count,
       "taskDataTableTupleCnt": taskDataTableTupleCnt,
-      "taskDesc": Desc
+      "taskDesc": Desc,
+      "page": parseInt(page)
     })
   }
-
 }
