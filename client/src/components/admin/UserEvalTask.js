@@ -22,36 +22,29 @@ export default function UserEvalTask({ open, handleClose, Uid, ID }) {
   // TODO: 유저가 제출한 파싱 데이터 목록을 가져오기.
   const getParsedData = (query) =>
     new Promise((resolve, reject) => {
-      setTimeout(
-        () =>
+      getAdmin('/user-info/eval', {
+        Uid,
+        per_page: query.pageSize,
+        page: query.page + 1,
+      }).then(
+        (response) => {
+          const { data, page, totalCount } = response.data;
+          console.log(response);
           resolve({
-            data: [
-              {
-                taskName: 'task1',
-                date: '2020-01-01',
-                OGDataType: '데이터타입1',
-                score: 10,
-                PNP: 'P',
-              },
-              {
-                taskName: 'task2',
-                date: '2020-01-01',
-                OGDataType: '데이터타입2',
-                score: 10,
-                PNP: 'P',
-              },
-              {
-                taskName: 'task3',
-                date: '2020-01-01',
-                OGDataType: '데이터타입3',
-                score: 10,
-                PNP: 'P',
-              },
-            ],
-            page: query.page,
-            totalCount: 100,
-          }),
-        500
+            data,
+            page: page - 1,
+            totalCount,
+          });
+        },
+        (error) => {
+          const message =
+            (error.response &&
+              error.response.data &&
+              error.response.data.message) ||
+            error.message ||
+            error.toString();
+          reject(message);
+        }
       );
     });
 
