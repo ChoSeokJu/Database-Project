@@ -120,7 +120,11 @@ export default function AppendTask(props) {
         return;
       }
       dispatch(clearOriginalData());
-      dispatch(setOriginalData(data.map(({ columnName }) => ({ columnName }))));
+      dispatch(
+        setOriginalData(
+          data.map(({ columnName }) => ({ columnName, originalColumnName: '' }))
+        )
+      );
       setActiveStep(activeStep + 1);
     } else {
       if (!name) {
