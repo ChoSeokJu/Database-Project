@@ -23,7 +23,7 @@ export default function TaskTableSubmit() {
   };
 
   const renderButton = (rowData) => {
-    if (!rowData.evaluated) {
+    if (!rowData.isEvaluated) {
       return (
         <Button
           variant="contained"
@@ -53,10 +53,11 @@ export default function TaskTableSubmit() {
           console.log(data);
           const dataParsed = data.map((row) => ({
             taskName: row.TaskName,
-            OGDataType: row.og_data_type.Name,
-            submitID: row.user.ID,
+            OGDataType: row.OGDataTypeName,
+            submitID: row.ID,
             submitDate: row.TimeStamp.match(/\d{4}-\d{2}-\d{2}/g)[0],
             Pid: row.Pid,
+            isEvaluated: row.isEvaluated,
           }));
           resolve({
             data: dataParsed,
@@ -93,6 +94,9 @@ export default function TaskTableSubmit() {
           localization={{
             header: {
               actions: '',
+            },
+            body: {
+              emptyDataSourceMessage: '할당받은 데이터가 없습니다',
             },
           }}
           columns={[
