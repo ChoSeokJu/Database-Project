@@ -14,11 +14,37 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: false
     },
     Schema: {
-      type: DataTypes.JSON,
+      type: DataTypes.TEXT,
+      get() {
+        try {
+          return JSON.parse(this.getDataValue('Schema'));
+        } catch (e) {
+          return null;
+        }
+      },
+      set(Schema) {
+        if (!(Schema instanceof Object)) {
+          throw Error('`Schema` should be an instance of Object');
+        }
+        this.setDataValue('Schema', JSON.stringify(Schema));
+      },
       allowNull: false
     },
     Mapping: {
-      type: DataTypes.JSON,
+      type: DataTypes.TEXT,
+      get() {
+        try {
+          return JSON.parse(this.getDataValue('Mapping'));
+        } catch (e) {
+          return null;
+        }
+      },
+      set(Mapping) {
+        if (!(Mapping instanceof Object)) {
+          throw Error('`Mapping` should be an instance of Object');
+        }
+        this.setDataValue('Mapping', JSON.stringify(Mapping));
+      },
       allowNull: false
     },
     TaskName: {

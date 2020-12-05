@@ -22,7 +22,20 @@ module.exports = function (sequelize, DataTypes) {
       comment: "수집하는 테이블 이름"
     },
     TableSchema: {
-      type: DataTypes.JSON,
+      type: DataTypes.TEXT,
+      get() {
+        try {
+          return JSON.parse(this.getDataValue('TableSchema'));
+        } catch (e) {
+          return null;
+        }
+      },
+      set(TableSchema) {
+        if (!(TableSchema instanceof Object)) {
+          throw Error('`TableSchema` should be an instance of Object');
+        }
+        this.setDataValue('TableSchema', JSON.stringify(TableSchema));
+      },
       allowNull: false,
       comment: "수집할 테이블의 스키마"
     },

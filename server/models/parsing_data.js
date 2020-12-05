@@ -30,7 +30,20 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: false
     },
     NullRatio: {
-      type: DataTypes.JSON,
+      type: DataTypes.TEXT,
+      get() {
+        try {
+          return JSON.parse(this.getDataValue('NullRatio'));
+        } catch (e) {
+          return null;
+        }
+      },
+      set(NullRatio) {
+        if (!(NullRatio instanceof Object)) {
+          throw Error('`NullRatio` should be an instance of Object');
+        }
+        this.setDataValue('NullRatio', JSON.stringify(NullRatio));
+      },
       allowNull: false
     },
     Term: {
