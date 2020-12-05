@@ -633,7 +633,7 @@ exports.parsedDataList = (req, res) => {
           ID: p_data.user.ID,
           date: p_data.TimeStamp,
           OGDataType: p_data.og_data_type.Name,
-          PNP: p_data.evaluates[0].Pass,
+          PNP: p_data.Appended,
         });
       });
       offset = parseInt(per_page) * (parseInt(page) - 1)
