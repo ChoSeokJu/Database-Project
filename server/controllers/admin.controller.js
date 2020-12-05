@@ -696,9 +696,12 @@ exports.getTaskInfo = async (req, res) => {
       TaskName: taskName, // this is for deployment
     },
   });
+
   const parsedData = await csv({ noheader: false }).fromFile(
     `${task.TableRef}/${task.TableName}`
-  );
+  ).on('done', (error)=>{
+    return res.status(200).json({"message": "File does not exist in the given path"
+  })});
   console.log(task.tupleCount);
   return res.status(200).json({
     task,
