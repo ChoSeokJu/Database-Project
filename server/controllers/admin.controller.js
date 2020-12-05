@@ -396,7 +396,7 @@ exports.infoSearch = (req, res) => {
         ]
       }).then((result2) =>{
         var total = result1.count + result2.count
-        var data2 = result1.rows.concat(result2).slice(parseInt(page)-1,parseInt(page)-1+parseInt(per_page));
+        var data2 = result1.rows.concat(result2.rows).slice(parseInt(page)-1,parseInt(page)-1+parseInt(per_page));
         if (total !== 0) {
           return res.status(200).json({
             data: data2,
@@ -405,9 +405,9 @@ exports.infoSearch = (req, res) => {
           });
         };
         return res.json({
-          data: [],
+          data: data2,
           page,
-          totalCount: 0
+          totalCount: total
         });
       })
     })
@@ -431,7 +431,7 @@ exports.infoSearch = (req, res) => {
               totalCount: count.rows.length
             });
           };
-          return res.json({
+          return res.status(404).json({
             data: result.rows,
             page,
             totalCount: count.rows.length
@@ -464,14 +464,14 @@ exports.infoSearch = (req, res) => {
         ],
       }).then((count)=> {
         console.log(count)
-        if (result.rows.lenght !== 0) {
+        if (result.rows.length !== 0) {
           return res.status(200).json({
             data: result.rows,
             page,
             totalCount: count.rows.length
           });
         };
-        return res.json({
+        return res.status(404).json({
           data: result.rows,
           page,
           totalCount: count.rows.length
@@ -486,19 +486,19 @@ exports.infoSearch = (req, res) => {
       offset: parseInt(per_page) * parseInt((page - 1)),
       limit: parseInt(per_page)
     }).then((result) =>{
-      User.count({
+      User.findAndCountAll({
         where: {
           Gender: { [Op.substring]: search },
         },
       }).then((count)=> {
         if (result.rows.length !== 0) {
-          return res.json({
+          return res.status(200).json({
             data: result.rows,
             page,
             totalCount: count.rows.length
           });
         };
-        return res.json({
+        return res.status(404).json({
           data: result.rows,
           page,
           totalCount: count.rows.length
@@ -507,10 +507,8 @@ exports.infoSearch = (req, res) => {
     })
   } else if (searchCriterion == 'age'){
     if (isNaN(parseInt(search))) {
-      return res.json({
-        data: [],
-        page: 1,
-        totalCount: 0
+      return res.status(400).json({
+        'message': '숫자를 입력해야 합니다'
       })
     }
     else {
@@ -523,7 +521,6 @@ exports.infoSearch = (req, res) => {
       for (let i = 0; i < result.length; i++) {
         const check = new Date(result[i].Bdate)
         const age = Math.floor(today.getFullYear() - check.getFullYear() + 1);
-        console.log(Math.floor(age/10)*10)
         if (Math.floor(age/10)*10 != parseInt(search)) {
           continue;
         }
@@ -539,7 +536,7 @@ exports.infoSearch = (req, res) => {
         });
       }
       if (temp_arr.length === 0) {
-        return res.json({
+        return res.status(400).json({
           data: temp_arr.slice(offset, offset+limit),
           page: page,
           totalCount: len
@@ -720,3 +717,4 @@ exports.getTaskInfo = async (req, res) => {
     tupleCount: parsedData.length,
   });
 };
+
