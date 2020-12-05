@@ -48,25 +48,28 @@ exports.evaluate = (req, res, next) => {
         }).then((parsing_data_result) => {
           if (parsing_data_result) {
             const { totalScore, Pass } = finalScore(parsing_data_result);
-            req.body.Pass = Pass;
-            req.body.totalScore = totalScore;
-            parsing_data.update({
-              FinalScore: totalScore,
-              Appended: totalScore > 10,
-            },
-              {
-                where: {
-                  Pid: parsing_data_result.Pid,
-                },
-              }).then((parsing_data) => {
-                if (parsing_data) {
-                  next();
-                } else {
-                  return res.status(404).json({
-                    message: '데이터를 찾을 수 없습니다',
-                  });
-                }
-              });
+            task.findByPk(parsing_data_result.TaskName).then((task)=>{
+              console.log(task.PassCriteria)
+              req.body.Pass = Pass;
+              req.body.totalScore = totalScore;
+              parsing_data.update({
+                FinalScore: totalScore,
+                Appended: totalScore > task.PassCriteria,
+              },
+                {
+                  where: {
+                    Pid: parsing_data_result.Pid,
+                  },
+                }).then((parsing_data) => {
+                  if (parsing_data) {
+                    next();
+                  } else {
+                    return res.status(404).json({
+                      message: '데이터를 찾을 수 없습니다',
+                    });
+                  }
+                });
+            })
           } else {
             return res.status(404).json({
               message: '데이터를 찾을 수 없습니다',
@@ -100,7 +103,6 @@ exports.saveToTaskTable = async function (req, res) {
 
   const { TableRef, TableName, PassCriteria } = await task.findOne({
     where: {
-      // TaskName: "Fundamentals",
       TaskName: TaskName, // this is for deployment
     },
     attributes: ['TableRef', 'TableName', 'PassCriteria'],
