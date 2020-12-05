@@ -29,9 +29,17 @@ export default function UserEvalTask({ open, handleClose, Uid, ID }) {
       }).then(
         (response) => {
           const { data, page, totalCount } = response.data;
-          console.log(response);
+          console.log(data);
+          const parsedData = data.map((row) => ({
+            Pid: row.Pid,
+            taskName: row.parsing_datum.TaskName,
+            date: row.TimeStamp.match(/\d{4}-\d{2}-\d{2}/g)[0],
+            score: row.Score,
+            PNP: row.Pass ? 'P' : 'NP',
+          }));
+          console.log(parsedData);
           resolve({
-            data,
+            data: parsedData,
             page: page - 1,
             totalCount,
           });
@@ -85,11 +93,13 @@ export default function UserEvalTask({ open, handleClose, Uid, ID }) {
               header: {
                 actions: '',
               },
+              body: {
+                emptyDataSourceMessage: '평가한 데이터가 없습니다',
+              },
             }}
             columns={[
               { title: '태스크 이름', field: 'taskName' },
               { title: '제출일자', field: 'date' },
-              { title: '원본 데이터 타입', field: 'OGDataType' },
               { title: '평가 점수', field: 'score' },
               { title: 'P/NP', field: 'PNP' },
             ]}
