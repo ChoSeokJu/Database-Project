@@ -4,6 +4,8 @@ const { json } = require('body-parser');
 const csv = require('csvtojson');
 const { response } = require('express');
 const createCsvWriter = require('csv-writer').createObjectCsvWriter;
+const { v4: uuidv4 } = require('uuid');
+
 
 const User = db.user;
 const Task = db.task;
@@ -57,13 +59,13 @@ exports.makeTask = (req, res) => {
     tableSchema,
     passCriteria,
   } = req.body;
-  const tableRef = './task_data_table';
   const date = new Date();
   const dateToTimestamp = date.getTime();
   const timestampToDate = new Date(dateToTimestamp);
 
   Task.findOne({ where: { TaskName: taskName } }).then((task) => {
     if (!task) {
+      const tableRef = `./task_data_table/${uuidv4()}.csv`;
       Task.create({
         TaskName: taskName,
         Desc: desc,
@@ -83,7 +85,7 @@ exports.makeTask = (req, res) => {
               csvHead.push({ id: columns[i], title: columns[i] });
             }
             const csvWriter = createCsvWriter({
-              path: `${tableRef}/${taskName}.csv`,
+              path: tableRef,
               header: csvHead,
             });
             csvWriter.writeRecords([]);
@@ -306,7 +308,7 @@ exports.evaluatedData = (req, res) => {
       Eid: parseInt(Uid),
       Pass: { [Op.ne]: null },
     }
-  }).then((count)=> {
+  }).then((count) => {
     Evaluate.findAll({
       include: [
         {
@@ -386,16 +388,16 @@ exports.getUserinfoAll = (req, res) => {
 };
 
 exports.infoSearch = (req, res) => {
-  const {search, searchCriterion, per_page, page} = req.query;
-  if(searchCriterion == 'all') {
+  const { search, searchCriterion, per_page, page } = req.query;
+  if (searchCriterion == 'all') {
     User.hasMany(Parsing_data, { foreignKey: 'Sid' });
     Parsing_data.belongsTo(User, { foreignKey: 'Sid' });
     User.findAndCountAll({
       where: {
-        [Op.or]:[
-          {ID: { [Op.substring]: search }},
-          {Gender: { [Op.substring]: search }},
-          {Name: { [Op.substring]: search }}
+        [Op.or]: [
+          { ID: { [Op.substring]: search } },
+          { Gender: { [Op.substring]: search } },
+          { Name: { [Op.substring]: search } }
         ]
       }
     }).then((result1) => {
@@ -408,9 +410,9 @@ exports.infoSearch = (req, res) => {
             required: true,
           },
         ]
-      }).then((result2) =>{
+      }).then((result2) => {
         var total = result1.count + result2.count
-        var data2 = result1.rows.concat(result2.rows).slice(parseInt(page)-1,parseInt(page)-1+parseInt(per_page));
+        var data2 = result1.rows.concat(result2.rows).slice(parseInt(page) - 1, parseInt(page) - 1 + parseInt(per_page));
         if (total !== 0) {
           return res.status(200).json({
             data: data2,
@@ -431,27 +433,27 @@ exports.infoSearch = (req, res) => {
         ID: { [Op.substring]: search }
       },
       offset: parseInt(per_page) * parseInt((page - 1)),
-       limit: parseInt(per_page),
-      }).then(result => {
-        User.findAndCountAll({
-          where: {
-            ID: { [Op.substring]: search }
-          },
-        }).then((count) => {
-          if (result.rows.length !== 0) {
-            return res.status(200).json({
-              data: result.rows,
-              page: parseInt(page),
-              totalCount: count.rows.length
-            });
-          };
-          return res.json({
-            data: [],
-            page,
-            totalCount: 0
+      limit: parseInt(per_page),
+    }).then(result => {
+      User.findAndCountAll({
+        where: {
+          ID: { [Op.substring]: search }
+        },
+      }).then((count) => {
+        if (result.rows.length !== 0) {
+          return res.status(200).json({
+            data: result.rows,
+            page: parseInt(page),
+            totalCount: count.rows.length
           });
-        })
-      }) 
+        };
+        return res.json({
+          data: [],
+          page,
+          totalCount: 0
+        });
+      })
+    })
   } else if (searchCriterion == 'task') {
     User.hasMany(Parsing_data, { foreignKey: 'Sid' });
     Parsing_data.belongsTo(User, { foreignKey: 'Sid' });
@@ -466,7 +468,7 @@ exports.infoSearch = (req, res) => {
       ],
       offset: parseInt(per_page) * parseInt((page - 1)),
       limit: parseInt(per_page)
-    }).then((result) =>{
+    }).then((result) => {
       User.findAndCountAll({
         include: [
           {
@@ -476,7 +478,7 @@ exports.infoSearch = (req, res) => {
             required: true,
           },
         ],
-      }).then((count)=> {
+      }).then((count) => {
         if (result.rows.length !== 0) {
           return res.status(200).json({
             data: result.rows,
@@ -498,12 +500,12 @@ exports.infoSearch = (req, res) => {
       },
       offset: parseInt(per_page) * parseInt((page - 1)),
       limit: parseInt(per_page)
-    }).then((result) =>{
+    }).then((result) => {
       User.findAndCountAll({
         where: {
           Gender: { [Op.substring]: search },
         },
-      }).then((count)=> {
+      }).then((count) => {
         if (result.rows.length !== 0) {
           return res.status(200).json({
             data: result.rows,
@@ -518,7 +520,7 @@ exports.infoSearch = (req, res) => {
         });
       });
     })
-  } else if (searchCriterion == 'age'){
+  } else if (searchCriterion == 'age') {
     if (isNaN(parseInt(search))) {
       return res.json({
         data: [],
@@ -527,45 +529,45 @@ exports.infoSearch = (req, res) => {
       })
     }
     else {
-    const today = new Date();
-    User.findAll().then((result) => {
-      offset = parseInt(per_page) * (parseInt(page) - 1);
-      limit = parseInt(per_page);
-      var len = new Number(0)
-      const temp_arr = []
-      for (let i = 0; i < result.length; i++) {
-        const check = new Date(result[i].Bdate)
-        const age = Math.floor(today.getFullYear() - check.getFullYear() + 1);
-        if (Math.floor(age/10)*10 != parseInt(search)) {
-          continue;
+      const today = new Date();
+      User.findAll().then((result) => {
+        offset = parseInt(per_page) * (parseInt(page) - 1);
+        limit = parseInt(per_page);
+        var len = new Number(0)
+        const temp_arr = []
+        for (let i = 0; i < result.length; i++) {
+          const check = new Date(result[i].Bdate)
+          const age = Math.floor(today.getFullYear() - check.getFullYear() + 1);
+          if (Math.floor(age / 10) * 10 != parseInt(search)) {
+            continue;
+          }
+          len += 1
+          temp_arr.push({
+            Uid: result[i].Uid,
+            ID: result[i].ID,
+            Name: result[i].Name,
+            Gender: result[i].Gender,
+            UType: result[i].UType,
+            Bdate: result[i].Bdate,
+            Age: age,
+          });
         }
-        len += 1
-        temp_arr.push({
-          Uid: result[i].Uid,
-          ID: result[i].ID,
-          Name: result[i].Name,
-          Gender: result[i].Gender,
-          UType: result[i].UType,
-          Bdate: result[i].Bdate,
-          Age: age,
+        if (temp_arr.length === 0) {
+          return res.json({
+            data: [],
+            page: page,
+            totalCount: 0
+          })
+        };
+        temp_arr.sort(function (a, b) {
+          return a.Age - b.Age
         });
-      }
-      if (temp_arr.length === 0) {
         return res.json({
-          data: [],
+          data: temp_arr.slice(offset, offset + limit),
           page: page,
-          totalCount: 0
+          totalCount: len
         })
-      };
-      temp_arr.sort(function(a,b){
-        return a.Age - b.Age
       });
-      return res.json({
-        data: temp_arr.slice(offset, offset+limit),
-        page: page,
-        totalCount: len
-      })
-    });
     };
   };
 };
@@ -637,7 +639,7 @@ exports.parsedDataList = (req, res) => {
 exports.downloadParsedData = (req, res) => {
   const { Pid } = req.query
   Parsing_data.findOne({
-    where:{
+    where: {
       Pid: Pid
     },
     include: [{
@@ -667,7 +669,7 @@ exports.downloadTaskData = (req, res) => {
   const { taskName } = req.query;
   Task.findByPk(taskName).then((Task) => {
     if (Task) {
-      fileRef = `${Task.TableRef}/${taskName}.csv`;
+      fileRef = Task.TableRef;
       res.download(fileRef, `${Task.TableName}.csv`, (err) => {
         if (err) {
           return res.status(404).json({
@@ -723,6 +725,21 @@ exports.getTaskInfo = async (req, res) => {
       TaskName: taskName, // this is for deployment
     },
   });
+<<<<<<< HEAD
+  if (task != undefined) {
+    const parsedData = await csv({ noheader: false }).fromFile(
+      task.TableRef
+    ).on('done', (error) => {
+      return res.status(200).json({
+        "message": "File does not exist in the given path"
+      })
+    });
+    console.log(task.tupleCount);
+    return res.status(200).json({
+      task,
+      tupleCount: parsedData.length,
+    });
+=======
   if (task != undefined){
     try{
       const parsedData = await csv({ noheader: false }).fromFile(
@@ -738,10 +755,15 @@ exports.getTaskInfo = async (req, res) => {
         "message": "such a file does not exist in ./task_data_table"
       })
     }
+>>>>>>> 9390780bd9489dd47356be0f370526cedfa29777
   } else {
     return res.status(404).json({
       "message": "no data with the taskname was found"
     })
   }
+<<<<<<< HEAD
+
+=======
+>>>>>>> 9390780bd9489dd47356be0f370526cedfa29777
 };
 
