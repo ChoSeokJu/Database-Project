@@ -65,7 +65,9 @@ exports.submitContent = (req, res, next) => {
 };
 
 exports.quantAssess = async function (req, res, next) {
-  const { Mapping, ogSchema, taskDataTableRef, taskTableName, taskSchema } = req.body
+  const { Mapping, ogSchema, taskDataTableRef, taskTableName, taskSchema, taskMinTerm } = req.body
+  
+
   const data = await csv({ noheader: false }).fromFile(req.file.path)
   const taskCol = Object.values(
     (await csv({ noheader: true }).fromFile(`./task_data_table/${taskTableName}`))[0]

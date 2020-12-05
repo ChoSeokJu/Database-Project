@@ -611,8 +611,6 @@ exports.parsedDataList = (req, res) => {
     where: {
       TaskName: taskName,
     },
-    offset: parseInt(per_page) * (parseInt(page) - 1),
-    limit: parseInt(per_page),
   }).then((parsing_data) => {
     if (parsing_data) {
       parsing_data.forEach((p_data) => {
@@ -624,8 +622,9 @@ exports.parsedDataList = (req, res) => {
           PNP: p_data.evaluates[0].Pass,
         });
       });
+      offset = parseInt(per_page) * (parseInt(page) - 1)
       return res.status(200).json({
-        data: output,
+        data: output.slice(offset, offset + parseInt(per_page)),
         page: parseInt(page),
         totalCount: output.length
       });

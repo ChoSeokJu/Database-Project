@@ -88,7 +88,7 @@ router.get(
 
 router.get(
   '/task/parsed-data',
-  [authJwt.verifyToken, authJwt.isAdmin],
+  // [authJwt.verifyToken, authJwt.isAdmin],
   adminController.parsedDataList
 )
 
