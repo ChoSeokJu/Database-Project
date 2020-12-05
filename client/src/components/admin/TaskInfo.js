@@ -67,7 +67,6 @@ export default function TaskInfo({ open, handleClose, taskName }) {
           TimeStamp,
           PassCriteria,
         } = response.data.task;
-        console.log(response.data);
         setTaskInfos({
           TaskName,
           Desc,
