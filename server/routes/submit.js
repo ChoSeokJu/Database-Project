@@ -41,7 +41,7 @@ router.get(
 
 router.get(
   '/submitter-list',
-  [authJwt.verifyToken],
+  [authJwt.verifyToken, authJwt.isSubmit],
   submitController.getSubmitterList,
   submitController.groupSubmitterList
 )
