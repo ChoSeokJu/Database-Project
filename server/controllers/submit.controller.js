@@ -53,6 +53,7 @@ exports.submitContent = (req, res, next) => {
         req.body.taskSchema = task.TableSchema[0]
         req.body.Mapping = og_data_type.Mapping[0]
         req.body.ogSchema = og_data_type.Schema
+        req.body.taskMinTerm = task.MinTerm
         next()
       })
     } else {
