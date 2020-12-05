@@ -95,7 +95,7 @@ export default function TaskInfo({ open, handleClose, taskName }) {
           const parsedData = data.map((row) => ({
             ID: row.ID,
             OGDataType: row.OGDataType,
-            PNP: row.PNP === null ? null : row.PNP ? 'P' : 'NP',
+            PNP: row.PNP === null ? '평가 대기중' : row.PNP ? 'P' : 'NP',
             date: row.date.match(/\d{4}-\d{2}-\d{2}/g)[0],
             Pid: row.Pid,
           }));
