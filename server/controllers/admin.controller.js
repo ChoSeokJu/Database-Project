@@ -728,7 +728,7 @@ exports.getTaskInfo = async (req, res) => {
   if (task != undefined) {
     try {
       const parsedData = await csv({ noheader: false }).fromFile(
-        tableRef
+        task.TableRef
       )
       console.log(task.tupleCount);
       return res.status(200).json({
@@ -737,12 +737,12 @@ exports.getTaskInfo = async (req, res) => {
       });
     } catch (err) {
       return res.status(404).json({
-        "message": "such a file does not exist in ./task_data_table"
+        "message": "./task_data_table에 파일이 존재하지 않습니다"
       })
     }
   } else {
     return res.status(404).json({
-      "message": "no data with the taskname was found"
+      "message": "해당 태스크 이름이 존재하지 않습니다"
     })
   }
 };
