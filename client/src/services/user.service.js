@@ -69,6 +69,14 @@ const postEval = (url, data) =>
 const postSubmit = (url, data) =>
   axios.post(`${API_URL}submit${url}`, data, { headers: authHeader() });
 
+const postSubmitUpload = (url, form) =>
+  axios.post(`${API_URL}submit${url}`, form, {
+    header: {
+      ...authHeader(),
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+
 export {
   getUser,
   postUser,
@@ -81,4 +89,5 @@ export {
   postAdmin,
   postEval,
   postSubmit,
+  postSubmitUpload,
 };
