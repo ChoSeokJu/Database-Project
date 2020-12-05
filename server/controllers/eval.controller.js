@@ -82,7 +82,7 @@ exports.evaluate = (req, res, next) => {
 };
 
 exports.saveToTaskTable = async function (req, res) {
-  if (req.body.Pass == 0) {
+  if (PNPtoInt(req.body.Pass) == 0) {
     return res.status(400).json({
       message: '제출된 자료가 정성적 평가를 통과하지 못하였습니다',
     });
@@ -93,7 +93,7 @@ exports.saveToTaskTable = async function (req, res) {
       // TaskName: "Fundamentals",
       TaskName: TaskName, // this is for deployment
     },
-    attributes: ['TableRef','TableName', 'PassCriteria'],
+    attributes: ['TableRef', 'TableName', 'PassCriteria'],
   });
 
   if (req.body.totalScore < PassCriteria) {
@@ -180,7 +180,7 @@ exports.evalContent = (req, res) => {
         limit: parseInt(per_page),
       }).then((parsing_data) => {
         var ammendedResults = []
-        parsing_data.forEach((p_data)=>{
+        parsing_data.forEach((p_data) => {
           ammendedResults.push({
             "Pid": p_data.Pid,
             "TaskName": p_data.TaskName,
@@ -209,7 +209,7 @@ exports.evalContent = (req, res) => {
 exports.downloadParsedData = (req, res) => {
   const { Pid } = req.query
   parsing_data.findOne({
-    where:{
+    where: {
       Pid: Pid
     },
     include: [{
