@@ -290,13 +290,13 @@ exports.getTaskList = function (req, res, next) {
         order: [
           ["Permit", "DESC"]
         ],
-        offset: parseInt(per_page) * parseInt((page - 1)),
-        limit: parseInt(per_page)
-      }).then((results) => {
-        if (results) {
+      }).then((w_results) => {
+        if (w_results) {
+          var offset = parseInt(per_page) * parseInt((page - 1))
+          var counts = w_results.length
+          var results = w_results.slice(offset, offset + parseInt(per_page))
           console.log(results)
           var amendedResults = []
-          var counts = results.length
           results.forEach((result) => {
             amendedResults.push({
               "taskName": result.task.TaskName,
