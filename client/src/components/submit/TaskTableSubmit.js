@@ -3,9 +3,11 @@ import MaterialTable from 'material-table';
 import Button from '@material-ui/core/Button';
 import Container from '@material-ui/core/Container';
 import IconButton from '@material-ui/core/IconButton';
+import Grid from '@material-ui/core/Grid';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemText from '@material-ui/core/ListItemText';
 import DescriptionIcon from '@material-ui/icons/Description';
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
-import { Typography } from '@material-ui/core';
 import TaskDetail from './TaskDetail';
 import OGDataSubmit from './OGDataSubmit';
 import TaskTerms from './TaskTerms';
@@ -13,6 +15,7 @@ import { getSubmit } from '../../services/user.service';
 
 export default function TaskTableSubmit() {
   const [totalCnt, setTotalCnt] = useState(null);
+  const [approvedCnt, setApprovedCnt] = useState(null);
   const tableRef = React.createRef();
   const [openTaskDetail, setOpenTaskDetail] = useState({
     open: false,
@@ -96,6 +99,7 @@ export default function TaskTableSubmit() {
             totalCount,
           });
           setTotalCnt(totalCount);
+          setApprovedCnt((data.filter((item) => item.permit === 'approved')).length);
         },
         (error) => {
           const message =
@@ -112,7 +116,22 @@ export default function TaskTableSubmit() {
   return (
     <>
       <Container component="main" maxWidth="md">
-        <Typography variant="body1">총 태스크 수: {totalCnt}</Typography>
+        <Grid container lg={12} md={12} xs={12}>
+          <Grid item lg={6} md={6} xs={12}>
+          </Grid>
+          <Grid item lg={3} md={3} xs={12}>
+            <ListItem>
+              <ListItemText primary='총 태스크 수' />
+              <ListItemText secondary={totalCnt} align='right' />
+            </ListItem>
+          </Grid>
+          <Grid item lg={3} md={3} xs={12}>
+            <ListItem>
+              <ListItemText primary='참여중인 태스크 수' />
+              <ListItemText secondary={approvedCnt} align='right' />
+            </ListItem>
+          </Grid>
+        </Grid>
         <MaterialTable
           tableRef={tableRef}
           title="태스크 목록"
@@ -132,11 +151,13 @@ export default function TaskTableSubmit() {
             },
           }}
           columns={[
-            { title: '이름', field: 'taskName' },
+            { title: '이름', field: 'taskName', sorting: false },
             {
               title: '참가 상태',
               cellStyle: { width: '15%' },
               field: 'status',
+              sorting: false,
+              align: 'center',
               render: (rowData) => renderPermit(rowData),
             },
             {
