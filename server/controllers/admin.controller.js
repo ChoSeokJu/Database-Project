@@ -494,16 +494,30 @@ exports.infoSearch = (req, res) => {
       })
     })
   } else if (searchCriterion == 'Gender') {
+    var male = ['남성','남자','남'];
+    var female = ['여성', '여자', '여'];
+    var value = "";
+    if (male.includes(search)) {
+      console.log('남자');
+      value = 'male';
+    }
+    else if (female.includes(search)) {
+      console.log('여자');
+      value = 'female';
+    }
+    else {
+      value = search;
+    }
     User.findAndCountAll({
       where: {
-        Gender: { [Op.substring]: search },
+        Gender: { [Op.substring]: value },
       },
       offset: parseInt(per_page) * parseInt((page - 1)),
       limit: parseInt(per_page)
     }).then((result) => {
       User.findAndCountAll({
         where: {
-          Gender: { [Op.substring]: search },
+          Gender: { [Op.substring]: value },
         },
       }).then((count) => {
         if (result.rows.length !== 0) {
