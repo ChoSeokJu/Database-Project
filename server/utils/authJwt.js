@@ -23,9 +23,6 @@ const verifyToken = (req, res, next) => {
     req.username = decoded.username;
     next();
   });
-
-  console.log(req.query);
-  console.log(req.body);
 };
 
 const isAdmin = (req, res, next) => {
