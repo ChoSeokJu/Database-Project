@@ -1,5 +1,5 @@
 /* eslint-disable react/jsx-filename-extension */
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -12,7 +12,13 @@ import IconButton from '@material-ui/core/IconButton';
 import GroupIcon from '@material-ui/icons/Group';
 import InfoIcon from '@material-ui/icons/Info';
 import Typography from '@material-ui/core/Typography';
+import Grid from '@material-ui/core/Grid';
 import { makeStyles } from '@material-ui/core/styles';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemText from '@material-ui/core/ListItemText';
+import Box from '@material-ui/core/Box';
+import Divider from '@material-ui/core/Divider';
 import Paper from '@material-ui/core/Paper';
 import GetAppIcon from '@material-ui/icons/GetApp';
 import download from 'downloadjs';
@@ -36,11 +42,43 @@ const useStyles = makeStyles((theme) => ({
     right: theme.spacing(1),
     top: theme.spacing(1),
   },
+  info: {
+    width: '50%',
+  },
+  divider: {
+    marginTop: theme.spacing(2),
+  },
 }));
 
 export default function TaskInfo({ open, handleClose, taskName }) {
   const classes = useStyles();
   const dispatch = useDispatch();
+  const [taskInfos, setTaskInfos] = useState({});
+
+  useEffect(() => {
+    if (open) {
+      getAdmin('/task/info', { taskName }).then((response) => {
+        const {
+          TaskName,
+          Desc,
+          MinTerm,
+          TableName,
+          TableSchema,
+          TimeStamp,
+          PassCriteria,
+        } = response.data;
+        setTaskInfos({
+          TaskName,
+          Desc,
+          MinTerm,
+          TableName,
+          TableSchema: TableSchema.join(', '),
+          TimeStamp: TimeStamp.match(/\d{4}-\d{2}-\d{2}/g)[0],
+          PassCriteria,
+        });
+      });
+    }
+  }, [open]);
 
   // TODO: 파싱된 데이터 목록 얻어오기
   const getParsedData = (query) =>
@@ -122,6 +160,21 @@ export default function TaskInfo({ open, handleClose, taskName }) {
       });
   };
 
+  const ListInfo = ({ key, value }) => (
+    <ListItem>
+      <ListItemText
+        secondaryTypographyProps={{
+          style: {
+            textOverflow: 'ellipsis',
+            overflow: 'hidden',
+          },
+        }}
+        primary={key}
+        secondary={value}
+      />
+    </ListItem>
+  );
+
   return (
     <Dialog
       open={open}
@@ -143,6 +196,49 @@ export default function TaskInfo({ open, handleClose, taskName }) {
         </Button>
       </DialogTitle>
       <DialogContent>
+        <Box display="flex" flexDirection="row">
+          <List className={classes.info}>
+            {[
+              ['태스크 이름', taskInfos.TaskName],
+              ['최소 업로드 주기', taskInfos.MinTerm],
+              ['패스 기준', taskInfos.PassCriteria],
+            ].map(([key, value]) => (
+              <ListItem>
+                <ListItemText
+                  secondaryTypographyProps={{
+                    style: {
+                      textOverflow: 'ellipsis',
+                      overflow: 'hidden',
+                    },
+                  }}
+                  primary={key}
+                  secondary={value}
+                />
+              </ListItem>
+            ))}
+          </List>
+          <List className={classes.info}>
+            {[
+              ['생성된 날짜', taskInfos.TimeStamp],
+              ['테이블 이름', taskInfos.TableName],
+              ['테이블 칼럼', taskInfos.TableSchema],
+            ].map(([key, value]) => (
+              <ListItem>
+                <ListItemText
+                  secondaryTypographyProps={{
+                    style: {
+                      textOverflow: 'ellipsis',
+                      overflow: 'hidden',
+                    },
+                  }}
+                  primary={key}
+                  secondary={value}
+                />
+              </ListItem>
+            ))}
+          </List>
+        </Box>
+        <Divider className={classes.divider} />
         <MaterialTable
           components={{
             Container: (props) => <Paper {...props} elevation={0} />,
