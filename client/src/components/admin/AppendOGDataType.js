@@ -1,5 +1,5 @@
 /* eslint-disable react/jsx-filename-extension */
-import React, { useState, useEffect } from 'react';
+import React, { useState, forwardRef, useImperativeHandle } from 'react';
 import MaterialTable from 'material-table';
 import Paper from '@material-ui/core/Paper';
 import { useDispatch, useSelector } from 'react-redux';
@@ -27,6 +27,7 @@ import {
   setSchemaName,
   setColumns,
 } from '../../actions/originalData';
+import { postAdmin } from '../../services/user.service';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -41,11 +42,36 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function AppendOGDataType(props) {
+const AppendOGDataType = forwardRef((props, ref) => {
   const dispatch = useDispatch();
   const classes = useStyles();
   const { data, name, columns } = useSelector((state) => state.originalData);
   const [columnName, setColumnName] = useState('');
+
+  useImperativeHandle(ref, () => ({
+    submitOGDataType(taskName) {
+      const newColumns = Object.entries(columns)
+        .filter((column) => column[0] === column[1])
+        .map((column) => column[0]);
+
+      const mapping = {};
+      data
+        .filter((row) => row.originalColumnName !== '')
+        .forEach((row) => {
+          mapping[row.columnName] = row.originalColumnName;
+        });
+
+      return postAdmin('/task/og-data', {
+        taskName,
+        OGDataType: name,
+        OGDataColumn: newColumns,
+        OGDataMapping: mapping,
+      }).then(
+        () => Promise.resolve(),
+        (error) => Promise.reject(error)
+      );
+    },
+  }));
 
   const isDuplicated = (newData) =>
     data.some(({ originalColumnName: oldName }) => {
@@ -204,4 +230,6 @@ export default function AppendOGDataType(props) {
       />
     </>
   );
-}
+});
+
+export default AppendOGDataType;
