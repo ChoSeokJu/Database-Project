@@ -419,9 +419,9 @@ exports.infoSearch = (req, res) => {
           });
         };
         return res.json({
-          data: data2,
+          data: [],
           page,
-          totalCount: total
+          totalCount: 0
         });
       })
     })
@@ -441,14 +441,14 @@ exports.infoSearch = (req, res) => {
           if (result.rows.length !== 0) {
             return res.status(200).json({
               data: result.rows,
-              page,
+              page: parseInt(page),
               totalCount: count.rows.length
             });
           };
-          return res.status(404).json({
-            data: result.rows,
+          return res.json({
+            data: [],
             page,
-            totalCount: count.rows.length
+            totalCount: 0
           });
         })
       }) 
@@ -477,7 +477,6 @@ exports.infoSearch = (req, res) => {
           },
         ],
       }).then((count)=> {
-        console.log(count)
         if (result.rows.length !== 0) {
           return res.status(200).json({
             data: result.rows,
@@ -485,10 +484,10 @@ exports.infoSearch = (req, res) => {
             totalCount: count.rows.length
           });
         };
-        return res.status(404).json({
-          data: result.rows,
+        return res.json({
+          data: [],
           page,
-          totalCount: count.rows.length
+          totalCount: 0
         });
       })
     })
@@ -512,17 +511,19 @@ exports.infoSearch = (req, res) => {
             totalCount: count.rows.length
           });
         };
-        return res.status(404).json({
-          data: result.rows,
+        return res.json({
+          data: [],
           page,
-          totalCount: count.rows.length
+          totalCount: 0
         });
       });
     })
   } else if (searchCriterion == 'age'){
     if (isNaN(parseInt(search))) {
-      return res.status(400).json({
-        'message': '숫자를 입력해야 합니다'
+      return res.json({
+        data: [],
+        page,
+        totalCount: 0
       })
     }
     else {
@@ -550,10 +551,10 @@ exports.infoSearch = (req, res) => {
         });
       }
       if (temp_arr.length === 0) {
-        return res.status(400).json({
-          data: temp_arr.slice(offset, offset+limit),
+        return res.json({
+          data: [],
           page: page,
-          totalCount: len
+          totalCount: 0
         })
       };
       temp_arr.sort(function(a,b){
