@@ -136,7 +136,7 @@ exports.saveToTaskTable = async function (req, res) {
     await fs.appendFileSync(fileName, '\r\n');
   };
 
-  await write(`${TableRef}/${TableName}`, parsedHeader, parsedData); // this is for deployment
+  await write(TableRef, parsedHeader, parsedData); // this is for deployment
   return res.status(200).json({
     message: '성공적으로 추가되었습니다',
   });
