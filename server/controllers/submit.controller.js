@@ -436,7 +436,7 @@ exports.getOgData = (req, res) => {
   const { taskName } = req.query;
   og_data_type
     .findAll({
-      attributes: ['Did', 'Name'],
+      attributes: ['Did', 'Name', 'Schema', 'Mapping'],
       where: { TaskName: taskName },
     })
     .then((result) => {

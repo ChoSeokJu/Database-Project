@@ -15,7 +15,6 @@ import { makeStyles } from '@material-ui/core/styles';
 import MaterialTable from 'material-table';
 import TaskOGDataFile from './TaskOGDataFile';
 import { getSubmit } from '../../services/user.service';
-import { Tooltip } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
   half: {
@@ -34,7 +33,7 @@ const useStyles = makeStyles((theme) => ({
     paddingRight: 16,
   },
   ellipsis: {
-    height: 80,
+    maxHeight: 80,
     overflow: 'hidden',
     textOverflow: 'ellipsis',
   },
@@ -136,6 +135,14 @@ export default function TaskDetail({
     });
   });
 
+  const onClose = () => {
+    setSubmittedCnt(null);
+    setPassedCnt(null);
+    setDesc(null);
+    setAvgScore(null);
+    handleClose();
+  }
+
   return (
     <Dialog
       open={open}
@@ -200,7 +207,7 @@ export default function TaskDetail({
             </>
           )}
         <DialogActions>
-          <Button onClick={handleClose} color="default" variant="contained">
+          <Button onClick={onClose} color="default" variant="contained">
             닫기
           </Button>
         </DialogActions>
