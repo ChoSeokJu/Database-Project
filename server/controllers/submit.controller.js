@@ -328,7 +328,7 @@ exports.getTaskList = function (req, res, next) {
             },
             {
               model: task,
-              attributes: ['TaskName'],
+              attributes: ['TaskName', 'Desc'],
               required: false,
               right: true,
             },
@@ -348,6 +348,7 @@ exports.getTaskList = function (req, res, next) {
             results.forEach((result) => {
               amendedResults.push({
                 taskName: result.task.TaskName,
+                taskDesc: result.task.Desc,
                 permit: result.Permit,
               });
             });
