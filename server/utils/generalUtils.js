@@ -109,3 +109,8 @@ exports.returnPass = (n) => {
   }
   return null;
 };
+
+exports.PNPtoInt = (n) => {
+  if(n=="NP"){return 0}
+  else if (n=="P"){return 1}
+}

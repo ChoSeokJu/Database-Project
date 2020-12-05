@@ -6,7 +6,7 @@ const db = require('../models');
 const {
   parsing_data, evaluate, user, og_data_type, task,
 } = db;
-const { finalScore, nowDate } = require('../utils/generalUtils');
+const { finalScore, nowDate, PNPtoInt } = require('../utils/generalUtils');
 
 parsing_data.hasMany(evaluate, { foreignKey: 'Pid', as: 'Eval' });
 evaluate.belongsTo(parsing_data, { foreignKey: 'Pid', as: 'Eval' });
@@ -27,7 +27,7 @@ exports.evaluate = (req, res, next) => {
 
   evaluate.update({
     Score,
-    Pass: PNP,
+    Pass: PNPtoInt(PNP),
     Desc,
     TimeStamp: nowDate('DateTime'),
   },
