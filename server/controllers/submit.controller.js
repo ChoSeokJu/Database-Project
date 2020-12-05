@@ -67,7 +67,7 @@ exports.submitContent = (req, res, next) => {
             req.body.taskDataTableRef = task.TableRef;
             req.body.taskTableName = task.TableName;
             req.body.taskSchema = task.TableSchema[0];
-            req.body.Mapping = og_data_type.Mapping[0];
+            req.body.Mapping = og_data_type.Mapping;
             req.body.ogSchema = og_data_type.Schema;
             req.body.taskMinTerm = task.MinTerm;
             next();
@@ -81,16 +81,18 @@ exports.submitContent = (req, res, next) => {
 };
 
 exports.quantAssess = async function (req, res, next) {
-  const { Mapping, ogSchema, taskDataTableRef, taskTableName, taskSchema, taskMinTerm } = req.body
-  
-
-  const data = await csv({ noheader: false }).fromFile(req.file.path)
+  const {
+    Mapping,
+    ogSchema,
+    taskDataTableRef,
+    taskTableName,
+    taskSchema,
+    taskMinTerm,
+  } = req.body;
+  console.log(req.file.path);
+  const data = await csv({ noheader: false }).fromFile(req.file.path);
   const taskCol = Object.values(
-    (
-      await csv({ noheader: true }).fromFile(
-        `./task_data_table/${taskTableName}`
-      )
-    )[0]
+    (await csv({ noheader: true }).fromFile(taskDataTableRef))[0]
   );
   taskCol.pop(); // pop "Sid" from task data columns
 
