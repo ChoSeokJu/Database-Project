@@ -127,19 +127,25 @@ export default function OGDataSubmit({ open, handleClose, taskName }) {
       // data.append('file', dataFile);
       try {
         const formData = new FormData();
-        formData.append('file', dataFile);
-        formData.append('taskName', ogDataType);
+        formData.append('file', dataFile, dataFile.name);
+        formData.append('taskName', taskName);
+        formData.append('ogDataType', ogDataType);
 
-        await postSubmitUpload('/submit-data', {});
+        await postSubmitUpload('/submit-data', formData);
 
         dispatch(setAlertType('success'));
         dispatch(setMessage('원본 데이터를  성공적으로 제출했습니다'));
         dispatch(openAlert());
         handleClose();
       } catch (error) {
-        console.log(error);
+        const message =
+          (error.response &&
+            error.response.data &&
+            error.response.data.message) ||
+          error.message ||
+          error.toString();
         dispatch(setAlertType('error'));
-        dispatch(setMessage(error.message));
+        dispatch(setMessage(message));
         dispatch(openAlert());
         handleClose();
       }
@@ -201,10 +207,10 @@ export default function OGDataSubmit({ open, handleClose, taskName }) {
               <input
                 accept=".csv"
                 className={classes.upload}
-                id="ogdata"
                 multiple
                 hidden
                 type="file"
+                name="file"
                 onChange={onDataFileChange}
               />
             </Button>

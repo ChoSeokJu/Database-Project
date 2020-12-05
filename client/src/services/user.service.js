@@ -71,7 +71,7 @@ const postSubmit = (url, data) =>
 
 const postSubmitUpload = (url, form) =>
   axios.post(`${API_URL}submit${url}`, form, {
-    header: {
+    headers: {
       ...authHeader(),
       'Content-Type': 'multipart/form-data',
     },
