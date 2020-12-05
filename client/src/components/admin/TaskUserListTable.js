@@ -79,6 +79,7 @@ export default function TaskUserListTable({ taskName }) {
       }).then(
         (response) => {
           const { data, page, totalCount } = response.data;
+          console.log(response.data);
           resolve({
             data,
             page: page - 1,
@@ -107,6 +108,7 @@ export default function TaskUserListTable({ taskName }) {
       }).then(
         (response) => {
           const { data, page, totalCount } = response.data;
+          console.log(response.data);
           resolve({
             data,
             page: page - 1,

@@ -168,8 +168,15 @@ exports.pendingUser = (req, res) => {
   Works_on.belongsTo(User, { foreignKey: 'Sid' });
   const arr = [];
   const { taskName, per_page, page } = req.query;
-  Task.count({
-    where: { TaskName: taskName },
+  Works_on.count({
+    include: [
+      {
+        model: User,
+        attributes: ['Uid', 'ID', 'Name'],
+        required: true,
+      },
+    ],
+    where: { TaskName: taskName, Permit: 'approved' },
   }).then((count) =>
     Works_on.findAll({
       attributes: [],
@@ -201,8 +208,15 @@ exports.approvedUser = (req, res) => {
   Works_on.belongsTo(User, { foreignKey: 'Sid' });
   const arr = [];
   const { taskName, per_page, page } = req.query;
-  Task.count({
-    where: { TaskName: taskName },
+  Works_on.count({
+    include: [
+      {
+        model: User,
+        attributes: ['Uid', 'ID', 'Name'],
+        required: true,
+      },
+    ],
+    where: { TaskName: taskName, Permit: 'approved' },
   }).then((count) =>
     Works_on.findAll({
       attributes: [],
@@ -726,3 +740,4 @@ exports.getTaskInfo = async (req, res) => {
   }
   
 };
+
