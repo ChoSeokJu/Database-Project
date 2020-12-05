@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-filename-extension */
 import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import Button from '@material-ui/core/Button';
@@ -53,20 +54,24 @@ export default function OGDataSubmit({ open, handleClose, taskName }) {
 
   useEffect(() => {
     getSubmit('/og-data', {
-      taskName: taskName,
-    }).then((response) => {
-      console.log(response);
-      setOgDataTypes(response.data.data);
-      setTaskTitle(taskName);
-    }, (error) => {
-      const message = (error.response
-        && error.response.data
-        && error.response.data.message)
-        || error.message
-        || error.toString();
-      console.log(message);
-    })
-  }, [taskName]);
+      taskName,
+    }).then(
+      (response) => {
+        console.log(response);
+        setOgDataTypes(response.data.data);
+        setTaskTitle(taskName);
+      },
+      (error) => {
+        const message =
+          (error.response &&
+            error.response.data &&
+            error.response.data.message) ||
+          error.message ||
+          error.toString();
+        console.log(message);
+      }
+    );
+  }, [open]);
 
   const onOgDataTypeChange = (e) => {
     setOgDataType(e.target.value);
@@ -74,7 +79,7 @@ export default function OGDataSubmit({ open, handleClose, taskName }) {
 
   const onDataFileChange = (e) => {
     setDataFile(e.target.files[0]);
-  }
+  };
 
   const onSubmitCntChange = (e) => {
     setSubmitCnt(e.target.value);
@@ -109,7 +114,6 @@ export default function OGDataSubmit({ open, handleClose, taskName }) {
     if (message) {
       dispatch(setMessage(message));
       dispatch(openAlert());
-      return;
     } else {
       e.preventDefault();
       // const data = new FormData();
@@ -139,7 +143,7 @@ export default function OGDataSubmit({ open, handleClose, taskName }) {
         handleClose();
       }
     }
-  }
+  };
 
   return (
     <Dialog
@@ -160,7 +164,7 @@ export default function OGDataSubmit({ open, handleClose, taskName }) {
           <Grid item xs={12}>
             <InputLabel required shrink id="ogdatatype" color="primary">
               원본 데이터 타입
-              </InputLabel>
+            </InputLabel>
             <Select
               labelId="ogdatatype"
               id="ogdatatype"
@@ -172,16 +176,18 @@ export default function OGDataSubmit({ open, handleClose, taskName }) {
             >
               <MenuItem value="" disabled>
                 선택
-                </MenuItem>
+              </MenuItem>
               {ogDataTypes.map((type, index) => (
-                <MenuItem value={type.Name} key={type.Did}>{type.Name}</MenuItem>
+                <MenuItem value={type.Name} key={type.Did}>
+                  {type.Name}
+                </MenuItem>
               ))}
             </Select>
           </Grid>
           <Grid item xs={12}>
             <InputLabel required shrink id="ogdata">
               원본 데이터 파일 제출
-              </InputLabel>
+            </InputLabel>
             <Button
               variant="contained"
               color="default"
@@ -200,7 +206,9 @@ export default function OGDataSubmit({ open, handleClose, taskName }) {
                 onChange={onDataFileChange}
               />
             </Button>
-            <Typography variant="body2">파일 이름: {dataFile ? dataFile.name : null}</Typography>
+            <Typography variant="body2">
+              파일 이름: {dataFile ? dataFile.name : null}
+            </Typography>
           </Grid>
           {/* <Grid item xs={12}>
             <TextField
@@ -266,10 +274,10 @@ export default function OGDataSubmit({ open, handleClose, taskName }) {
               onClick={handleSubmit}
             >
               제출하기
-                </Button>
+            </Button>
           </Grid>
         </Grid>
       </DialogContent>
-    </Dialog >
+    </Dialog>
   );
 }

@@ -89,21 +89,11 @@ export default function TaskTableSubmit() {
       }).then(
         (response) => {
           console.log(response);
-          const {
-            data,
-            page,
-            totalCount,
-            score,
-            submittedDataCnt,
-            taskDataTableTupleCnt,
-          } = response.data;
+          const { data, page, totalCount } = response.data;
           resolve({
             data,
             page: page - 1,
             totalCount,
-            score,
-            submittedDataCnt,
-            taskDataTableTupleCnt,
           });
           setTotalCnt(totalCount);
         },
