@@ -728,7 +728,7 @@ exports.getTaskInfo = async (req, res) => {
   if (task != undefined) {
     try {
       const parsedData = await csv({ noheader: false }).fromFile(
-        tableRef
+        task.tableRef
       )
       console.log(task.tupleCount);
       return res.status(200).json({
