@@ -48,7 +48,7 @@ router.get(
 
 router.get(
   '/task-details',
-  [authJwt.verifyToken, authJwt.isSubmit],
+  // [authJwt.verifyToken, authJwt.isSubmit],
   submitController.getSubmitterTaskDetails
 )
 

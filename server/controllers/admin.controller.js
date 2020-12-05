@@ -725,21 +725,6 @@ exports.getTaskInfo = async (req, res) => {
       TaskName: taskName, // this is for deployment
     },
   });
-<<<<<<< HEAD
-  if (task != undefined) {
-    const parsedData = await csv({ noheader: false }).fromFile(
-      task.TableRef
-    ).on('done', (error) => {
-      return res.status(200).json({
-        "message": "File does not exist in the given path"
-      })
-    });
-    console.log(task.tupleCount);
-    return res.status(200).json({
-      task,
-      tupleCount: parsedData.length,
-    });
-=======
   if (task != undefined){
     try{
       const parsedData = await csv({ noheader: false }).fromFile(
@@ -755,15 +740,9 @@ exports.getTaskInfo = async (req, res) => {
         "message": "such a file does not exist in ./task_data_table"
       })
     }
->>>>>>> 9390780bd9489dd47356be0f370526cedfa29777
   } else {
     return res.status(404).json({
       "message": "no data with the taskname was found"
     })
   }
-<<<<<<< HEAD
-
-=======
->>>>>>> 9390780bd9489dd47356be0f370526cedfa29777
 };
-
