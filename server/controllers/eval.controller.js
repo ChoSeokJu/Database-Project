@@ -155,7 +155,7 @@ exports.evalContent = (req, res) => {
     if (user_id) {
       console.log(user_id.Uid);
       parsing_data.findAll({
-        attributes: ['Pid', 'TaskName', 'FinalScore', 'TimeStamp'],
+        attributes: ['Pid', 'TaskName', 'FinalScore', 'TimeStamp', 'Appended'],
         include: [{
           model: evaluate,
           attributes: [],
@@ -179,8 +179,21 @@ exports.evalContent = (req, res) => {
         offset: parseInt(per_page) * parseInt((page - 1)),
         limit: parseInt(per_page),
       }).then((parsing_data) => {
+        var ammendedResults = []
+        parsing_data.forEach((p_data)=>{
+          ammendedResults.push({
+            "Pid": p_data.Pid,
+            "TaskName": p_data.TaskName,
+            "FinalScore": p_data.FinalScore,
+            "TimeStamp": p_data.TimeStamp,
+            "Appended": p_data.appended,
+            "ID": p_data.user.ID,
+            "OGDataTypeName": p_data.og_data_type.Name,
+            "isEvaluated": !((p_data.FinalScore == null) && (p_data.Appended == null))
+          })
+        })
         res.status(200).json({
-          data: parsing_data,
+          data: ammendedResults,
           page: page,
           totalCount: parsing_data.length
         });
