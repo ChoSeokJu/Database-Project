@@ -1,19 +1,21 @@
 import React, { useEffect, useState } from 'react';
-import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Divider from '@material-ui/core/Divider';
+import Grid from '@material-ui/core/Grid';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import Paper from '@material-ui/core/Paper';
+import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import MaterialTable from 'material-table';
 import TaskOGDataFile from './TaskOGDataFile';
 import { getSubmit } from '../../services/user.service';
+import { Tooltip } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
   half: {
@@ -22,32 +24,58 @@ const useStyles = makeStyles((theme) => ({
   divider: {
     marginTop: theme.spacing(2),
   },
+  itemName: {
+    width: '80%',
+  },
+  desc: {
+    paddingTop: 20,
+    paddingBottom: 8,
+    paddingLeft: 16,
+    paddingRight: 16,
+  },
+  ellipsis: {
+    height: 80,
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+  },
+  more: {
+    float: 'right',
+  }
 }));
 
-function DividedList({ items, length, direction }) {
+function DividedList({ items, direction, onlyDesc }) {
   const classes = useStyles();
+  const [more, setMore] = useState(true);
+
+  const onMoreChange = () => {
+    setMore(() => !more);
+  }
+
+  if (onlyDesc) {
+    return (
+      <>
+        <Typography variant='body1' component='span' display='block'>{items[0][0]}</Typography>
+        <Typography variant='body2' color='textSecondary' display='block'>{items[0][1]}</Typography>
+      </>
+    )
+  }
 
   return (
-    <List className={length === 2 && classes.half}>
-      {items.map(([key, value]) => (
-        <ListItem>
-          {direction === 'vertical'
-            ? <ListItemText secondaryTopographyProps={{
-              style: {
-                textOverflow: 'ellipsis',
-                overflow: 'hidden',
-              },
-            }}
-              primary={key}
-              secondary={value}
-            />
-            : <>
-              <ListItemText className={classes.half} primary={key} />
-              <ListItemText className={classes.half} secondary={value} />
-            </>}
-        </ListItem>
-      ))}
-    </List>
+    <>
+      {direction === 'vertical'
+        ? <>
+          <Typography variant='body1' component='span' display='block'>{items[0][0]}</Typography>
+          <Typography variant='body2' color='textSecondary' display='block' className={more && classes.ellipsis}>{items[0][1]}</Typography>
+          <Button onClick={onMoreChange} color='primary' className={classes.more}>{more ? '더보기' : '간단히'}</Button>
+        </>
+        : <List>
+          {items.map(([key, value]) => (
+            <ListItem>
+              <ListItemText className={classes.itemName} primary={key} />
+              <ListItemText secondary={value} />
+            </ListItem>))}
+        </List>}
+    </>
   )
 }
 
@@ -62,7 +90,7 @@ export default function TaskDetail({
 
   useEffect(() => {
     if (open) {
-      getSubmit('/submitter-list', {
+      getSubmit('/task-details', {
         taskName: taskName,
         per_page: 8,
         page: 1,
@@ -119,13 +147,17 @@ export default function TaskDetail({
       <DialogTitle>{taskName}의 태스크 상세정보</DialogTitle>
       <DialogContent>
         {permit !== 'approved'
-          ? (<DividedList items={[['설명', desc]]} length={1} direction='vertical' />)
+          ? (<DividedList items={[['설명', desc]]} direction='vertical' onlyDesc />)
           : (
             <>
-              <Box display="flex" flexDirection="row">
-                <DividedList items={[['설명', desc]]} length={2} direction='vertical' />
-                <DividedList items={[['평가 점수', avgScore], ['Pass된 파일 수', passedCnt], ['제출한 파일 수', submittedCnt]]} length={2} />
-              </Box>
+              <Grid container lg={12} md={12} xs={12}>
+                <Grid item lg={6} md={6} xs={12} className={classes.desc}>
+                  <DividedList items={[['설명', desc]]} direction='vertical' />
+                </Grid>
+                <Grid item lg={6} md={6} xs={12}>
+                  <DividedList items={[['평가 점수', avgScore], ['Pass된 파일 수', passedCnt], ['제출한 파일 수', submittedCnt]]} />
+                </Grid>
+              </Grid>
               <Divider className={classes.divider} />
               <MaterialTable
                 components={{
