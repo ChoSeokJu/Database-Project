@@ -151,6 +151,7 @@ export default function TaskDetail({
   const getTaskDetail = (query) =>
     new Promise((resolve, reject) => {
       getSubmit('/submitter-list', {
+        Uid,
         taskName,
         per_page: query.pageSize,
         page: query.page + 1,

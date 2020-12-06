@@ -440,32 +440,32 @@ exports.getOgData = (req, res) => {
       where: { TaskName: taskName },
     })
     .then((result) => {
-      if(result.length != 0) {
-        var output = [];
-        task.findOne({where : {TaskName: taskName}}).then((og_task) => {
-          if(og_task) {
-          const tableSchema = og_task.TableSchema;
-          for (let i = 0; i < result.length; i++) {
-            var temp = {};
-            var output_temp = result[i];
-            for (var key in result[i].Mapping) {
-              temp[result[i].Mapping[key]] = tableSchema[0][key]
+      if (result.length != 0) {
+        const output = [];
+        task.findOne({ where: { TaskName: taskName } }).then((og_task) => {
+          if (og_task) {
+            const tableSchema = og_task.TableSchema;
+            for (let i = 0; i < result.length; i++) {
+              const temp = {};
+              const output_temp = result[i];
+              for (const key in result[i].Mapping) {
+                temp[result[i].Mapping[key]] = tableSchema[0][key];
+              }
+              output_temp.dataValues.Og_type = temp;
+              output.push(output_temp);
             }
-            output_temp['dataValues']["Og_type"] = temp
-            output.push(output_temp)
-          }
-          res.status(200).json({
-            data: output,
-          });
+            res.status(200).json({
+              data: output,
+            });
           } else {
             res.status(400).json({
-              message: "Task에서 해당되는 태스크 이름을 찾을 수 없습니다",
+              message: 'Task에서 해당되는 태스크 이름을 찾을 수 없습니다',
             });
           }
-        })
+        });
       } else {
         res.status(400).json({
-          message: "og_data type에서 해당되는 태스크 이름을 찾을 수 없습니다",
+          message: 'og_data type에서 해당되는 태스크 이름을 찾을 수 없습니다',
         });
       }
     });
@@ -473,12 +473,18 @@ exports.getOgData = (req, res) => {
 
 exports.getSubmitterList = (req, res, next) => {
   const { taskName } = req.query;
-  const Uid = req.Uid || req.query.Uid;
+  const Uid = req.query.Uid || req.Uid;
   user.findByPk(Uid).then((user_id) => {
     if (user_id) {
       parsing_data
         .findAll({
-          attributes: ['SubmitCnt', 'TotalTupleCnt', 'FinalScore', 'TimeStamp', 'Appended'],
+          attributes: [
+            'SubmitCnt',
+            'TotalTupleCnt',
+            'FinalScore',
+            'TimeStamp',
+            'Appended',
+          ],
           include: [
             {
               model: og_data_type,
@@ -518,7 +524,7 @@ exports.groupSubmitterList = async (req, res) => {
   const OGDataTypeList = [];
   const { p_data } = req.body;
   const { taskName, per_page, page } = req.query;
-  const Uid = req.Uid || req.query.Uid;
+  const Uid = req.query.Uid || req.Uid;
 
   const { TotalSubmitCnt } = await parsing_data.findOne({
     where: {
@@ -572,7 +578,9 @@ exports.groupSubmitterList = async (req, res) => {
     } else {
       if (newOGDataType != undefined) {
         newOGDataType.submittedDataCnt = newOGDataType.submitData.length;
-        newOGDataType.passedDataCnt = (newOGDataType.submitData.filter((item) => item.PNP === 1)).length;
+        newOGDataType.passedDataCnt = newOGDataType.submitData.filter(
+          (item) => item.PNP === 1
+        ).length;
         console.log();
         OGDataTypeList.push(newOGDataType);
       }
@@ -600,7 +608,9 @@ exports.groupSubmitterList = async (req, res) => {
     });
   }
   newOGDataType.submittedDataCnt = newOGDataType.submitData.length;
-  newOGDataType.passedDataCnt = (newOGDataType.submitData.filter((item) => item.PNP === 1)).length;
+  newOGDataType.passedDataCnt = newOGDataType.submitData.filter(
+    (item) => item.PNP === 1
+  ).length;
   OGDataTypeList.push(newOGDataType);
   const offset = parseInt(per_page) * (parseInt(page) - 1);
   return res.status(200).json({
@@ -615,7 +625,7 @@ exports.groupSubmitterList = async (req, res) => {
 
 exports.getSubmitterTaskDetails = (req, res) => {
   const { taskName } = req.query;
-  const Uid = req.Uid || req.query.Uid;
+  const Uid = req.query.Uid || req.Uid;
   parsing_data
     .findOne({
       where: {

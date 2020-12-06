@@ -47,7 +47,14 @@ export default function UserEvalTask({ open, handleClose, Uid, ID }) {
     });
 
   const renderButton = (rowData) => (
-    <Button onClick={handleInfo(rowData)}>상세정보</Button>
+    <Button
+      color="primary"
+      variant="contained"
+      onClick={handleInfo(rowData)}
+      style={{ whiteSpace: 'nowrap' }}
+    >
+      상세정보
+    </Button>
   );
 
   const handleCloseDetail = () => {
