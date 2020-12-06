@@ -66,7 +66,14 @@ module.exports = function(sequelize, DataTypes) {
         using: "BTREE",
         fields: [
           { name: "Did" },
-          { name: "TaskName" },
+        ]
+      },
+      {
+        name: "NAME_UNIQUE",
+        unique: true,
+        using: "BTREE",
+        fields: [
+          { name: "Name" },
         ]
       },
       {
