@@ -372,6 +372,78 @@ exports.getTaskList = function (req, res, next) {
   });
 };
 
+exports.getTaskListApproved = function (req, res, next) {
+  const { per_page, page } = req.query;
+  const Uid = req.Uid || req.query.Uid;
+  user.findByPk(Uid).then((user_id) => {
+    if (user_id) {
+      works_on
+        .findAll({
+          attributes: [],
+          include: [
+            {
+              model: user,
+              attributes: [],
+              required: true,
+              where: {
+                [Op.or]: [
+                  {
+                    Uid: { [Op.eq]: Uid },
+                  },
+                  {
+                    Uid: { [Op.is]: null },
+                  },
+                ],
+              },
+            },
+            {
+              model: task,
+              attributes: ['TaskName', 'Desc'],
+              required: false,
+              right: true,
+            },
+          ],
+          where:{
+            Permit: "approved"
+          }
+        })
+        .then((w_results) => {
+          if (w_results) {
+            const offset = parseInt(per_page) * parseInt(page - 1);
+            const counts = w_results.length;
+            const results = w_results.slice(
+              offset,
+              offset + parseInt(per_page)
+            );
+            console.log(results);
+            const amendedResults = [];
+            results.forEach((result) => {
+              amendedResults.push({
+                taskName: result.task.TaskName,
+                taskDesc: result.task.Desc,
+                permit: result.Permit,
+              });
+            });
+            req.body.response = {
+              data: amendedResults,
+              page: parseInt(page),
+              totalCount: counts,
+            };
+            next();
+          } else {
+            return res.status(404).json({
+              message: '아무것도 찾을 수 없습니다',
+            });
+          }
+        });
+    } else {
+      return res.status(404).json({
+        message: '아무것도 찾을 수 없습니다',
+      });
+    }
+  });
+};
+
 exports.getAvgScore = function (req, res) {
   /* get average score and total tuple cnt */
   const Uid = req.Uid || req.query.Uid;

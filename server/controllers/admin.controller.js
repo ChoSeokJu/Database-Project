@@ -710,8 +710,8 @@ exports.downloadTaskData = (req, res) => {
   const { taskName } = req.query;
   Task.findByPk(taskName).then((Task) => {
     if (Task) {
-      fileRef = Task.TableRef;
-      res.download(fileRef, `${Task.TableName}.csv`, (err) => {
+      console.log(Task.TableName)
+      res.download(Task.TableRef, `${Task.TableName}.csv`, (err) => {
         if (err) {
           return res.status(404).json({
             message: '파일을 다운로드 할 수 없습니다',
