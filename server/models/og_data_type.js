@@ -65,7 +65,7 @@ module.exports = function(sequelize, DataTypes) {
         unique: true,
         using: "BTREE",
         fields: [
-          { name: "Did" },
+          { name: "Did" }
         ]
       },
       {
@@ -73,7 +73,7 @@ module.exports = function(sequelize, DataTypes) {
         unique: true,
         using: "BTREE",
         fields: [
-          { name: "Name" },
+          { name: "Name" }
         ]
       },
       {
