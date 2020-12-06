@@ -535,14 +535,14 @@ exports.infoSearch = (req, res) => {
     }
     User.findAndCountAll({
       where: {
-        Gender: { [Op.substring]: value },
+        Gender: value ,
       },
       offset: parseInt(per_page) * parseInt(page - 1),
       limit: parseInt(per_page),
     }).then((result) => {
       User.findAndCountAll({
         where: {
-          Gender: { [Op.substring]: value },
+          Gender: value,
         },
       }).then((count) => {
         if (result.rows.length !== 0) {
