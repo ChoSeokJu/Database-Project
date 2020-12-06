@@ -21,7 +21,7 @@ exports.changeUserInfo = (req, res) => {
 exports.changePassword = (req, res) => {
   const { Uid } = req;
   User.findByPk(Uid).then((user) => {
-    if (user.get('UType') === "admin") {
+    if (user.get('UType') === 'admin') {
       return res.status(400).json({
         message: '관리자는 비밀번호를 변경할 수 없습니다',
       });
@@ -38,37 +38,37 @@ exports.changePassword = (req, res) => {
 };
 
 exports.getUserInfo = (req, res) => {
-  const { Uid } = req.query;
-  User.findByPk(Uid).then((user) => res.json({
-    Name: user.get('Name'),
-    Bdate: user.get('Bdate'),
-    Gender: user.get('Gender'),
-    ID: user.get('ID'),
-    Addr: user.get('Addr'),
-    PhoneNo: user.get('PhoneNo'),
-  }));
+  const { Uid } = req;
+  User.findByPk(Uid).then((user) =>
+    res.json({
+      Name: user.get('Name'),
+      Bdate: user.get('Bdate'),
+      Gender: user.get('Gender'),
+      ID: user.get('ID'),
+      Addr: user.get('Addr'),
+      PhoneNo: user.get('PhoneNo'),
+    })
+  );
 };
 
 exports.handleWithdrawal = (req, res) => {
-  const { Uid } = req.query;
+  const { Uid } = req;
   User.findByPk(Uid).then((user) => {
-    if (user.get('UType') === "admin") {
+    if (user.get('UType') === 'admin') {
       return res
         .status(400)
         .json({ message: 'Admin 계정은 탈퇴할 수 없습니다' });
     }
-    
-    user.set('ID', "탈퇴한회원")
-    user.set('Gender', "")
-    user.set('Name', "")
-    user.set('Addr', "")
-    user.set('PhoneNo', "")
-    user.set('Bdate', "")
-    user.set('Password', "")
-    user.save()
-    return res
-      .status(200)
-      .json({ message: '회원 탈퇴가 완료되었습니다' });
+
+    user.set('ID', '탈퇴한회원');
+    user.set('Gender', 'undeclared');
+    user.set('Name', '');
+    user.set('Addr', '');
+    user.set('PhoneNo', '');
+    user.set('Bdate', '0000-00-00');
+    user.set('Password', '');
+    user.save();
+    return res.status(200).json({ message: '회원 탈퇴가 완료되었습니다' });
   });
 };
 
@@ -80,17 +80,16 @@ exports.requestTask = (req, res) => {
   Requests.create({
     Title: title,
     Content: content,
-    Date: timestampToDate
+    Date: timestampToDate,
   }).then((result) => {
     if (title || content) {
       res.status(200).json({
-        message: 'Task 요청이 완료되었습니다'
+        message: 'Task 요청이 완료되었습니다',
       });
-    }
-    else if (!title || !content) {
+    } else if (!title || !content) {
       res.status(400).json({
-        message: '제목이나 내용을 작성하지 않으셨습니다'
+        message: '제목이나 내용을 작성하지 않으셨습니다',
       });
     }
-  })
+  });
 };
