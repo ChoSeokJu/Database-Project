@@ -8,7 +8,7 @@ const router = express.Router();
 
 router.post(
   '/',
-  // [authJwt.verifyToken, authJwt.isEval],
+  [authJwt.verifyToken, authJwt.isEval],
   evalController.evaluate,
   evalController.saveToTaskTable
 );
