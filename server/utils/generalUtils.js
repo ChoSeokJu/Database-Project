@@ -114,3 +114,8 @@ exports.PNPtoInt = (n) => {
   if(n=="NP"){return 0}
   else if (n=="P"){return 1}
 }
+
+exports.IntToPNP = (n) => {
+  if(n=0){return "NP"}
+  else if (n=1) {return "N"}
+}

@@ -303,8 +303,10 @@ exports.submitApply = function (req, res) {
 };
 
 exports.getTaskList = function (req, res, next) {
-  const { per_page, page } = req.query;
-  const { Uid } = req;
+  const { Uid, per_page, page } = req.query;
+  if (Uid==undefined){
+    Uid = req.Uid
+  }
   user.findByPk(Uid).then((user_id) => {
     if (user_id) {
       works_on
@@ -374,7 +376,10 @@ exports.getTaskList = function (req, res, next) {
 
 exports.getAvgScore = function (req, res) {
   /* get average score and total tuple cnt */
-  const { Uid } = req;
+  const { Uid } = req.query;
+  if (Uid==undefined){
+    Uid = req.Uid
+  }
   user.findByPk(Uid).then((user_id) => {
     if (user_id) {
       parsing_data
@@ -546,6 +551,7 @@ exports.groupSubmitterList = async (req, res) => {
     } else {
       if (newOGDataType != undefined) {
         newOGDataType.submittedDataCnt = newOGDataType.submitData.length;
+        console.log()
         OGDataTypeList.push(newOGDataType);
       }
       newOGDataType = {};
@@ -584,8 +590,10 @@ exports.groupSubmitterList = async (req, res) => {
 };
 
 exports.getSubmitterTaskDetails = (req, res) => {
-  const { taskName } = req.query;
-  const { Uid } = req;
+  const { Uid, taskName } = req.query;
+  if (Uid==undefined){
+    Uid = req.Uid
+  }
   parsing_data
     .findOne({
       where: {
@@ -622,7 +630,7 @@ exports.getSubmitterTaskDetails = (req, res) => {
                   return res.status(200).json({
                     score: p_data.score,
                     submittedDataCnt: parsing_data,
-                    taskDataTableTupleCnt: p_data.taskDataTableTupleCnt,
+                    taskDataTableTupleCnt: parseInt(p_data.taskDataTableTupleCnt),
                     taskDesc: task.Desc,
                   });
                 }
