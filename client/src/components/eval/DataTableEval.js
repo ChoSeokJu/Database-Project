@@ -77,7 +77,7 @@ export default function TaskTableSubmit() {
     return (
       <>
         <Box display="flex" flexDirection="row" alignItems="center">
-          {rowData.PNP ? (
+          {rowData.evalContent.Pass ? (
             <Tooltip title="Pass">
               <CheckIcon className={classes.check} />
             </Tooltip>
@@ -86,11 +86,11 @@ export default function TaskTableSubmit() {
               <CloseIcon className={classes.close} />
             </Tooltip>
           )}
-          <Rating value={10} readOnly />
+          <Rating value={rowData.evalContent.Score} readOnly />
           <Button
             variant="contained"
             className={classes.button}
-            onClick={handleDialog(rowData.desc)}
+            onClick={handleDialog(rowData.evalContent.Desc)}
           >
             상세의견
           </Button>
@@ -116,6 +116,7 @@ export default function TaskTableSubmit() {
             submitDate: row.TimeStamp.match(/\d{4}-\d{2}-\d{2}/g)[0],
             Pid: row.Pid,
             isEvaluated: row.isEvaluated,
+            evalContent: row.evalContent,
           }));
           resolve({
             data: dataParsed,

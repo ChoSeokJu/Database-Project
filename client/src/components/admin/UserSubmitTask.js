@@ -95,6 +95,9 @@ export default function UserEvalTask({ open, handleClose, Uid, ID }) {
               header: {
                 actions: '',
               },
+              body: {
+                emptyDataSourceMessage: '참여중인 태스크가 없습니다',
+              },
             }}
             columns={[
               {
