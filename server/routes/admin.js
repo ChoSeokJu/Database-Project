@@ -1,6 +1,7 @@
 const express = require('express');
 const { authJwt } = require('../utils');
 const adminController = require('../controllers/admin.controller');
+const submitController = require('../controllers/submit.controller');
 
 const router = express.Router();
 
@@ -118,6 +119,19 @@ router.get(
   '/user-info',
   [authJwt.verifyToken, authJwt.isAdmin],
   adminController.getUserInfo
+);
+
+router.get(
+  '/submitter/task-list',
+  [authJwt.verifyToken, authJwt.isAdmin],
+  submitController.getTaskList,
+  submitController.getAvgScore
+)
+
+router.get(
+  '/submitter/task-details',
+  [authJwt.verifyToken, authJwt.isAdmin],
+  submitController.getSubmitterTaskDetails
 );
 
 module.exports = router;
