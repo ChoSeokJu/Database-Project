@@ -6,7 +6,7 @@ const User = db.user;
 const Requests = db.request_task;
 
 exports.changeUserInfo = (req, res) => {
-  const { Uid } = req.body;
+  const { Uid } = req;
   User.findByPk(Uid).then((user) => {
     const { address, phone } = req.body;
     user.set('Addr', address);
@@ -19,7 +19,7 @@ exports.changeUserInfo = (req, res) => {
 };
 
 exports.changePassword = (req, res) => {
-  const { Uid } = req.body;
+  const { Uid } = req;
   User.findByPk(Uid).then((user) => {
     if (user.get('UType') === 2) {
       return res.status(400).json({
