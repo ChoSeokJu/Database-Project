@@ -96,7 +96,7 @@ exports.quantAssess = async function (req, res, next) {
     (await csv({ noheader: true }).fromFile(taskDataTableRef))[0]
   );
   taskCol.pop(); // pop "Sid" from task data columns
-  const dataHeader
+  let dataHeader
   try{
     dataHeader = Object.keys(data[0]);
   } catch(err){
