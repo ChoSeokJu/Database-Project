@@ -42,8 +42,6 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const sum = (accumulator, currentValue) => accumulator + currentValue;
-
 function DividedList({ items, direction, onlyDesc }) {
   const classes = useStyles();
   const [more, setMore] = useState(true);
@@ -97,9 +95,9 @@ export default function TaskDetail({
         page: 1,
       }).then((response) => {
         console.log(response);
-        const { score, submittedDataCnt, taskDataTableTupleCnt, taskDesc } = response.data;
+        const { score, submittedDataCnt, passedDataCnt, taskDesc } = response.data;
         setSubmittedCnt(submittedDataCnt || 0);
-        setPassedCnt(taskDataTableTupleCnt || 0);
+        setPassedCnt(passedDataCnt || 0);
         setDesc(taskDesc || '-');
         setAvgScore(score || '-');
       }, (error) => {
@@ -143,16 +141,6 @@ export default function TaskDetail({
     setDesc(null);
     setAvgScore(null);
     handleClose();
-  }
-
-  const getOgPassedCnt = (submits) => {
-    let passed = submits.filter((submit) => submit.PNP === 'P');
-    return (passed.length);
-  }
-
-  const getTotalPassedCnt = (items) => {
-    let counts = items.map((item) => getOgPassedCnt(item));
-    return counts.reduce(sum);
   }
 
   return (
@@ -206,8 +194,7 @@ export default function TaskDetail({
                     title: '제출한 파일 수', field: 'submittedDataCnt', align: 'right', cellStyle: { width: '20%', textAlign: 'right' }
                   },
                   {
-                    title: 'Pass된 파일 수', align: 'right', cellStyle: { width: '20%', textAlign: 'right' },
-                    render: (rowData) => getOgPassedCnt(rowData.submitData)
+                    title: 'Pass된 파일 수', field: 'passedDataCnt', align: 'right', cellStyle: { width: '20%', textAlign: 'right' },
                   },
                 ]}
                 data={getTaskDetail}
