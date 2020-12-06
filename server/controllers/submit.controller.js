@@ -304,8 +304,8 @@ exports.submitApply = function (req, res) {
 
 exports.getTaskList = function (req, res, next) {
   const { Uid, per_page, page } = req.query;
-  if (Uid==undefined){
-    Uid = req.Uid
+  if (Uid == undefined) {
+    Uid = req.Uid;
   }
   user.findByPk(Uid).then((user_id) => {
     if (user_id) {
@@ -377,8 +377,8 @@ exports.getTaskList = function (req, res, next) {
 exports.getAvgScore = function (req, res) {
   /* get average score and total tuple cnt */
   const { Uid } = req.query;
-  if (Uid==undefined){
-    Uid = req.Uid
+  if (Uid == undefined) {
+    Uid = req.Uid;
   }
   user.findByPk(Uid).then((user_id) => {
     if (user_id) {
@@ -551,7 +551,7 @@ exports.groupSubmitterList = async (req, res) => {
     } else {
       if (newOGDataType != undefined) {
         newOGDataType.submittedDataCnt = newOGDataType.submitData.length;
-        console.log()
+        console.log();
         OGDataTypeList.push(newOGDataType);
       }
       newOGDataType = {};
@@ -590,15 +590,10 @@ exports.groupSubmitterList = async (req, res) => {
 };
 
 exports.getSubmitterTaskDetails = (req, res) => {
-<<<<<<< HEAD
   const { Uid, taskName } = req.query;
-  if (Uid==undefined){
-    Uid = req.Uid
+  if (Uid == undefined) {
+    Uid = req.Uid;
   }
-=======
-  const { taskName } = req.query;
-  const { Uid } = req.query;
->>>>>>> fc30c59037b0e3316eb547bd70731c8181633abd
   parsing_data
     .findOne({
       where: {
@@ -624,34 +619,35 @@ exports.getSubmitterTaskDetails = (req, res) => {
             },
           })
           .then((parsing_count) => {
-            parsing_data.count({
-              where: {
-                TaskName: taskName,
-                Sid: Uid,
-                Appended: 1
-              }
-            })
-            .then((count_append) => {
-              task
-              .findOne({
+            parsing_data
+              .count({
                 where: {
                   TaskName: taskName,
+                  Sid: Uid,
+                  Appended: 1,
                 },
               })
-              .then((task) => { 
-                if (task) {
-                  return res.status(200).json({
-                    score: p_data.score,
-                    submittedDataCnt: parsing_count,
-                    passedCnt: count_append,
-                    taskDesc: task.Desc,
+              .then((count_append) => {
+                task
+                  .findOne({
+                    where: {
+                      TaskName: taskName,
+                    },
+                  })
+                  .then((task) => {
+                    if (task) {
+                      return res.status(200).json({
+                        score: p_data.score,
+                        submittedDataCnt: parsing_count,
+                        passedCnt: count_append,
+                        taskDesc: task.Desc,
+                      });
+                    }
+                    return res.status(200).json({
+                      message: 'no task found using the given taskname',
+                    });
                   });
-                }
-                return res.status(200).json({
-                  message: 'no task found using the given taskname',
-                });
               });
-            });
           });
       } else {
         return res.status(200).json({
@@ -660,4 +656,3 @@ exports.getSubmitterTaskDetails = (req, res) => {
       }
     });
 };
-
