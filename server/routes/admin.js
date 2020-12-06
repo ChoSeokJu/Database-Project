@@ -125,7 +125,7 @@ router.get(
   '/submitter/task-list',
   [authJwt.verifyToken, authJwt.isAdmin],
   submitController.getTaskList,
-  submitController.getAvgScore
+  submitController.getAvgScoreAppended
 )
 
 router.get(

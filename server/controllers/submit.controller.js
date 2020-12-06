@@ -432,6 +432,67 @@ exports.getAvgScore = function (req, res) {
   });
 };
 
+exports.getAvgScoreAppended = function (req, res) {
+  /* get average score and total tuple cnt */
+  const Uid = req.Uid || req.query.Uid;
+  user.findByPk(Uid).then((user_id) => {
+    if (user_id) {
+      parsing_data
+        .count({
+          where: {
+            Sid: Uid,
+            Appended: 1
+          },
+        })
+        .then((p_data) => {
+          if (p_data) {
+            req.body.response.submittedDataCnt = p_data;
+            AVG_SCORE.findByPk(Uid).then((AVG_SCORE) => {
+              if (AVG_SCORE) {
+                req.body.response.score = AVG_SCORE.Score;
+                parsing_data
+                  .findOne({
+                    attributes: [
+                      [
+                        sequelize.fn('SUM', sequelize.col('TotalTupleCnt')),
+                        'TotalTupleCnt',
+                      ],
+                    ],
+                    where: {
+                      Sid: Uid,
+                      Appended: 1,
+                    },
+                    raw: true,
+                  })
+                  .then((parsing_data) => {
+                    if (parsing_data) {
+                      req.body.response.taskDataTableTupleCnt =
+                        parsing_data.TotalTupleCnt;
+                      return res.status(200).json(req.body.response);
+                    }
+                    /* 데이터는 제출했고 점수는 받았지만 태스크 데이터 테이블에 추가는 안됨 */
+                    req.body.response.taskDataTableTupleCnt = null;
+                    return res.status(200).json(req.body.response);
+                  });
+              } else {
+                /* 데이터는 제출했지만 점수는 안받음 */
+                req.body.response.score = null;
+                req.body.response.taskDataTableTupleCnt = null;
+                return res.status(200).json(req.body.response);
+              }
+            });
+          } else {
+            /* 아무런 데이터를 제출 하지 않음 */
+            req.body.response.submittedDataCnt = null;
+            req.body.response.score = null;
+            req.body.response.taskDataTableTupleCnt = null;
+            return res.status(200).json(req.body.response);
+          }
+        });
+    }
+  });
+};
+
 exports.getOgData = (req, res) => {
   const { taskName } = req.query;
   og_data_type
