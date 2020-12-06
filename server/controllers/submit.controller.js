@@ -100,7 +100,7 @@ exports.quantAssess = async function (req, res, next) {
   try{
     dataHeader = Object.keys(data[0]);
   } catch(err){
-    return res.status(200).json({
+    return res.status(404).json({
       message:
       "빈 csv파일을 제출했습니다. 다시 제출해주세요."
     })
