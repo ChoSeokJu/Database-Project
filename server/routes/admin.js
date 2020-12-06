@@ -130,7 +130,7 @@ router.get(
 
 router.get(
   '/submitter/task-details',
-  // [authJwt.verifyToken, authJwt.isAdmin],
+  [authJwt.verifyToken, authJwt.isAdmin],
   submitController.getSubmitterTaskDetails
 );
 
