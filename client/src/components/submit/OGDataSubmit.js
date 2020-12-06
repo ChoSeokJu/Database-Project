@@ -101,7 +101,7 @@ export default function OGDataSubmit({ open, handleClose, taskName }) {
     );
     setOgDataMapping(
       Object.entries(og.Mapping)
-        .map(([key, value]) => `${key}: ${value}`)
+        .map(([key, value]) => `${value}: ${key}`)
         .join(', ')
     );
   };

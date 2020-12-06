@@ -74,7 +74,7 @@ export default function TaskInfo({ open, handleClose, taskName }) {
           TimeStamp,
           PassCriteria,
         } = response.data.task;
-        console.log(response.data.task);
+        const { tupleCount } = response.data;
         setTaskInfos({
           TaskName,
           Desc,
@@ -85,6 +85,7 @@ export default function TaskInfo({ open, handleClose, taskName }) {
             .join(', '),
           TimeStamp: TimeStamp.match(/\d{4}-\d{2}-\d{2}/g)[0],
           PassCriteria,
+          tupleCount,
         });
       });
 
@@ -211,6 +212,7 @@ export default function TaskInfo({ open, handleClose, taskName }) {
           <List className={classes.info}>
             {[
               ['생성된 날짜', taskInfos.TimeStamp],
+              ['총 튜플 수', `${taskInfos.tupleCount}개`],
               ['테이블 이름', taskInfos.TableName],
               ['테이블 칼럼', taskInfos.TableSchema],
             ].map(([key, value]) => (

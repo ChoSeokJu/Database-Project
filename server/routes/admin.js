@@ -126,12 +126,6 @@ router.get(
   [authJwt.verifyToken, authJwt.isAdmin],
   submitController.getTaskList,
   submitController.getAvgScore
-)
-
-router.get(
-  '/submitter/task-details',
-  [authJwt.verifyToken, authJwt.isAdmin],
-  submitController.getSubmitterTaskDetails
 );
 
 module.exports = router;
