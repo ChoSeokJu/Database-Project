@@ -7,6 +7,7 @@ const {
   typeCheck,
   permitState,
   returnPass,
+  sumPassedTuple,
 } = require('../utils/generalUtils');
 
 const {
@@ -653,6 +654,9 @@ exports.groupSubmitterList = async (req, res) => {
         newOGDataType.passedDataCnt = newOGDataType.submitData.filter(
           (item) => item.PNP === 1
         ).length;
+        newOGDataType.totalTupleCnt = newOGDataType.submitData
+          .map((item) => item.TotalTupleCnt)
+          .reduce(sumPassedTuple);
         console.log();
         OGDataTypeList.push(newOGDataType);
       }
@@ -683,6 +687,9 @@ exports.groupSubmitterList = async (req, res) => {
   newOGDataType.passedDataCnt = newOGDataType.submitData.filter(
     (item) => item.PNP === 1
   ).length;
+  newOGDataType.totalTupleCnt = newOGDataType.submitData
+    .map((item) => item.TotalTupleCnt)
+    .reduce(sumPassedTuple);
   OGDataTypeList.push(newOGDataType);
   const offset = parseInt(per_page) * (parseInt(page) - 1);
   return res.status(200).json({
@@ -743,6 +750,7 @@ exports.getSubmitterTaskDetails = (req, res) => {
                       return res.status(200).json({
                         score: p_data.score,
                         submittedDataCnt: parsing_count,
+                        taskDataTableTupleCnt: p_data.taskDataTableTupleCnt,
                         passedDataCnt: count_append,
                         taskDesc: task.Desc,
                       });
