@@ -111,11 +111,15 @@ exports.returnPass = (n) => {
 };
 
 exports.PNPtoInt = (n) => {
-  if(n=="NP"){return 0}
-  else if (n=="P"){return 1}
+  if (n == "NP") { return 0 }
+  else if (n == "P") { return 1 }
 }
 
 exports.IntToPNP = (n) => {
-  if(n=0){return "NP"}
-  else if (n=1) {return "N"}
+  if (n = 0) { return "NP" }
+  else if (n = 1) { return "N" }
+}
+
+exports.sumPassedTuple = (accum, cur) => {
+  return accum + cur
 }
