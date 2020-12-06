@@ -40,6 +40,7 @@ export default function TaskOGDataFile({ data }) {
           { title: '제출일자', render: (rowData) => renderDate(rowData.date) },
           { title: '점수', render: (rowData) => rowData.score || '-' },
           { title: 'P/NP', render: (rowData) => renderPNP(rowData) },
+          { title: 'Pass된 튜플 수', render: (rowData) => rowData.TotalTupleCnt || '-' },
         ]}
         data={data}
         style={{}}

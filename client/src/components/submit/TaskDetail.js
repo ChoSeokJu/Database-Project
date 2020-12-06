@@ -83,6 +83,7 @@ export default function TaskDetail({
 }) {
   const classes = useStyles();
   const [submittedCnt, setSubmittedCnt] = useState(null);
+  const [passedTupleCnt, setPassedTupleCnt] = useState(null);
   const [passedCnt, setPassedCnt] = useState(null);
   const [desc, setDesc] = useState(null);
   const [avgScore, setAvgScore] = useState(null);
@@ -95,8 +96,9 @@ export default function TaskDetail({
         page: 1,
       }).then((response) => {
         console.log(response);
-        const { score, submittedDataCnt, passedDataCnt, taskDesc } = response.data;
+        const { score, submittedDataCnt, passedDataCnt, taskDataTableTupleCnt, taskDesc } = response.data;
         setSubmittedCnt(submittedDataCnt || 0);
+        setPassedTupleCnt(taskDataTableTupleCnt || 0);
         setPassedCnt(passedDataCnt || 0);
         setDesc(taskDesc || '-');
         setAvgScore(score || '-');
@@ -137,6 +139,7 @@ export default function TaskDetail({
 
   const onClose = () => {
     setSubmittedCnt(null);
+    setPassedTupleCnt(null);
     setPassedCnt(null);
     setDesc(null);
     setAvgScore(null);
@@ -163,7 +166,7 @@ export default function TaskDetail({
                   <DividedList items={[['설명', desc]]} direction='vertical' />
                 </Grid>
                 <Grid item lg={6} md={6} xs={12}>
-                  <DividedList items={[['평가 점수', avgScore], ['Pass된 파일 수', passedCnt], ['제출한 파일 수', submittedCnt]]} />
+                  <DividedList items={[['평가 점수', avgScore], ['제출한 파일 수', submittedCnt], ['Pass된 파일 수', passedCnt], ['Pass된 튜플 수', passedTupleCnt]]} />
                 </Grid>
               </Grid>
               <Divider className={classes.divider} />
@@ -186,15 +189,16 @@ export default function TaskDetail({
                 }}
                 columns={[
                   {
-                    title: '원본 데이터 타입',
-                    field: 'OGDataTypeName',
-                    cellStyle: { width: '50%', textAlign: 'left' }
+                    title: '원본 데이터 타입', field: 'OGDataTypeName', cellStyle: { width: '30%', textAlign: 'left' }
                   },
                   {
                     title: '제출한 파일 수', field: 'submittedDataCnt', align: 'right', cellStyle: { width: '20%', textAlign: 'right' }
                   },
                   {
                     title: 'Pass된 파일 수', field: 'passedDataCnt', align: 'right', cellStyle: { width: '20%', textAlign: 'right' },
+                  },
+                  {
+                    title: 'Pass된 튜플 수', field: 'totalTupleCnt', align: 'right', cellStyle: { width: '20%', textAlign: 'right' },
                   },
                 ]}
                 data={getTaskDetail}
