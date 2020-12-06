@@ -751,7 +751,7 @@ exports.getSubmitterTaskDetails = (req, res) => {
                         score: p_data.score,
                         submittedDataCnt: parsing_count,
                         taskDataTableTupleCnt: p_data.taskDataTableTupleCnt,
-                        passedDataCnt: count_append,
+                                    j;lkfsad                        passedDataCnt: count_append,
                         taskDesc: task.Desc,
                       });
                     }

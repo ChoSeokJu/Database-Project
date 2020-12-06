@@ -20,7 +20,6 @@ parsing_data.belongsTo(og_data_type, { foreignKey: 'Did' });
 exports.evaluate = (req, res, next) => {
   /* insert evaluated value */
   // ! add timestamp
-  // ! final score metric => add all numbers
   const {
     Pid, Score, Desc, PNP,
   } = req.body;
@@ -108,6 +107,12 @@ exports.saveToTaskTable = async function (req, res) {
     attributes: ['TableRef', 'TableName', 'PassCriteria'],
   });
 
+  const username = await user.findOne({
+    where: {
+      Uid: Sid
+    }
+  })
+
   if (req.body.totalScore < PassCriteria) {
     return res.status(400).json({
       message: '제출된 자료가 정량적 평가를 통과하지 못하였습니다',
@@ -123,7 +128,7 @@ exports.saveToTaskTable = async function (req, res) {
 
   const parsedData = await csv({ noheader: false }).fromFile(DataRef); // this is for deployment
   parsedData.forEach((row) => {
-    row.Sid = Sid;
+    row.Sid = username.ID;
   });
 
   const parsedHeader = Object.keys(parsedData[0]); // or Object.values(mapping.Mapping)
