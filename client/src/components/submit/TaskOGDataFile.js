@@ -34,6 +34,9 @@ export default function TaskOGDataFile({ data }) {
           search: false,
           toolbar: false,
           sorting: false,
+          headerStyle: {
+            fontWeight: 'bold',
+          }
         }}
         columns={[
           { title: '회차', field: 'submitCnt' },
@@ -43,7 +46,6 @@ export default function TaskOGDataFile({ data }) {
           { title: 'Pass된 튜플 수', render: (rowData) => rowData.TotalTupleCnt || '-' },
         ]}
         data={data}
-        style={{}}
       />
     </div>
   );

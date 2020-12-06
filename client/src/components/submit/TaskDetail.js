@@ -174,6 +174,7 @@ export default function TaskDetail({
                 components={{
                   Container: (props) => <Paper {...props} elevation={0} />,
                 }}
+                title="제출한 파일 현황"
                 options={{
                   pageSize: 3,
                   pageSizeOptions: [],
@@ -181,6 +182,9 @@ export default function TaskDetail({
                   search: false,
                   toolbar: false,
                   sorting: false,
+                  headerStyle: {
+                    fontWeight: 'bold',
+                  }
                 }}
                 localization={{
                   body: {
