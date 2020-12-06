@@ -632,7 +632,7 @@ exports.getSubmitterTaskDetails = (req, res) => {
                       return res.status(200).json({
                         score: p_data.score,
                         submittedDataCnt: parsing_count,
-                        passedCnt: count_append,
+                        passedDataCnt: count_append,
                         taskDesc: task.Desc,
                       });
                     }
