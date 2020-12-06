@@ -7,6 +7,7 @@ const {
   typeCheck,
   permitState,
   returnPass,
+  sumPassedTuple,
 } = require('../utils/generalUtils');
 
 const {
@@ -403,7 +404,7 @@ exports.getTaskListApproved = function (req, res, next) {
               right: true,
             },
           ],
-          where:{
+          where: {
             Permit: "approved"
           }
         })
@@ -512,23 +513,23 @@ exports.getOgData = (req, res) => {
       where: { TaskName: taskName },
     })
     .then((result) => {
-      if(result.length != 0) {
+      if (result.length != 0) {
         var output = [];
-        task.findOne({where : {TaskName: taskName}}).then((og_task) => {
-          if(og_task) {
-          const tableSchema = og_task.TableSchema;
-          for (let i = 0; i < result.length; i++) {
-            var temp = {};
-            var output_temp = result[i];
-            for (var key in result[i].Mapping) {
-              temp[result[i].Mapping[key]] = tableSchema[0][key]
+        task.findOne({ where: { TaskName: taskName } }).then((og_task) => {
+          if (og_task) {
+            const tableSchema = og_task.TableSchema;
+            for (let i = 0; i < result.length; i++) {
+              var temp = {};
+              var output_temp = result[i];
+              for (var key in result[i].Mapping) {
+                temp[result[i].Mapping[key]] = tableSchema[0][key]
+              }
+              output_temp['dataValues']["Og_type"] = temp
+              output.push(output_temp)
             }
-            output_temp['dataValues']["Og_type"] = temp
-            output.push(output_temp)
-          }
-          res.status(200).json({
-            data: output,
-          });
+            res.status(200).json({
+              data: output,
+            });
           } else {
             res.status(400).json({
               message: "Task에서 해당되는 태스크 이름을 찾을 수 없습니다",
@@ -645,6 +646,7 @@ exports.groupSubmitterList = async (req, res) => {
       if (newOGDataType != undefined) {
         newOGDataType.submittedDataCnt = newOGDataType.submitData.length;
         newOGDataType.passedDataCnt = (newOGDataType.submitData.filter((item) => item.PNP === 1)).length;
+        newOGDataType.totalTupleCnt = (newOGDataType.submitData.map((item) => item.TotalTupleCnt)).reduce(sumPassedTuple);
         console.log();
         OGDataTypeList.push(newOGDataType);
       }
@@ -673,6 +675,7 @@ exports.groupSubmitterList = async (req, res) => {
   }
   newOGDataType.submittedDataCnt = newOGDataType.submitData.length;
   newOGDataType.passedDataCnt = (newOGDataType.submitData.filter((item) => item.PNP === 1)).length;
+  newOGDataType.totalTupleCnt = (newOGDataType.submitData.map((item) => item.TotalTupleCnt)).reduce(sumPassedTuple);
   OGDataTypeList.push(newOGDataType);
   const offset = parseInt(per_page) * (parseInt(page) - 1);
   return res.status(200).json({
@@ -733,6 +736,7 @@ exports.getSubmitterTaskDetails = (req, res) => {
                       return res.status(200).json({
                         score: p_data.score,
                         submittedDataCnt: parsing_count,
+                        taskDataTableTupleCnt: p_data.taskDataTableTupleCnt,
                         passedDataCnt: count_append,
                         taskDesc: task.Desc,
                       });
