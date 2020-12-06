@@ -7,6 +7,7 @@ const {
   typeCheck,
   permitState,
   returnPass,
+  sumPassedTuple,
 } = require('../utils/generalUtils');
 
 const {
@@ -281,7 +282,7 @@ exports.assignEvaluator = function (req, res) {
 
 exports.submitApply = function (req, res) {
   const { taskName } = req.body;
-  const Uid = req.Uid || req.query.Uid;
+  const Uid = req.query.Uid || req.Uid;
   user.findByPk(Uid).then((user_id) => {
     works_on
       .create({
@@ -304,7 +305,7 @@ exports.submitApply = function (req, res) {
 
 exports.getTaskList = function (req, res, next) {
   const { per_page, page } = req.query;
-  const Uid = req.Uid || req.query.Uid;
+  const Uid = req.query.Uid || req.Uid;
   user.findByPk(Uid).then((user_id) => {
     if (user_id) {
       works_on
@@ -374,7 +375,7 @@ exports.getTaskList = function (req, res, next) {
 
 exports.getTaskListApproved = function (req, res, next) {
   const { per_page, page } = req.query;
-  const Uid = req.Uid || req.query.Uid;
+  const Uid = req.query.Uid || req.Uid;
   user.findByPk(Uid).then((user_id) => {
     if (user_id) {
       works_on
@@ -403,9 +404,9 @@ exports.getTaskListApproved = function (req, res, next) {
               right: true,
             },
           ],
-          where:{
-            Permit: "approved"
-          }
+          where: {
+            Permit: 'approved',
+          },
         })
         .then((w_results) => {
           if (w_results) {
@@ -446,7 +447,7 @@ exports.getTaskListApproved = function (req, res, next) {
 
 exports.getAvgScore = function (req, res) {
   /* get average score and total tuple cnt */
-  const Uid = req.Uid || req.query.Uid;
+  const Uid = req.query.Uid || req.Uid;
   user.findByPk(Uid).then((user_id) => {
     if (user_id) {
       parsing_data
@@ -653,6 +654,9 @@ exports.groupSubmitterList = async (req, res) => {
         newOGDataType.passedDataCnt = newOGDataType.submitData.filter(
           (item) => item.PNP === 1
         ).length;
+        newOGDataType.totalTupleCnt = newOGDataType.submitData
+          .map((item) => item.TotalTupleCnt)
+          .reduce(sumPassedTuple);
         console.log();
         OGDataTypeList.push(newOGDataType);
       }
@@ -683,6 +687,9 @@ exports.groupSubmitterList = async (req, res) => {
   newOGDataType.passedDataCnt = newOGDataType.submitData.filter(
     (item) => item.PNP === 1
   ).length;
+  newOGDataType.totalTupleCnt = newOGDataType.submitData
+    .map((item) => item.TotalTupleCnt)
+    .reduce(sumPassedTuple);
   OGDataTypeList.push(newOGDataType);
   const offset = parseInt(per_page) * (parseInt(page) - 1);
   return res.status(200).json({
@@ -743,6 +750,7 @@ exports.getSubmitterTaskDetails = (req, res) => {
                       return res.status(200).json({
                         score: p_data.score,
                         submittedDataCnt: parsing_count,
+                        taskDataTableTupleCnt: p_data.taskDataTableTupleCnt,
                         passedDataCnt: count_append,
                         taskDesc: task.Desc,
                       });
