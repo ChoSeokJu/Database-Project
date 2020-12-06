@@ -87,15 +87,15 @@ function DividedList({ items, direction, onlyDesc }) {
           </Button>
         </>
       ) : (
-        <List>
-          {items.map(([key, value]) => (
-            <ListItem>
-              <ListItemText className={classes.itemName} primary={key} />
-              <ListItemText secondary={value} />
-            </ListItem>
-          ))}
-        </List>
-      )}
+          <List>
+            {items.map(([key, value]) => (
+              <ListItem>
+                <ListItemText className={classes.itemName} primary={key} />
+                <ListItemText secondary={value} />
+              </ListItem>
+            ))}
+          </List>
+        )}
     </>
   );
 }
@@ -109,6 +109,7 @@ export default function TaskDetail({
 }) {
   const classes = useStyles();
   const [submittedCnt, setSubmittedCnt] = useState(null);
+  const [passedTupleCnt, setPassedTupleCnt] = useState(null);
   const [passedCnt, setPassedCnt] = useState(null);
   const [desc, setDesc] = useState(null);
   const [avgScore, setAvgScore] = useState(null);
@@ -127,9 +128,11 @@ export default function TaskDetail({
             score,
             submittedDataCnt,
             passedDataCnt,
+            taskDataTableTupleCnt,
             taskDesc,
           } = response.data;
           setSubmittedCnt(submittedDataCnt || 0);
+          setPassedTupleCnt(taskDataTableTupleCnt || 0);
           setPassedCnt(passedDataCnt || 0);
           setDesc(taskDesc || '-');
           setAvgScore(score || '-');
@@ -181,6 +184,7 @@ export default function TaskDetail({
 
   const onClose = () => {
     setSubmittedCnt(null);
+    setPassedTupleCnt(null);
     setPassedCnt(null);
     setDesc(null);
     setAvgScore(null);
@@ -201,71 +205,81 @@ export default function TaskDetail({
         {permit !== 'approved' ? (
           <DividedList items={[['설명', desc]]} direction="vertical" onlyDesc />
         ) : (
-          <>
-            <Grid container lg={12} md={12} xs={12}>
-              <Grid item lg={6} md={6} xs={12} className={classes.desc}>
-                <DividedList items={[['설명', desc]]} direction="vertical" />
+            <>
+              <Grid container lg={12} md={12} xs={12}>
+                <Grid item lg={6} md={6} xs={12} className={classes.desc}>
+                  <DividedList items={[['설명', desc]]} direction="vertical" />
+                </Grid>
+                <Grid item lg={6} md={6} xs={12}>
+                  <DividedList
+                    items={[
+                      ['평가 점수', avgScore],
+                      ['제출한 파일 수', submittedCnt],
+                      ['Pass된 파일 수', passedCnt],
+                      ['Pass된 튜플 수', passedTupleCnt]
+                    ]}
+                  />
+                </Grid>
               </Grid>
-              <Grid item lg={6} md={6} xs={12}>
-                <DividedList
-                  items={[
-                    ['평가 점수', avgScore],
-                    ['Pass된 파일 수', passedCnt],
-                    ['제출한 파일 수', submittedCnt],
-                  ]}
-                />
-              </Grid>
-            </Grid>
-            <Divider className={classes.divider} />
-            <MaterialTable
-              components={{
-                Container: (props) => <Paper {...props} elevation={0} />,
-              }}
-              options={{
-                pageSize: 3,
-                pageSizeOptions: [],
-                paginationType: 'stepped',
-                search: false,
-                toolbar: false,
-                sorting: false,
-              }}
-              localization={{
-                body: {
-                  emptyDataSourceMessage: '태스크가 없습니다',
-                },
-              }}
-              columns={[
-                {
-                  title: '원본 데이터 타입',
-                  field: 'OGDataTypeName',
-                  cellStyle: { width: '50%', textAlign: 'left' },
-                },
-                {
-                  title: '제출한 파일 수',
-                  field: 'submittedDataCnt',
-                  align: 'right',
-                  cellStyle: { width: '20%', textAlign: 'right' },
-                },
-                {
-                  title: 'Pass된 파일 수',
-                  field: 'passedDataCnt',
-                  align: 'right',
-                  cellStyle: { width: '20%', textAlign: 'right' },
-                },
-              ]}
-              data={getTaskDetail}
-              onRowClick={(event, rowData, togglePanel) => togglePanel()}
-              detailPanel={[
-                {
-                  tooltip: '제출한 파일 현황 보기',
-                  render: (rowData) => (
-                    <TaskOGDataFile data={rowData.submitData} />
-                  ),
-                },
-              ]}
-            />
-          </>
-        )}
+              <Divider className={classes.divider} />
+              <MaterialTable
+                components={{
+                  Container: (props) => <Paper {...props} elevation={0} />,
+                }}
+                options={{
+                  pageSize: 3,
+                  pageSizeOptions: [],
+                  paginationType: 'stepped',
+                  search: false,
+                  toolbar: false,
+                  sorting: false,
+                  headerStyle: {
+                    fontWeight: 'bold',
+                  }
+                }}
+                localization={{
+                  body: {
+                    emptyDataSourceMessage: '태스크가 없습니다',
+                  },
+                }}
+                columns={[
+                  {
+                    title: '원본 데이터 타입',
+                    field: 'OGDataTypeName',
+                    cellStyle: { width: '50%', textAlign: 'left' },
+                  },
+                  {
+                    title: '제출한 파일 수',
+                    field: 'submittedDataCnt',
+                    align: 'right',
+                    cellStyle: { width: '20%', textAlign: 'right' },
+                  },
+                  {
+                    title: 'Pass된 파일 수',
+                    field: 'passedDataCnt',
+                    align: 'right',
+                    cellStyle: { width: '20%', textAlign: 'right' },
+                  },
+                  {
+                    title: 'Pass된 튜플 수',
+                    field: 'totalTupleCnt',
+                    align: 'right',
+                    cellStyle: { width: '20%', textAlign: 'right' },
+                  },
+                ]}
+                data={getTaskDetail}
+                onRowClick={(event, rowData, togglePanel) => togglePanel()}
+                detailPanel={[
+                  {
+                    tooltip: '제출한 파일 현황 보기',
+                    render: (rowData) => (
+                      <TaskOGDataFile data={rowData.submitData} />
+                    ),
+                  },
+                ]}
+              />
+            </>
+          )}
         <DialogActions>
           <Button onClick={onClose} color="default" variant="contained">
             닫기
