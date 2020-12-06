@@ -128,6 +128,7 @@ function Register(props) {
     dispatch(register(data))
       .then(() => {
         setSuccessful(true);
+        dispatch(setAlertType('success'));
       })
       .catch(() => {
         dispatch(openAlert());

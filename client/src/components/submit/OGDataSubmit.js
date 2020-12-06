@@ -16,6 +16,7 @@ import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import CloseIcon from '@material-ui/icons/Close';
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
+import { Box } from '@material-ui/core';
 import { getSubmit, postSubmitUpload } from '../../services/user.service';
 import {
   setMessage,
@@ -25,17 +26,16 @@ import {
 } from '../../actions/message';
 
 const useStyles = makeStyles((theme) => ({
-  form: {
-    width: '80%', // Fix IE 11 issue.
-  },
   margin: {
-    margin: theme.spacing(0.5, 0, 0),
-  },
-  submit: {
-    margin: theme.spacing(3, 0, 2),
+    marginTop: theme.spacing(1),
+    marginBottom: theme.spacing(1),
+    marginLeft: theme.spacing(1),
   },
   upload: {
     display: 'none',
+  },
+  text: {
+    marginLeft: theme.spacing(1),
   },
 }));
 
@@ -45,8 +45,8 @@ export default function OGDataSubmit({ open, handleClose, taskName }) {
   const [dataFile, setDataFile] = useState(null);
   const [ogDataType, setOgDataType] = useState('');
   const [ogDataTypes, setOgDataTypes] = useState([]);
-  const [ogDataSchema, setOgDataSchema] = useState('');
-  const [ogDataMapping, setOgDataMapping] = useState('');
+  const [ogDataSchema, setOgDataSchema] = useState([]);
+  const [ogDataMapping, setOgDataMapping] = useState({});
   const [submitCnt, setSubmitCnt] = useState('');
   const [submitTermStart, setSubmitTermStart] = useState('');
   const [submitTermEnd, setSubmitTermEnd] = useState('');
@@ -86,9 +86,10 @@ export default function OGDataSubmit({ open, handleClose, taskName }) {
 
   const onOgDataTypeChange = (e) => {
     setOgDataType(e.target.value);
-    let og = ogDataTypes.find((item) => item.Name === e.target.value);
-    setOgDataSchema(og.Schema.toString());
-    setOgDataMapping(JSON.stringify(og.Mapping));
+    const og = ogDataTypes.find((item) => item.Name === e.target.value);
+    console.log(og);
+    setOgDataSchema(og.Schema);
+    setOgDataMapping(og.Mapping);
   };
 
   const onDataFileChange = (e) => {
@@ -167,14 +168,11 @@ export default function OGDataSubmit({ open, handleClose, taskName }) {
       fullWidth
       aria-labelledby="form-dialog-title"
     >
-      <DialogActions>
-        <IconButton onClick={handleClose}>
-          <CloseIcon />
-        </IconButton>
-      </DialogActions>
-      <DialogTitle>원본 데이터 제출</DialogTitle>
+      <DialogTitle aria-labelledby="form-dialog-title">
+        원본 데이터 제출
+      </DialogTitle>
       <DialogContent>
-        <Grid container spacing={3}>
+        <Grid container spacing={2}>
           <Grid item xs={12}>
             <InputLabel required shrink id="ogdatatype" color="primary">
               원본 데이터 타입
@@ -197,38 +195,48 @@ export default function OGDataSubmit({ open, handleClose, taskName }) {
                 </MenuItem>
               ))}
             </Select>
-            {ogDataType &&
+            {ogDataType && (
               <>
-                <Typography variant="body2">스키마: {ogDataSchema}</Typography>
-                <Typography variant="body2">매핑: {ogDataMapping}</Typography>
-              </>}
+                <Typography variant="body2">
+                  스키마: {ogDataSchema.join(', ')}
+                </Typography>
+                <Typography variant="body2">
+                  매핑:{' '}
+                  {Object.entries(ogDataMapping)
+                    .map(([key, value]) => `${key}: ${value}`)
+                    .join(', ')}
+                </Typography>
+              </>
+            )}
           </Grid>
           <Grid item xs={12}>
             <InputLabel required shrink id="ogdata">
               원본 데이터 파일 제출
             </InputLabel>
-            <Button
-              variant="contained"
-              color="default"
-              component="label"
-              className={classes.margin}
-              startIcon={<CloudUploadIcon />}
-              size="small"
-            >
-              <Typography variant="body2">파일 업로드</Typography>
-              <input
-                accept=".csv"
-                className={classes.upload}
-                multiple
-                hidden
-                type="file"
-                name="file"
-                onChange={onDataFileChange}
-              />
-            </Button>
-            <Typography variant="body2">
-              파일 이름: {dataFile ? dataFile.name : null}
-            </Typography>
+            <Box display="flex" alignItems="center">
+              <Button
+                variant="contained"
+                color="default"
+                component="label"
+                className={classes.margin}
+                startIcon={<CloudUploadIcon />}
+                size="small"
+              >
+                <Typography variant="body2">파일 업로드</Typography>
+                <input
+                  accept=".csv"
+                  className={classes.upload}
+                  multiple
+                  hidden
+                  type="file"
+                  name="file"
+                  onChange={onDataFileChange}
+                />
+              </Button>
+              <Typography variant="body2" className={classes.text}>
+                파일 이름: {dataFile ? dataFile.name : null}
+              </Typography>
+            </Box>
           </Grid>
           {/* <Grid item xs={12}>
             <TextField
@@ -285,19 +293,22 @@ export default function OGDataSubmit({ open, handleClose, taskName }) {
               </Grid>
             </Grid>
          </Grid> */}
-          <Grid container justify="flex-end">
-            <Button
-              type="submit"
-              variant="contained"
-              color="primary"
-              className={classes.submit}
-              onClick={handleSubmit}
-            >
-              제출하기
-            </Button>
-          </Grid>
         </Grid>
       </DialogContent>
+      <DialogActions>
+        <Button color="secondary" variant="outlined" onClick={handleClose}>
+          취소
+        </Button>
+        <Button
+          type="submit"
+          variant="contained"
+          color="primary"
+          className={classes.submit}
+          onClick={handleSubmit}
+        >
+          제출하기
+        </Button>
+      </DialogActions>
     </Dialog>
   );
 }

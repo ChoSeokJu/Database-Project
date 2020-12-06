@@ -136,7 +136,11 @@ export default function TopBar(props) {
       <Button size="large" color="inherit" onClick={() => history.push('/')}>
         태스크 목록
       </Button>
-      <Button size="large" color="inherit" onClick={() => history.push('/eval/task')}>
+      <Button
+        size="large"
+        color="inherit"
+        onClick={() => history.push('/eval/task')}
+      >
         태스크 요청
       </Button>
     </>
@@ -149,7 +153,11 @@ export default function TopBar(props) {
       <Button size="large" color="inherit" onClick={() => history.push('/')}>
         태스크 목록
       </Button>
-      <Button size="large" color="inherit" onClick={() => history.push('/submit/task')}>
+      <Button
+        size="large"
+        color="inherit"
+        onClick={() => history.push('/submit/task')}
+      >
         태스크 요청
       </Button>
     </>
@@ -159,8 +167,8 @@ export default function TopBar(props) {
     <div className={classes.grow}>
       <AppBar position="fixed" color="primary">
         <Toolbar>
-          <Button size="large" color="inherit" onClick={onLogoClick}>
-            FREESWOT
+          <Button size="small" color="inherit" onClick={onLogoClick}>
+            <Typography variant="h5">FREESWOT</Typography>
           </Button>
           <div className={classes.grow} />
           {showAdminBoard && adminBoard}
