@@ -178,7 +178,7 @@ exports.pendingUser = (req, res) => {
         required: true,
       },
     ],
-    where: { TaskName: taskName, Permit: 'approved' },
+    where: { TaskName: taskName, Permit: 'pending' },
   }).then((count) =>
     Works_on.findAll({
       attributes: [],
