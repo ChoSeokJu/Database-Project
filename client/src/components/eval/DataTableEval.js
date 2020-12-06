@@ -13,8 +13,8 @@ export default function TaskTableSubmit() {
   });
 
   const handleClose = () => {
-    setOpenEvalDialog({ open: false, Pid: null });
     tableRef.current && tableRef.current.onQueryChange();
+    setOpenEvalDialog({ open: false, Pid: null });
   };
 
   const handleEvalDialog = (Pid) => () => {

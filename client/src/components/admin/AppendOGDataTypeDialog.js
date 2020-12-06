@@ -1,12 +1,12 @@
 /* eslint-disable react/jsx-filename-extension */
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import { useDispatch, useSelector } from 'react-redux';
-import AppendOGDataType from './AppendOGDataType';
+import AppendOGDataType, { submitOGDataType } from './AppendOGDataType';
 import { setOriginalData, clearOriginalData } from '../../actions/originalData';
 import {
   openAlert,
@@ -14,7 +14,7 @@ import {
   setAlertType,
   setMessage,
 } from '../../actions/message';
-import { getAdmin, postAdmin } from '../../services/user.service';
+import { getAdmin } from '../../services/user.service';
 
 export default function AppendOGDataTypeDialog({
   open,
@@ -22,6 +22,7 @@ export default function AppendOGDataTypeDialog({
   taskName,
 }) {
   const dispatch = useDispatch();
+  const childRef = useRef();
   const { data, name, columns } = useSelector((state) => state.originalData);
 
   useEffect(() => {
@@ -52,23 +53,7 @@ export default function AppendOGDataTypeDialog({
       dispatch(openDialog());
     }
 
-    const newColumns = Object.entries(columns)
-      .filter((column) => column[0] === column[1])
-      .map((column) => column[0]);
-
-    const mapping = {};
-    data
-      .filter((row) => row.originalColumnName !== '')
-      .forEach((row) => {
-        mapping[row.columnName] = row.originalColumnName;
-      });
-
-    postAdmin('/task/og-data', {
-      taskName,
-      OGDataType: name,
-      OGDataColumn: newColumns,
-      OGDataMapping: mapping,
-    }).then(
+    childRef.current.submitOGDataType(taskName).then(
       () => {
         dispatch(setAlertType('success'));
         dispatch(setMessage('데이터가 성공적으로 추가되었습니다'));
@@ -83,11 +68,11 @@ export default function AppendOGDataTypeDialog({
           error.message ||
           error.toString();
         dispatch(setAlertType('error'));
-        dispatch(setMessage(message));
+        dispatch(setMessage(error));
         dispatch(openAlert());
-        handleClose();
       }
     );
+
     // TODO: 완료! 원본 데이터 스키마 제출하기
   };
 
@@ -103,7 +88,7 @@ export default function AppendOGDataTypeDialog({
         {taskName}에 원본 데이터 스키마 추가
       </DialogTitle>
       <DialogContent>
-        <AppendOGDataType />
+        <AppendOGDataType ref={childRef} />
       </DialogContent>
       <DialogActions>
         <Button onClick={handleClose} color="primary">

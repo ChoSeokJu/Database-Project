@@ -51,24 +51,31 @@ export default function TaskTableAdmin(props) {
   };
 
   // TODO: 완료! 태스크 목록 불러오기
-  const getTask = (query) => new Promise((resolve, reject) => {
-    getAdmin('/task', {
-      per_page: query.pageSize,
-      page: query.page + 1,
-    }).then((response) => {
-      const { data, page, totalCount } = response.data;
-      resolve({
-        data, page: page - 1, totalCount,
-      });
-    }, (error) => {
-      const message = (error.response
-        && error.response.data
-        && error.response.data.message)
-        || error.message
-        || error.toString();
-      reject(message);
+  const getTask = (query) =>
+    new Promise((resolve, reject) => {
+      getAdmin('/task', {
+        per_page: query.pageSize,
+        page: query.page + 1,
+      }).then(
+        (response) => {
+          const { data, page, totalCount } = response.data;
+          resolve({
+            data,
+            page: page - 1,
+            totalCount,
+          });
+        },
+        (error) => {
+          const message =
+            (error.response &&
+              error.response.data &&
+              error.response.data.message) ||
+            error.message ||
+            error.toString();
+          reject(message);
+        }
+      );
     });
-  });
 
   return (
     <>
@@ -76,7 +83,7 @@ export default function TaskTableAdmin(props) {
         <MaterialTable
           title="태스크 목록"
           options={{
-            pageSize: 8,
+            pageSize: 10,
             pageSizeOptions: [],
             paginationType: 'stepped',
             search: false,

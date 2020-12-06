@@ -29,6 +29,7 @@ exports.changePassword = (req, res) => {
     checkValidPassword(req, res, () => {
       user.set('Password', bcrypt.hashSync(req.body.password));
       user.save();
+      console.log(user);
       return res.json({
         message: '패스워드를 변경했습니다',
       });
@@ -37,7 +38,7 @@ exports.changePassword = (req, res) => {
 };
 
 exports.getUserInfo = (req, res) => {
-  const { Uid } = req;
+  const { Uid } = req.query;
   User.findByPk(Uid).then((user) => res.json({
     Name: user.get('Name'),
     Bdate: user.get('Bdate'),
@@ -49,7 +50,7 @@ exports.getUserInfo = (req, res) => {
 };
 
 exports.handleWithdrawal = (req, res) => {
-  const { Uid } = req;
+  const { Uid } = req.query;
   User.findByPk(Uid).then((user) => {
     if (user.get('UType') === 2) {
       return res

@@ -83,7 +83,10 @@ export default function DataEvalDialog({ open, handleClose, Pid }) {
       Desc: opinion,
       PNP: PNP ? 'P' : 'NP',
     }).then(
-      () => {
+      (response) => {
+        dispatch(setAlertType('success'));
+        dispatch(setMessage('평가가 완료되었습니다'));
+        dispatch(openAlert());
         handleClose();
       },
       (error) => {

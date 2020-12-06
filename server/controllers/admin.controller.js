@@ -5,7 +5,7 @@ const csv = require('csvtojson');
 const { response } = require('express');
 const createCsvWriter = require('csv-writer').createObjectCsvWriter;
 const { v4: uuidv4 } = require('uuid');
-
+var fs = require('fs');
 
 const User = db.user;
 const Task = db.task;
@@ -78,20 +78,20 @@ exports.makeTask = (req, res) => {
       })
         .then((new_task) => {
           if (new_task) {
-            const csvHead = [];
             columns = Object.keys(tableSchema[0]);
             columns.push('Sid');
-            for (let i = 0; i < columns.length; i++) {
-              csvHead.push({ id: columns[i], title: columns[i] });
-            }
-            const csvWriter = createCsvWriter({
-              path: tableRef,
-              header: csvHead,
-            });
-            csvWriter.writeRecords([]);
-            return res.status(200).json({
-              message: '테스크가 생성되었습니다.',
-            });
+            fs.writeFile(tableRef, columns, 'utf8', function (err) {
+              if (err) {
+                return res.status(400).json({
+                  message: '테스크 생성 과정에서 오류가 발생하였습니다.',
+                });
+              } else{
+                return res.status(200).json({
+                  message: '테스크가 생성되었습니다.',
+                });
+              }
+            });         
+            
           }
         })
         .catch((err) => {
@@ -178,7 +178,7 @@ exports.pendingUser = (req, res) => {
         required: true,
       },
     ],
-    where: { TaskName: taskName, Permit: 'approved' },
+    where: { TaskName: taskName, Permit: 'pending' },
   }).then((count) =>
     Works_on.findAll({
       attributes: [],
@@ -293,6 +293,20 @@ exports.addOgData = (req, res) => {
   });
 };
 
+exports.getOgData = (req, res) => {
+  const { taskName } = req.query;
+  og_data_type
+    .findAll({
+      attributes: ['Did', 'Name', 'Schema', 'Mapping'],
+      where: { TaskName: taskName },
+    })
+    .then((result) => {
+      res.status(200).json({
+        data: result,
+      });
+    });
+};
+
 exports.evaluatedData = (req, res) => {
   // ! req.query? req.body? req?
   const { Uid, per_page, page } = req.query;
@@ -307,7 +321,7 @@ exports.evaluatedData = (req, res) => {
     where: {
       Eid: parseInt(Uid),
       Pass: { [Op.ne]: null },
-    }
+    },
   }).then((count) => {
     Evaluate.findAll({
       include: [
@@ -326,15 +340,15 @@ exports.evaluatedData = (req, res) => {
       if (evaluate) {
         return res.status(200).json({
           data: evaluate,
-          page: page,
-          totalCount: count
+          page,
+          totalCount: count,
         });
       }
       return res.status(404).json({
         message: '평가자에게 할당된 데이터가 없습니다',
       });
     });
-  })
+  });
 };
 
 exports.getUserinfoAll = (req, res) => {
@@ -397,9 +411,9 @@ exports.infoSearch = (req, res) => {
         [Op.or]: [
           { ID: { [Op.substring]: search } },
           { Gender: { [Op.substring]: search } },
-          { Name: { [Op.substring]: search } }
-        ]
-      }
+          { Name: { [Op.substring]: search } },
+        ],
+      },
     }).then((result1) => {
       User.findAndCountAll({
         include: [
@@ -409,51 +423,53 @@ exports.infoSearch = (req, res) => {
             where: { TaskName: { [Op.substring]: search } },
             required: true,
           },
-        ]
+        ],
       }).then((result2) => {
-        var total = result1.count + result2.count
-        var data2 = result1.rows.concat(result2.rows).slice(parseInt(page) - 1, parseInt(page) - 1 + parseInt(per_page));
+        const total = result1.count + result2.count;
+        const data2 = result1.rows
+          .concat(result2.rows)
+          .slice(parseInt(page) - 1, parseInt(page) - 1 + parseInt(per_page));
         if (total !== 0) {
           return res.status(200).json({
             data: data2,
             page,
-            totalCount: total
+            totalCount: total,
           });
-        };
+        }
         return res.json({
           data: [],
           page,
-          totalCount: 0
+          totalCount: 0,
         });
-      })
-    })
+      });
+    });
   } else if (searchCriterion == 'ID') {
     User.findAndCountAll({
       where: {
-        ID: { [Op.substring]: search }
+        ID: { [Op.substring]: search },
       },
-      offset: parseInt(per_page) * parseInt((page - 1)),
+      offset: parseInt(per_page) * parseInt(page - 1),
       limit: parseInt(per_page),
-    }).then(result => {
+    }).then((result) => {
       User.findAndCountAll({
         where: {
-          ID: { [Op.substring]: search }
+          ID: { [Op.substring]: search },
         },
       }).then((count) => {
         if (result.rows.length !== 0) {
           return res.status(200).json({
             data: result.rows,
             page: parseInt(page),
-            totalCount: count.rows.length
+            totalCount: count.rows.length,
           });
-        };
+        }
         return res.json({
           data: [],
           page,
-          totalCount: 0
+          totalCount: 0,
         });
-      })
-    })
+      });
+    });
   } else if (searchCriterion == 'task') {
     User.hasMany(Parsing_data, { foreignKey: 'Sid' });
     Parsing_data.belongsTo(User, { foreignKey: 'Sid' });
@@ -466,8 +482,8 @@ exports.infoSearch = (req, res) => {
           required: true,
         },
       ],
-      offset: parseInt(per_page) * parseInt((page - 1)),
-      limit: parseInt(per_page)
+      offset: parseInt(per_page) * parseInt(page - 1),
+      limit: parseInt(per_page),
     }).then((result) => {
       User.findAndCountAll({
         include: [
@@ -483,37 +499,35 @@ exports.infoSearch = (req, res) => {
           return res.status(200).json({
             data: result.rows,
             page,
-            totalCount: count.rows.length
+            totalCount: count.rows.length,
           });
-        };
+        }
         return res.json({
           data: [],
           page,
-          totalCount: 0
+          totalCount: 0,
         });
-      })
-    })
+      });
+    });
   } else if (searchCriterion == 'Gender') {
-    var male = ['남성','남자','남'];
-    var female = ['여성', '여자', '여'];
-    var value = "";
+    const male = ['남성', '남자', '남'];
+    const female = ['여성', '여자', '여'];
+    let value = '';
     if (male.includes(search)) {
       console.log('남자');
       value = 'male';
-    }
-    else if (female.includes(search)) {
+    } else if (female.includes(search)) {
       console.log('여자');
       value = 'female';
-    }
-    else {
+    } else {
       value = search;
     }
     User.findAndCountAll({
       where: {
         Gender: { [Op.substring]: value },
       },
-      offset: parseInt(per_page) * parseInt((page - 1)),
-      limit: parseInt(per_page)
+      offset: parseInt(per_page) * parseInt(page - 1),
+      limit: parseInt(per_page),
     }).then((result) => {
       User.findAndCountAll({
         where: {
@@ -524,66 +538,63 @@ exports.infoSearch = (req, res) => {
           return res.status(200).json({
             data: result.rows,
             page,
-            totalCount: count.rows.length
+            totalCount: count.rows.length,
           });
-        };
+        }
         return res.json({
           data: [],
           page,
-          totalCount: 0
+          totalCount: 0,
         });
       });
-    })
+    });
   } else if (searchCriterion == 'age') {
     if (isNaN(parseInt(search))) {
       return res.json({
         data: [],
         page,
-        totalCount: 0
-      })
-    }
-    else {
-      const today = new Date();
-      User.findAll().then((result) => {
-        offset = parseInt(per_page) * (parseInt(page) - 1);
-        limit = parseInt(per_page);
-        var len = new Number(0)
-        const temp_arr = []
-        for (let i = 0; i < result.length; i++) {
-          const check = new Date(result[i].Bdate)
-          const age = Math.floor(today.getFullYear() - check.getFullYear() + 1);
-          if (Math.floor(age / 10) * 10 != parseInt(search)) {
-            continue;
-          }
-          len += 1
-          temp_arr.push({
-            Uid: result[i].Uid,
-            ID: result[i].ID,
-            Name: result[i].Name,
-            Gender: result[i].Gender,
-            UType: result[i].UType,
-            Bdate: result[i].Bdate,
-            Age: age,
-          });
-        }
-        if (temp_arr.length === 0) {
-          return res.json({
-            data: [],
-            page: page,
-            totalCount: 0
-          })
-        };
-        temp_arr.sort(function (a, b) {
-          return a.Age - b.Age
-        });
-        return res.json({
-          data: temp_arr.slice(offset, offset + limit),
-          page: page,
-          totalCount: len
-        })
+        totalCount: 0,
       });
-    };
-  };
+    }
+
+    const today = new Date();
+    User.findAll().then((result) => {
+      offset = parseInt(per_page) * (parseInt(page) - 1);
+      limit = parseInt(per_page);
+      let len = new Number(0);
+      const temp_arr = [];
+      for (let i = 0; i < result.length; i++) {
+        const check = new Date(result[i].Bdate);
+        const age = Math.floor(today.getFullYear() - check.getFullYear() + 1);
+        if (Math.floor(age / 10) * 10 != parseInt(search)) {
+          continue;
+        }
+        len += 1;
+        temp_arr.push({
+          Uid: result[i].Uid,
+          ID: result[i].ID,
+          Name: result[i].Name,
+          Gender: result[i].Gender,
+          UType: result[i].UType,
+          Bdate: result[i].Bdate,
+          Age: age,
+        });
+      }
+      if (temp_arr.length === 0) {
+        return res.json({
+          data: [],
+          page,
+          totalCount: 0,
+        });
+      }
+      temp_arr.sort((a, b) => a.Age - b.Age);
+      return res.json({
+        data: temp_arr.slice(offset, offset + limit),
+        page,
+        totalCount: len,
+      });
+    });
+  }
 };
 
 exports.requestList = (req, res) => {
@@ -636,11 +647,11 @@ exports.parsedDataList = (req, res) => {
           PNP: p_data.Appended,
         });
       });
-      offset = parseInt(per_page) * (parseInt(page) - 1)
+      offset = parseInt(per_page) * (parseInt(page) - 1);
       return res.status(200).json({
         data: output.slice(offset, offset + parseInt(per_page)),
         page: parseInt(page),
-        totalCount: output.length
+        totalCount: output.length,
       });
     }
     return res.status(400).json({
@@ -650,26 +661,32 @@ exports.parsedDataList = (req, res) => {
 };
 
 exports.downloadParsedData = (req, res) => {
-  const { Pid } = req.query
+  const { Pid } = req.query;
   Parsing_data.findOne({
     where: {
-      Pid: Pid
+      Pid,
     },
-    include: [{
-      model: og_data_type,
-      attributes: ['Name'],
-      required: true,
-    }]
+    include: [
+      {
+        model: og_data_type,
+        attributes: ['Name'],
+        required: true,
+      },
+    ],
   }).then((parsing_data) => {
     if (parsing_data) {
-      console.log(parsing_data.og_data_type.Name)
-      res.download(parsing_data.DataRef, `${parsing_data.og_data_type.Name}.csv`, (err) => {
-        if (err) {
-          res.status(404).send('잘못된 요청입니다');
-        } else {
-          console.log(res.headersSent);
+      console.log(parsing_data.og_data_type.Name);
+      res.download(
+        parsing_data.DataRef,
+        `${parsing_data.og_data_type.Name}.csv`,
+        (err) => {
+          if (err) {
+            res.status(404).send('잘못된 요청입니다');
+          } else {
+            console.log(res.headersSent);
+          }
         }
-      });
+      );
     } else {
       res.status(400).json({
         message: '파싱데이터를 찾을 수 없습니다',
@@ -740,9 +757,7 @@ exports.getTaskInfo = async (req, res) => {
   });
   if (task != undefined) {
     try {
-      const parsedData = await csv({ noheader: false }).fromFile(
-        task.TableRef
-      )
+      const parsedData = await csv({ noheader: false }).fromFile(task.TableRef);
       console.log(task.tupleCount);
       return res.status(200).json({
         task,
@@ -750,12 +765,12 @@ exports.getTaskInfo = async (req, res) => {
       });
     } catch (err) {
       return res.status(404).json({
-        "message": "./task_data_table에 파일이 존재하지 않습니다"
-      })
+        message: './task_data_table에 파일이 존재하지 않습니다',
+      });
     }
   } else {
     return res.status(404).json({
-      "message": "해당 태스크 이름이 존재하지 않습니다"
-    })
+      message: '해당 태스크 이름이 존재하지 않습니다',
+    });
   }
 };
