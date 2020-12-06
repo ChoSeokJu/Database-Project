@@ -133,9 +133,8 @@ exports.saveToTaskTable = async function (req, res) {
     // ! make sure that they are written in order when they are saved
     rows = json2csv(data, { header: false });
     const newRows = rows.replace(/[\\"]/g, '');
-
-    await fs.appendFileSync(fileName, newRows);
     await fs.appendFileSync(fileName, '\r\n');
+    await fs.appendFileSync(fileName, newRows);    
   };
 
   await write(TableRef, parsedHeader, parsedData); // this is for deployment
