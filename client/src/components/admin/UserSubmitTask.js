@@ -9,47 +9,59 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import IconButton from '@material-ui/core/IconButton';
 import InfoIcon from '@material-ui/icons/Info';
+import { getAdmin } from '../../services/user.service';
+import TaskDetail from '../submit/TaskDetail';
 
-export default function UserEvalTask({
-  open, handleClose, Uid, ID,
-}) {
-  const [openInfo, setOpenInfo] = useState({ open: false, taskName: '', Uid: '' });
-  // TODO: 유저가 제출한 파싱 데이터 목록을 가져오기.
-  const getParsedData = (query) => new Promise((resolve, reject) => {
-    setTimeout(
-      () => resolve({
-        data: [
-          {
-            taskName: 'task1',
-            date: '2020-01-01',
-            OGDataType: '데이터타입1',
-            score: 10,
-            PNP: 'P',
-          },
-          {
-            taskName: 'task2',
-            date: '2020-01-01',
-            OGDataType: '데이터타입2',
-            score: 10,
-            PNP: 'P',
-          },
-          {
-            taskName: 'task3',
-            date: '2020-01-01',
-            OGDataType: '데이터타입3',
-            score: 10,
-            PNP: 'P',
-          },
-        ],
-        page: query.page,
-        totalCount: 100,
-      }),
-      500,
-    );
+export default function UserEvalTask({ open, handleClose, Uid, ID }) {
+  const [openTaskDetail, setOpenTaskDetail] = useState({
+    open: false,
+    taskName: '',
   });
+  // TODO: 유저가 제출한 파싱 데이터 목록을 가져오기.
+  const getTaskData = (query) =>
+    new Promise((resolve, reject) => {
+      getAdmin('/submitter/task-list', {
+        Uid,
+        per_page: query.pageSize,
+        page: query.page + 1,
+      }).then(
+        (response) => {
+          const { data, page, totalCount } = response.data;
+          console.log(data);
+          resolve({
+            data,
+            page: page - 1,
+            totalCount,
+          });
+        },
+        (error) => {
+          const message =
+            (error.response &&
+              error.response.data &&
+              error.response.data.message) ||
+            error.message ||
+            error.toString();
+          reject(message);
+        }
+      );
+    });
 
+  const renderButton = (rowData) => (
+    <Button
+      color="primary"
+      variant="contained"
+      onClick={handleInfo(rowData)}
+      style={{ whiteSpace: 'nowrap' }}
+    >
+      상세정보
+    </Button>
+  );
+
+  const handleCloseDetail = () => {
+    setOpenTaskDetail({ open: false, taskName: '' });
+  };
   const handleInfo = (rowData) => () => {
-    setOpenInfo({ open: true, taskName: rowData.taskName, Uid });
+    setOpenTaskDetail({ open: true, taskName: rowData.taskName });
   };
 
   return (
@@ -59,12 +71,11 @@ export default function UserEvalTask({
         onClose={handleClose}
         maxWidth="md"
         fullWidth
+        scroll="body"
         aria-labelledby="form-dialog-title"
       >
         <DialogTitle id="form-dialog-title">
-          {ID}
-          {' '}
-          회원이 참여중인 태스크
+          {ID} 회원이 참여중인 태스크
         </DialogTitle>
         <DialogContent>
           <MaterialTable
@@ -84,24 +95,40 @@ export default function UserEvalTask({
               header: {
                 actions: '',
               },
+              body: {
+                emptyDataSourceMessage: '참여중인 태스크가 없습니다',
+              },
             }}
             columns={[
-              { title: '태스크 이름', field: 'taskName' },
-              { title: '제출 횟수', field: 'date' },
-              { title: '평균 평가 점수', field: 'avgScore' },
-              { title: '마지막 제출 날짜', field: 'lastDate' },
               {
-                title: '상세정보',
-                field: 'info',
-                align: 'center',
-                render: (rowData) => (
-                  <IconButton onClick={handleInfo(rowData)} size="small">
-                    <InfoIcon />
-                  </IconButton>
-                ),
+                title: '태스크 이름',
+                field: 'taskName',
+                cellStyle: {
+                  textOverflow: 'ellipsis',
+                  whiteSpace: 'nowrap',
+                  overflow: 'hidden',
+                  maxWidth: 100,
+                  width: '20%',
+                },
+              },
+              {
+                title: '태스크 설명',
+                field: 'taskDesc',
+                cellStyle: {
+                  textOverflow: 'ellipsis',
+                  whiteSpace: 'nowrap',
+                  overflow: 'hidden',
+                  maxWidth: 600,
+                  width: '70%',
+                },
+              },
+              {
+                field: 'evaluated',
+                align: 'right',
+                render: (rowData) => renderButton(rowData),
               },
             ]}
-            data={getParsedData}
+            data={getTaskData}
           />
         </DialogContent>
         <DialogActions>
@@ -110,6 +137,13 @@ export default function UserEvalTask({
           </Button>
         </DialogActions>
       </Dialog>
+      <TaskDetail
+        open={openTaskDetail.open}
+        handleClose={handleCloseDetail}
+        taskName={openTaskDetail.taskName}
+        permit="approved"
+        Uid={Uid}
+      />
     </>
   );
 }

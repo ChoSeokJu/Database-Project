@@ -3,10 +3,11 @@ const db = require('../models');
 const { checkValidPassword } = require('../utils/verifySignUp');
 
 const User = db.user;
+const Requests = db.request_task;
 
 exports.changeUserInfo = (req, res) => {
-  const {id} = req.body
-  User.findByPk(id).then((user) => {
+  const { Uid } = req;
+  User.findByPk(Uid).then((user) => {
     const { address, phone } = req.body;
     user.set('Addr', address);
     user.set('PhoneNo', phone);
@@ -18,9 +19,9 @@ exports.changeUserInfo = (req, res) => {
 };
 
 exports.changePassword = (req, res) => {
-  const {id} = req.body
-  User.findByPk(id).then((user) => {
-    if (user.get('UType') === 2) {
+  const { Uid } = req;
+  User.findByPk(Uid).then((user) => {
+    if (user.get('UType') === 'admin') {
       return res.status(400).json({
         message: '관리자는 비밀번호를 변경할 수 없습니다',
       });
@@ -28,6 +29,7 @@ exports.changePassword = (req, res) => {
     checkValidPassword(req, res, () => {
       user.set('Password', bcrypt.hashSync(req.body.password));
       user.save();
+      console.log(user);
       return res.json({
         message: '패스워드를 변경했습니다',
       });
@@ -36,8 +38,8 @@ exports.changePassword = (req, res) => {
 };
 
 exports.getUserInfo = (req, res) => {
-  const {id} = req.query
-  User.findByPk(id).then((user) =>
+  const { Uid } = req;
+  User.findByPk(Uid).then((user) =>
     res.json({
       Name: user.get('Name'),
       Bdate: user.get('Bdate'),
@@ -50,15 +52,44 @@ exports.getUserInfo = (req, res) => {
 };
 
 exports.handleWithdrawal = (req, res) => {
-  const {id} = req.query
-  User.findByPk(id).then((user) => {
-    if (user.get('UType') === 2) {
+  const { Uid } = req;
+  User.findByPk(Uid).then((user) => {
+    if (user.get('UType') === 'admin') {
       return res
         .status(400)
         .json({ message: 'Admin 계정은 탈퇴할 수 없습니다' });
     }
-    user
-      .destroy()
-      .then(() => res.json({ message: '회원탈퇴가 완료되었습니다' }));
+
+    user.set('ID', '탈퇴한회원');
+    user.set('Gender', 'undeclared');
+    user.set('Name', '');
+    user.set('Addr', '');
+    user.set('PhoneNo', '');
+    user.set('Bdate', '0000-00-00');
+    user.set('Password', '');
+    user.save();
+    return res.status(200).json({ message: '회원 탈퇴가 완료되었습니다' });
+  });
+};
+
+exports.requestTask = (req, res) => {
+  const { title, content } = req.body;
+  const date = new Date();
+  const dateToTimestamp = date.getTime();
+  const timestampToDate = new Date(dateToTimestamp);
+  Requests.create({
+    Title: title,
+    Content: content,
+    Date: timestampToDate,
+  }).then((result) => {
+    if (title || content) {
+      res.status(200).json({
+        message: 'Task 요청이 완료되었습니다',
+      });
+    } else if (!title || !content) {
+      res.status(400).json({
+        message: '제목이나 내용을 작성하지 않으셨습니다',
+      });
+    }
   });
 };

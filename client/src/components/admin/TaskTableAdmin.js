@@ -12,6 +12,7 @@ import TaskUserList from './TaskUserList';
 import TaskInfo from './TaskInfo';
 import { setTaskData } from '../../actions/taskData';
 import AppendOGDataTypeDialog from './AppendOGDataTypeDialog';
+import { getAdmin } from '../../services/user.service';
 
 export default function TaskTableAdmin(props) {
   const [openTaskUserList, setOpenTaskUserList] = useState({
@@ -49,26 +50,30 @@ export default function TaskTableAdmin(props) {
     history.push('/admin/task/append');
   };
 
-  // TODO: 태스크 목록 불러오기
+  // TODO: 완료! 태스크 목록 불러오기
   const getTask = (query) =>
     new Promise((resolve, reject) => {
-      setTimeout(
-        () =>
+      getAdmin('/task', {
+        per_page: query.pageSize,
+        page: query.page + 1,
+      }).then(
+        (response) => {
+          const { data, page, totalCount } = response.data;
           resolve({
-            data: [
-              { taskName: '카드1' },
-              { taskName: '카드2' },
-              { taskName: '카드3' },
-              { taskName: '카드4' },
-              { taskName: '카드5' },
-              { taskName: '카드6' },
-              { taskName: '카드7' },
-              { taskName: '카드8' },
-            ],
-            page: query.page,
-            totalCount: 100,
-          }),
-        500
+            data,
+            page: page - 1,
+            totalCount,
+          });
+        },
+        (error) => {
+          const message =
+            (error.response &&
+              error.response.data &&
+              error.response.data.message) ||
+            error.message ||
+            error.toString();
+          reject(message);
+        }
       );
     });
 
@@ -78,7 +83,7 @@ export default function TaskTableAdmin(props) {
         <MaterialTable
           title="태스크 목록"
           options={{
-            pageSize: 8,
+            pageSize: 10,
             pageSizeOptions: [],
             paginationType: 'stepped',
             search: false,

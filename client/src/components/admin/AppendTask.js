@@ -1,5 +1,5 @@
 /* eslint-disable react/jsx-filename-extension */
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
 import TextField from '@material-ui/core/TextField';
@@ -56,41 +56,38 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function getStepContent(step) {
-  switch (step) {
-    case 0:
-      return <AppendTaskForm />;
-    case 1:
-      return <AppendOGDataType />;
-    default:
-      throw new Error('Unknown step');
-  }
-}
-
 const steps = ['태스크 정보 입력', '원본 데이터 스키마 추가'];
 
 export default function AppendTask(props) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const history = useHistory();
+  const childRef = useRef();
 
-  const { data, taskName, minPeriod, passCriteria, description } = useSelector(
-    (state) => state.taskData
-  );
+  const {
+    data,
+    taskName,
+    tableName,
+    minPeriod,
+    passCriteria,
+    description,
+  } = useSelector((state) => state.taskData);
 
   const { name } = useSelector((state) => state.originalData);
   const [activeStep, setActiveStep] = React.useState(0);
 
   useEffect(() => {
     dispatch(clearTaskData());
+    dispatch(clearOriginalData());
   }, []);
 
-  const handleNext = () => {
+  const handleNext = async () => {
     if (activeStep === 0) {
       /* 여기서는 최소한의 validty check만 한다.
         최종 제출시 태스크 정보 먼저 보내 유효한 입력인지 체크한다.
       */
       let message = '';
+      const tableNameRegex = /^[\w\d\s\-_.]+$/;
       dispatch(setAlertType('error'));
       if (data.length === 0) {
         message = '최소한 하나의 칼럼을 추가해주세요';
@@ -101,6 +98,9 @@ export default function AppendTask(props) {
       if (minPeriod === '' || minPeriod < 0) {
         message = '유효한 최소 주기를 입력해주세요';
       }
+      if (!tableNameRegex.test(tableName)) {
+        message = '테이블 제목은 영문 및 숫자만 가능합니다';
+      }
       if (taskName === '') {
         message = '태스크 이름을 입력하세요';
       }
@@ -110,7 +110,11 @@ export default function AppendTask(props) {
         return;
       }
       dispatch(clearOriginalData());
-      dispatch(setOriginalData(data.map(({ columnName }) => ({ columnName }))));
+      dispatch(
+        setOriginalData(
+          data.map(({ columnName }) => ({ columnName, originalColumnName: '' }))
+        )
+      );
       setActiveStep(activeStep + 1);
     } else {
       if (!name) {
@@ -119,11 +123,37 @@ export default function AppendTask(props) {
         dispatch(openAlert());
         return;
       }
-      // TODO: 최종 제출. 제출할 때 Number로 바꿔야 함에 유의하자.
+      // TODO: 완료! 최종 제출. 제출할 때 Number로 바꿔야 함에 유의하자.
+      const tableSchema = {};
+      data.forEach((row) => {
+        tableSchema[row.columnName] = row.type;
+      });
+      try {
+        await postAdmin('/task/make', {
+          taskName,
+          desc: description,
+          minTerm: Number(minPeriod),
+          tableSchema: [tableSchema],
+          passCriteria: Number(passCriteria),
+          tableName,
+        });
+        await childRef.current.submitOGDataType(taskName);
 
-      dispatch(setMessage('태스크 추가가 성공했습니다'));
-      dispatch(openDialog());
-      history.push('/');
+        dispatch(setAlertType('success'));
+        dispatch(setMessage('태스크 추가가 성공했습니다'));
+        dispatch(openDialog());
+        history.push('/');
+      } catch (error) {
+        const message =
+          (error.response &&
+            error.response.data &&
+            error.response.data.message) ||
+          error.message ||
+          error.toString();
+        dispatch(setAlertType('error'));
+        dispatch(setMessage(message));
+        dispatch(openAlert());
+      }
     }
   };
 
@@ -146,24 +176,26 @@ export default function AppendTask(props) {
             ))}
           </Stepper>
           <>
-            <>
-              {getStepContent(activeStep)}
-              <div className={classes.buttons}>
-                {activeStep !== 0 && (
-                  <Button onClick={handleBack} className={classes.button}>
-                    Back
-                  </Button>
-                )}
-                <Button
-                  variant="contained"
-                  color="primary"
-                  onClick={handleNext}
-                  className={classes.button}
-                >
-                  {activeStep === 0 ? '다음' : '태스크 추가'}
+            {activeStep === 0 ? (
+              <AppendTaskForm />
+            ) : (
+              <AppendOGDataType ref={childRef} />
+            )}
+            <div className={classes.buttons}>
+              {activeStep !== 0 && (
+                <Button onClick={handleBack} className={classes.button}>
+                  Back
                 </Button>
-              </div>
-            </>
+              )}
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={handleNext}
+                className={classes.button}
+              >
+                {activeStep === 0 ? '다음' : '태스크 추가'}
+              </Button>
+            </div>
           </>
         </Paper>
       </main>

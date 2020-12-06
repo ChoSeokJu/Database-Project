@@ -1,12 +1,12 @@
 /* eslint-disable react/jsx-filename-extension */
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import { useDispatch, useSelector } from 'react-redux';
-import AppendOGDataType from './AppendOGDataType';
+import AppendOGDataType, { submitOGDataType } from './AppendOGDataType';
 import { setOriginalData, clearOriginalData } from '../../actions/originalData';
 import {
   openAlert,
@@ -14,6 +14,7 @@ import {
   setAlertType,
   setMessage,
 } from '../../actions/message';
+import { getAdmin } from '../../services/user.service';
 
 export default function AppendOGDataTypeDialog({
   open,
@@ -21,19 +22,20 @@ export default function AppendOGDataTypeDialog({
   taskName,
 }) {
   const dispatch = useDispatch();
-  const { data, name } = useSelector((state) => state.originalData);
+  const childRef = useRef();
+  const { data, name, columns } = useSelector((state) => state.originalData);
 
   useEffect(() => {
+    dispatch(clearOriginalData());
     if (open) {
-      dispatch(clearOriginalData());
-      /* TODO: task에 대한 scheme 다운로드해서 setTaskData에 넣음. */
-      dispatch(
-        setOriginalData([
-          { columnName: '스키마1' },
-          { columnName: '스키마2' },
-          { columnName: '스키마3' },
-        ])
-      );
+      /* TODO: 완료! task에 대한 scheme 다운로드해서 setTaskData에 넣음. */
+      getAdmin('/task/schema', { taskName }).then((response) => {
+        const { data } = response.data;
+        data.forEach((row) => {
+          row.originalColumnName = '';
+        });
+        dispatch(setOriginalData(data));
+      });
     }
   }, [open]);
 
@@ -46,12 +48,28 @@ export default function AppendOGDataTypeDialog({
       dispatch(openAlert());
       return;
     }
-    if (isNullExist()) {
-      dispatch(setMessage('비어있는 데이터 스키마는 전부 NULL로 들어갑니다'));
-      dispatch(openDialog());
-    }
-    // TODO: 원본 데이터 스키마 제출하기
-    handleClose();
+
+    childRef.current.submitOGDataType(taskName).then(
+      () => {
+        dispatch(setAlertType('success'));
+        dispatch(setMessage('데이터가 성공적으로 추가되었습니다'));
+        dispatch(openAlert());
+        handleClose();
+      },
+      (error) => {
+        const message =
+          (error.response &&
+            error.response.data &&
+            error.response.data.message) ||
+          error.message ||
+          error.toString();
+        dispatch(setAlertType('error'));
+        dispatch(setMessage(message));
+        dispatch(openAlert());
+      }
+    );
+
+    // TODO: 완료! 원본 데이터 스키마 제출하기
   };
 
   return (
@@ -66,7 +84,7 @@ export default function AppendOGDataTypeDialog({
         {taskName}에 원본 데이터 스키마 추가
       </DialogTitle>
       <DialogContent>
-        <AppendOGDataType />
+        <AppendOGDataType ref={childRef} />
       </DialogContent>
       <DialogActions>
         <Button onClick={handleClose} color="primary">

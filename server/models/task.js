@@ -1,7 +1,7 @@
 /* jshint indent: 2 */
 
 const Sequelize = require('sequelize');
-module.exports = function(sequelize, DataTypes) {
+module.exports = function (sequelize, DataTypes) {
   return sequelize.define('task', {
     TaskName: {
       type: DataTypes.STRING(255),
@@ -22,7 +22,20 @@ module.exports = function(sequelize, DataTypes) {
       comment: "수집하는 테이블 이름"
     },
     TableSchema: {
-      type: DataTypes.JSON,
+      type: DataTypes.TEXT,
+      get() {
+        try {
+          return JSON.parse(this.getDataValue('TableSchema'));
+        } catch (e) {
+          return null;
+        }
+      },
+      set(TableSchema) {
+        if (!(TableSchema instanceof Object)) {
+          throw Error('`TableSchema` should be an instance of Object');
+        }
+        this.setDataValue('TableSchema', JSON.stringify(TableSchema));
+      },
       allowNull: false,
       comment: "수집할 테이블의 스키마"
     },
@@ -33,6 +46,10 @@ module.exports = function(sequelize, DataTypes) {
     },
     TimeStamp: {
       type: DataTypes.DATE,
+      allowNull: false
+    },
+    PassCriteria: {
+      type: DataTypes.INTEGER,
       allowNull: false
     }
   }, {

@@ -1,5 +1,5 @@
 /* eslint-disable react/jsx-filename-extension */
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -12,66 +12,162 @@ import IconButton from '@material-ui/core/IconButton';
 import GroupIcon from '@material-ui/icons/Group';
 import InfoIcon from '@material-ui/icons/Info';
 import Typography from '@material-ui/core/Typography';
+import Grid from '@material-ui/core/Grid';
 import { makeStyles } from '@material-ui/core/styles';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemText from '@material-ui/core/ListItemText';
+import Box from '@material-ui/core/Box';
+import Divider from '@material-ui/core/Divider';
 import Paper from '@material-ui/core/Paper';
 import GetAppIcon from '@material-ui/icons/GetApp';
+import download from 'downloadjs';
+import { useDispatch } from 'react-redux';
 import TaskUserTable from './TaskUserListTable';
+import { getAdmin, downloadAdmin } from '../../services/user.service';
+import {
+  openAlert,
+  openDialog,
+  setAlertType,
+  setMessage,
+} from '../../actions/message';
 
 const useStyles = makeStyles((theme) => ({
   title: {
     marginTop: theme.spacing(2),
     marginBottom: theme.spacing(2),
   },
-  button: {
-    marginLeft: theme.spacing(2),
+  downloadButton: {
+    position: 'absolute',
+    right: theme.spacing(1),
+    top: theme.spacing(1),
+  },
+  info: {
+    width: '50%',
+  },
+  divider: {
+    marginTop: theme.spacing(2),
+  },
+  ellipsis: {
+    maxHeight: theme.spacing(10),
+    textOverflow: 'ellipsis',
+    overflow: 'hidden',
+    wordWrap: 'break-word',
   },
 }));
 
-export default function TaskUserList({ open, handleClose, taskName }) {
+export default function TaskInfo({ open, handleClose, taskName }) {
   const classes = useStyles();
+  const dispatch = useDispatch();
+  const [taskInfos, setTaskInfos] = useState({});
+  const [OGDataTypes, setOGDataTypes] = useState([]);
 
-  // TODO: 파싱된 데이터 목록 얻어오기
+  useEffect(() => {
+    if (open) {
+      getAdmin('/task/info', { taskName }).then((response) => {
+        const {
+          TaskName,
+          Desc,
+          MinTerm,
+          TableName,
+          TableSchema,
+          TimeStamp,
+          PassCriteria,
+        } = response.data.task;
+        const { tupleCount } = response.data;
+        setTaskInfos({
+          TaskName,
+          Desc,
+          MinTerm,
+          TableName,
+          TableSchema: Object.entries(TableSchema[0])
+            .map(([key, value]) => `${key}: ${value}`)
+            .join(', '),
+          TimeStamp: TimeStamp.match(/\d{4}-\d{2}-\d{2}/g)[0],
+          PassCriteria,
+          tupleCount,
+        });
+      });
+
+      getAdmin('/task/og-data', {
+        taskName,
+      }).then((response) => {
+        const { data } = response.data;
+        console.log(data);
+        const parsedData = data.map((row) => ({
+          OGDataType: row.Name,
+          schema: row.Schema.join(', '),
+          mapping: Object.entries(row.Mapping)
+            .map(([key, value]) => `${value}: ${key}`)
+            .join(', '),
+        }));
+        setOGDataTypes(parsedData);
+      });
+    } else {
+      setTaskInfos([]);
+    }
+  }, [open]);
+
   const getParsedData = (query) =>
     new Promise((resolve, reject) => {
-      setTimeout(
-        () =>
+      getAdmin('/task/parsed-data', {
+        taskName,
+        per_page: query.pageSize,
+        page: query.page + 1,
+      }).then(
+        (response) => {
+          const { data, page, totalCount } = response.data;
+          const parsedData = data.map((row) => ({
+            ID: row.ID,
+            OGDataType: row.OGDataType,
+            PNP: row.PNP === null ? '평가 대기중' : row.PNP ? 'P' : 'NP',
+            date: row.date.match(/\d{4}-\d{2}-\d{2}/g)[0],
+            Pid: row.Pid,
+          }));
           resolve({
-            data: [
-              {
-                ID: 'user1',
-                date: '2020-01-01',
-                OGDataType: '데이터타입1',
-                PNP: 'P',
-              },
-              {
-                ID: 'user2',
-                date: '2020-01-01',
-                OGDataType: '데이터타입2',
-                PNP: 'P',
-              },
-              {
-                ID: 'user3',
-                date: '2020-01-01',
-                OGDataType: '데이터타입3',
-                PNP: 'P',
-              },
-            ],
-            page: query.page,
-            totalCount: 100,
-          }),
-        500
+            data: parsedData,
+            page: page - 1,
+            totalCount,
+          });
+        },
+        (error) => {
+          const message =
+            (error.response &&
+              error.response.data &&
+              error.response.data.message) ||
+            error.message ||
+            error.toString();
+          reject(message);
+        }
       );
     });
 
   const handleTableDownload = () => {
-    // TODO: 태스크의 테이블 다운로드
-    alert(`${taskName} 태스크의 테이블 다운로드`);
+    // TODO: 완료! 태스크의 테이블 다운로드
+    downloadAdmin('/task/download', { taskName });
   };
 
   const handleParsedDataDownload = (event, rowData) => {
-    // TODO: 파싱된 데이터 다운로드
-    alert(`${rowData.ID}가 올린 파싱된 데이터를 다운`);
+    // TODO: 완료! 파싱된 데이터 다운로드
+    downloadAdmin('/task/parsed-data/download', {
+      Pid: rowData.Pid,
+    });
   };
+
+  const ListInfo = ({ key, value }) => (
+    <ListItem>
+      <ListItemText
+        secondaryTypographyProps={{
+          style: {
+            textOverflow: 'ellipsis',
+            overflow: 'hidden',
+          },
+        }}
+        primary={key}
+        secondary={value}
+      />
+    </ListItem>
+  );
 
   return (
     <Dialog
@@ -79,31 +175,66 @@ export default function TaskUserList({ open, handleClose, taskName }) {
       onClose={handleClose}
       maxWidth="md"
       fullWidth
+      scroll="body"
       aria-labelledby="form-dialog-title"
     >
-      <DialogContent>
-        <Typography variant="h5" component="h2" className={classes.title}>
-          {taskName}의 데이터 테이블
-        </Typography>
+      <DialogTitle id="form-dialog-title">
+        {taskName}의 태스크 상세정보
         <Button
           variant="contained"
           color="primary"
-          className={classes.button}
+          className={classes.downloadButton}
           endIcon={<GetAppIcon />}
-          className={classes.button}
           onClick={handleTableDownload}
         >
-          다운로드
+          데이터 테이블 다운로드
         </Button>
-        <Typography variant="h5" component="h2" className={classes.title}>
-          파싱된 원본 데이터
-        </Typography>
+      </DialogTitle>
+      <DialogContent>
+        <Box display="flex" flexDirection="row">
+          <List className={classes.info}>
+            {[
+              ['태스크 이름', taskInfos.TaskName],
+              ['패스 기준', `${taskInfos.PassCriteria}점`],
+              ['설명', taskInfos.Desc],
+            ].map(([key, value]) => (
+              <ListItem>
+                <ListItemText
+                  secondaryTypographyProps={{
+                    className: classes.ellipsis,
+                  }}
+                  primary={key}
+                  secondary={value}
+                />
+              </ListItem>
+            ))}
+          </List>
+          <List className={classes.info}>
+            {[
+              ['생성된 날짜', taskInfos.TimeStamp],
+              ['총 튜플 수', `${taskInfos.tupleCount}개`],
+              ['테이블 이름', taskInfos.TableName],
+              ['테이블 칼럼', taskInfos.TableSchema],
+            ].map(([key, value]) => (
+              <ListItem>
+                <ListItemText
+                  secondaryTypographyProps={{
+                    className: classes.ellipsis,
+                  }}
+                  primary={key}
+                  secondary={value}
+                />
+              </ListItem>
+            ))}
+          </List>
+        </Box>
+        <Divider className={classes.divider} />
         <MaterialTable
           components={{
             Container: (props) => <Paper {...props} elevation={0} />,
           }}
           options={{
-            pageSize: 3,
+            pageSize: 5,
             pageSizeOptions: [],
             actionsColumnIndex: -1,
             paginationType: 'stepped',
@@ -114,6 +245,9 @@ export default function TaskUserList({ open, handleClose, taskName }) {
           localization={{
             header: {
               actions: '',
+            },
+            body: {
+              emptyDataSourceMessage: '제출된 데이터가 없습니다',
             },
           }}
           columns={[
@@ -130,6 +264,43 @@ export default function TaskUserList({ open, handleClose, taskName }) {
             },
           ]}
           data={getParsedData}
+        />
+        <MaterialTable
+          title="원본 데이터 스키마 목록"
+          components={{
+            Container: (props) => <Paper {...props} elevation={0} />,
+          }}
+          options={{
+            pageSize: 5,
+            pageSizeOptions: [],
+            paginationType: 'stepped',
+            search: false,
+            sorting: false,
+          }}
+          localization={{
+            header: {
+              actions: '',
+            },
+            body: {
+              emptyDataSourceMessage: '추가된 원본 데이터 스키마가 없습니다',
+            },
+          }}
+          columns={[
+            {
+              title: '원본 데이터 타입 이름',
+              field: 'OGDataType',
+              cellStyle: {
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+                overflow: 'hidden',
+                maxWidth: 200,
+                width: '20%',
+              },
+            },
+            { title: '원본 데이터 스키마', field: 'schema' },
+            { title: '태스크 칼럼과 매핑', field: 'mapping' },
+          ]}
+          data={OGDataTypes}
         />
       </DialogContent>
       <DialogActions>

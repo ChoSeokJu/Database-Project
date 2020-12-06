@@ -1,5 +1,5 @@
 /* eslint-disable react/jsx-filename-extension */
-import React, { useState } from 'react';
+import React, { useState, forwardRef, useImperativeHandle } from 'react';
 import MaterialTable from 'material-table';
 import Paper from '@material-ui/core/Paper';
 import { useDispatch, useSelector } from 'react-redux';
@@ -8,25 +8,70 @@ import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
 import Divider from '@material-ui/core/Divider';
+import Tooltip from '@material-ui/core/Tooltip';
+import IconButton from '@material-ui/core/IconButton';
+import Button from '@material-ui/core/Button';
+import AddBoxIcon from '@material-ui/icons/AddBox';
+import Chip from '@material-ui/core/Chip';
+import Box from '@material-ui/core/Box';
 import { makeStyles } from '@material-ui/core/styles';
+import { InputAdornment } from '@material-ui/core';
 import {
   openAlert,
   openDialog,
   setAlertType,
   setMessage,
 } from '../../actions/message';
-import { setOriginalData, setSchemaName } from '../../actions/originalData';
+import {
+  setOriginalData,
+  setSchemaName,
+  setColumns,
+} from '../../actions/originalData';
+import { postAdmin } from '../../services/user.service';
 
 const useStyles = makeStyles((theme) => ({
-  divider: {
-    marginTop: theme.spacing(3),
+  root: {
+    display: 'flex',
+    justifyContent: 'center',
+    flexWrap: 'wrap',
+    listStyle: 'none',
+    padding: theme.spacing(0.5),
+  },
+  chip: {
+    margin: theme.spacing(0.5),
   },
 }));
 
-export default function AppendOGDataType(props) {
+const AppendOGDataType = forwardRef((props, ref) => {
   const dispatch = useDispatch();
   const classes = useStyles();
-  const { data, name } = useSelector((state) => state.originalData);
+  const { data, name, columns } = useSelector((state) => state.originalData);
+  const [columnName, setColumnName] = useState('');
+
+  useImperativeHandle(ref, () => ({
+    submitOGDataType(taskName) {
+      const newColumns = Object.entries(columns)
+        .filter((column) => column[0] === column[1])
+        .map((column) => column[0]);
+
+      const mapping = {};
+      data
+        .filter((row) => row.originalColumnName !== '')
+        .forEach((row) => {
+          mapping[row.columnName] = row.originalColumnName;
+        });
+
+      return postAdmin('/task/og-data', {
+        taskName,
+        OGDataType: name,
+        OGDataColumn: newColumns,
+        OGDataMapping: mapping,
+      }).then(
+        () => Promise.resolve(),
+        (error) => Promise.reject(error)
+      );
+    },
+  }));
 
   const isDuplicated = (newData) =>
     data.some(({ originalColumnName: oldName }) => {
@@ -35,23 +80,103 @@ export default function AppendOGDataType(props) {
       }
     });
 
+  const handleAppendColumn = () => {
+    if (columnName.trim() === '') {
+      dispatch(setAlertType('error'));
+      dispatch(setMessage('칼럼 이름은 빈칸이 될 수 없습니다'));
+      dispatch(openAlert());
+      return;
+    }
+    if (columnName in columns && columns[columnName] !== '') {
+      dispatch(setAlertType('error'));
+      dispatch(setMessage('이미 있는 칼럼입니다'));
+      dispatch(openAlert());
+      setColumnName('');
+      return;
+    }
+
+    dispatch(setColumns({ ...columns, [columnName]: columnName }));
+    setColumnName('');
+  };
+
+  const handleDeleteColumn = (name) => () => {
+    dispatch(setColumns({ ...columns, [name]: '' }));
+    const newData = [...data];
+    dispatch(
+      setOriginalData(
+        newData.map((row) => {
+          if (row.originalColumnName === name) {
+            return { ...row, originalColumnName: '' };
+          }
+          return row;
+        })
+      )
+    );
+  };
+
   return (
     <>
-      <Grid container>
+      <Grid container spacing={3}>
         <Grid item xs={12}>
           <TextField
             required
             label="원본 데이터 스키마 이름"
-            variant="outlined"
             fullWidth
             value={name}
             onChange={(e) => dispatch(setSchemaName(e.target.value))}
           />
         </Grid>
+        {/* <Grid item xs={12}>
+          <Divider className={classes.divider} />
+        </Grid> */}
+        <Grid item xs={12}>
+          <Tooltip
+            open
+            title="원본 데이터 칼럼을 추가하고 태스크 칼럼과 매핑해주세요"
+            aria-label="add"
+          >
+            <TextField
+              label="원본 데이터 칼럼 추가"
+              fullWidth
+              value={columnName}
+              onChange={(e) => setColumnName(e.target.value)}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <Tooltip title="칼럼 추가">
+                      <IconButton
+                        color="inherit"
+                        position="absolute"
+                        onClick={handleAppendColumn}
+                        size="small"
+                      >
+                        <AddBoxIcon />
+                      </IconButton>
+                    </Tooltip>
+                  </InputAdornment>
+                ),
+              }}
+            />
+          </Tooltip>
+        </Grid>
+        <Grid item xs={12}>
+          <Paper component="ul" className={classes.root} elevation={0}>
+            {Object.keys(columns).map((name) =>
+              columns[name] === '' || name === '' ? null : (
+                <li key={name}>
+                  <Chip
+                    label={name}
+                    color="primary"
+                    onDelete={handleDeleteColumn(name)}
+                    className={classes.chip}
+                  />
+                </li>
+              )
+            )}
+          </Paper>
+        </Grid>
       </Grid>
-      <Divider className={classes.divider} />
       <MaterialTable
-        title="원본 데이터 스키마"
         components={{
           Container: (props) => <Paper {...props} elevation={0} />,
         }}
@@ -62,6 +187,7 @@ export default function AppendOGDataType(props) {
           paginationType: 'stepped',
           search: false,
           sorting: false,
+          toolbar: false,
         }}
         localization={{
           body: {
@@ -73,7 +199,11 @@ export default function AppendOGDataType(props) {
         }}
         columns={[
           { title: '태스크 칼럼', field: 'columnName', editable: 'never' },
-          { title: '원본 데이터 칼럼', field: 'originalColumnName' },
+          {
+            title: '대응되는 원본 데이터 칼럼',
+            field: 'originalColumnName',
+            lookup: columns,
+          },
         ]}
         data={data}
         editable={{
@@ -92,10 +222,6 @@ export default function AppendOGDataType(props) {
                 dispatch(setMessage('이미 존재하는 원본 칼럼 이름입니다'));
                 dispatch(openDialog());
                 reject();
-              } else if (!newData.originalColumnName) {
-                dispatch(setMessage('값을 입력해주세요'));
-                dispatch(openDialog());
-                reject();
               } else {
                 update();
               }
@@ -104,4 +230,6 @@ export default function AppendOGDataType(props) {
       />
     </>
   );
-}
+});
+
+export default AppendOGDataType;

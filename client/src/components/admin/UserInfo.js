@@ -16,16 +16,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 import GetAppIcon from '@material-ui/icons/GetApp';
 import TaskUserTable from './TaskUserListTable';
-
-const useStyles = makeStyles((theme) => ({
-  title: {
-    marginTop: theme.spacing(2),
-    marginBottom: theme.spacing(2),
-  },
-  button: {
-    marginLeft: theme.spacing(2),
-  },
-}));
+import { getAdmin } from '../../services/user.service';
 
 const fields = ({
   ID, Name, Gender, UType, Addr, Bdate, PhoneNo, Score,
@@ -53,27 +44,22 @@ const fields = ({
 };
 
 export default function UserInfo({ open, handleClose, Uid }) {
-  const classes = useStyles();
-
-  // TODO: 유저 정보 받아오기
+  // TODO: 완료! 유저 정보 받아오기
   const getUserInfo = (query) => new Promise((resolve, reject) => {
-    setTimeout(
-      () => resolve({
-        data: fields({
-          ID: 'username',
-          Name: '홍길동',
-          Gender: 'male',
-          UType: 'submit',
-          Addr: '서울특별시 서대문구 신촌동 연세로 50',
-          Bdate: '2020-01-01',
-          PhoneNo: '010-1234-1234',
-          Score: '8점',
-        }),
-        page: query.page,
-        totalCount: 8,
-      }),
-      500,
-    );
+    getAdmin('/user-info', {
+      Uid,
+    }).then((response) => {
+      resolve({
+        data: fields(response.data),
+      });
+    }, (error) => {
+      const message = (error.response
+        && error.response.data
+        && error.response.data.message)
+        || error.message
+        || error.toString();
+      reject(message);
+    });
   });
 
   return (

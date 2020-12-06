@@ -27,7 +27,7 @@ const verifyToken = (req, res, next) => {
 
 const isAdmin = (req, res, next) => {
   User.findByPk(req.Uid).then((user) => {
-    if (user && user.get('UType') === 2) {
+    if (user && user.get('UType') === 'admin') {
       console.log(`Admin user ${req.username} sent a request`);
       next();
       return;

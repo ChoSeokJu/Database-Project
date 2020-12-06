@@ -8,40 +8,40 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 
 exports.signup = (req, res) => {
-  const { username, gender, name, address, phone, birthday, password, userType } = req.body;
-  console.log("Heellooo")
+  const {
+    username, gender, name, address, phone, birthday, password, userType,
+  } = req.body;
   User.findOne({
     where: {
-      UType: userType
+      UType: userType,
     },
   }).then((user) => {
-    if (user && user.userType === "admin") {
+    if (user && user.userType === 'admin') {
       return res.status(404).json({
         message: '관리자 계정이 이미 존재합니다',
       });
     }
-    else {
-      User.create({
-        ID: username,
-        Gender: gender,
-        Name: name,
-        Addr: address,
-        PhoneNo: phone,
-        Bdate: birthday,
-        Password: bcrypt.hashSync(password),
-        UType: userType,
-      })
-        .then((user) => {
-          res.json({
-            message: '회원가입에 성공했습니다',
-          });
-        })
-        .catch((err) => {
-          res.status(500).json({
-            message: err.message,
-          });
+
+    User.create({
+      ID: username,
+      Gender: gender,
+      Name: name,
+      Addr: address,
+      PhoneNo: phone,
+      Bdate: birthday,
+      Password: bcrypt.hashSync(password),
+      UType: userType,
+    })
+      .then((user) => {
+        res.json({
+          message: '회원가입에 성공했습니다',
         });
-    }
+      })
+      .catch((err) => {
+        res.status(500).json({
+          message: err.message,
+        });
+      });
   });
 };
 
@@ -85,5 +85,5 @@ exports.getUser = (req, res) => {
   User.findAll()
     .then((user) => {
       res.json(user);
-    })
+    });
 };

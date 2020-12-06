@@ -1,84 +1,231 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
+import Divider from '@material-ui/core/Divider';
+import Grid from '@material-ui/core/Grid';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemText from '@material-ui/core/ListItemText';
+import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
+import { makeStyles } from '@material-ui/core/styles';
 import MaterialTable from 'material-table';
 import TaskOGDataFile from './TaskOGDataFile';
+import { getSubmit } from '../../services/user.service';
+
+const useStyles = makeStyles((theme) => ({
+  half: {
+    width: '50%',
+  },
+  divider: {
+    marginTop: theme.spacing(2),
+  },
+  itemName: {
+    width: '80%',
+  },
+  desc: {
+    paddingTop: 20,
+    paddingBottom: 8,
+    paddingLeft: 16,
+    paddingRight: 16,
+  },
+  ellipsis: {
+    maxHeight: 80,
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+  },
+  more: {
+    float: 'right',
+  },
+}));
+
+function DividedList({ items, direction, onlyDesc }) {
+  const classes = useStyles();
+  const [more, setMore] = useState(true);
+
+  const onMoreChange = () => {
+    setMore(() => !more);
+  };
+
+  if (onlyDesc) {
+    return (
+      <>
+        <Typography variant="body1" component="span" display="block">
+          {items[0][0]}
+        </Typography>
+        <Typography variant="body2" color="textSecondary" display="block">
+          {items[0][1]}
+        </Typography>
+      </>
+    );
+  }
+
+  return (
+    <>
+      {direction === 'vertical' ? (
+        <>
+          <Typography variant="body1" component="span" display="block">
+            {items[0][0]}
+          </Typography>
+          <Typography
+            variant="body2"
+            color="textSecondary"
+            display="block"
+            className={more && classes.ellipsis}
+          >
+            {items[0][1]}
+          </Typography>
+          <Button
+            onClick={onMoreChange}
+            color="primary"
+            className={classes.more}
+          >
+            {more ? '더보기' : '간단히'}
+          </Button>
+        </>
+      ) : (
+        <List>
+          {items.map(([key, value]) => (
+            <ListItem>
+              <ListItemText className={classes.itemName} primary={key} />
+              <ListItemText secondary={value} />
+            </ListItem>
+          ))}
+        </List>
+      )}
+    </>
+  );
+}
 
 export default function TaskDetail({
-  open, handleClose, taskName, permit,
+  open,
+  handleClose,
+  taskName,
+  permit,
+  Uid,
 }) {
-  const getOGDataType = (query) => new Promise((resolve, reject) => {
-    setTimeout(
-      () => resolve({
-        data: [
-          {
-            submitCnt: 1,
-            OGDataType: '데이터타입1',
-            submitData: [
-              {
-                submitCnt: 1, date: '2020-11-01', score: 90, PNP: 'P',
-              },
-            ],
-          },
-          {
-            submitCnt: 2,
-            OGDataType: '데이터타입2',
-            submitData: [
-              {
-                submitCnt: 1, date: '2020-11-02', score: 80, PNP: 'P',
-              },
-              {
-                submitCnt: 2, date: '2020-11-03', score: 85, PNP: 'P',
-              },
-            ],
-          },
-          {
-            submitCnt: 3,
-            OGDataType: '데이터타입3',
-            submitData: [
-              {
-                submitCnt: 1, date: '2020-11-04', score: 80, PNP: 'P',
-              },
-              {
-                submitCnt: 2, date: '2020-11-05', score: 85, PNP: 'P',
-              },
-              {
-                submitCnt: 3, date: '2020-11-06', score: 30, PNP: 'NP',
-              },
-            ],
-          },
-        ],
-        page: query.page,
-        totalCount: 100,
-      }),
-      500,
-    );
-  });
+  const classes = useStyles();
+  const [submittedCnt, setSubmittedCnt] = useState(null);
+  const [passedTupleCnt, setPassedTupleCnt] = useState(null);
+  const [passedCnt, setPassedCnt] = useState(null);
+  const [desc, setDesc] = useState(null);
+  const [avgScore, setAvgScore] = useState(null);
+
+  useEffect(() => {
+    if (open) {
+      getSubmit('/task-details', {
+        Uid,
+        taskName,
+        per_page: 8,
+        page: 1,
+      }).then(
+        (response) => {
+          console.log(response);
+          const {
+            score,
+            submittedDataCnt,
+            passedDataCnt,
+            taskDataTableTupleCnt,
+            taskDesc,
+          } = response.data;
+          setSubmittedCnt(submittedDataCnt || 0);
+          setPassedTupleCnt(taskDataTableTupleCnt || 0);
+          setPassedCnt(passedDataCnt || 0);
+          setDesc(taskDesc || '-');
+          setAvgScore(score || '-');
+        },
+        (error) => {
+          console.log(error);
+          const message =
+            (error.response &&
+              error.response.data &&
+              error.response.data.message) ||
+            error.message ||
+            error.toString();
+          console.log(message);
+        }
+      );
+    }
+  }, [open]);
+
+  const getTaskDetail = (query) =>
+    new Promise((resolve, reject) => {
+      getSubmit('/submitter-list', {
+        Uid,
+        taskName,
+        per_page: query.pageSize,
+        page: query.page + 1,
+      }).then(
+        (response) => {
+          console.log(response);
+          const { data, page, totalCount } = response.data;
+          resolve({
+            data,
+            page: page - 1,
+            totalCount,
+          });
+        },
+        (error) => {
+          console.log(error);
+          const message =
+            (error.response &&
+              error.response.data &&
+              error.response.data.message) ||
+            error.message ||
+            error.toString();
+          console.log(message);
+          reject(message);
+        }
+      );
+    });
+
+  const onClose = () => {
+    setSubmittedCnt(null);
+    setPassedTupleCnt(null);
+    setPassedCnt(null);
+    setDesc(null);
+    setAvgScore(null);
+    handleClose();
+  };
 
   return (
     <Dialog
       open={open}
       onClose={handleClose}
+      scroll="body"
       maxWidth="md"
       fullWidth
       aria-labelledby="form-dialog-title"
     >
-      <DialogTitle>{taskName}</DialogTitle>
+      <DialogTitle>{taskName}의 태스크 상세정보</DialogTitle>
       <DialogContent>
-        <Typography variant="body1">
-          {taskName}
-          에 대한 설명
-        </Typography>
-        {permit === '승인 완료' && (
+        {permit !== 'approved' ? (
+          <DividedList items={[['설명', desc]]} direction="vertical" onlyDesc />
+        ) : (
           <>
-            <Typography variant="body2">
-              Pass된 파일 수/제출한 파일 수:
-            </Typography>
+            <Grid container lg={12} md={12} xs={12}>
+              <Grid item lg={6} md={6} xs={12} className={classes.desc}>
+                <DividedList items={[['설명', desc]]} direction="vertical" />
+              </Grid>
+              <Grid item lg={6} md={6} xs={12}>
+                <DividedList
+                  items={[
+                    ['평가 점수', avgScore],
+                    ['제출한 파일 수', submittedCnt],
+                    ['Pass된 파일 수', passedCnt],
+                    ['Pass된 튜플 수', passedTupleCnt],
+                  ]}
+                />
+              </Grid>
+            </Grid>
+            <Divider className={classes.divider} />
             <MaterialTable
+              components={{
+                Container: (props) => <Paper {...props} elevation={0} />,
+              }}
               options={{
                 pageSize: 3,
                 pageSizeOptions: [],
@@ -86,27 +233,55 @@ export default function TaskDetail({
                 search: false,
                 toolbar: false,
                 sorting: false,
+                headerStyle: {
+                  fontWeight: 'bold',
+                },
+              }}
+              localization={{
+                body: {
+                  emptyDataSourceMessage: '태스크가 없습니다',
+                },
               }}
               columns={[
                 {
                   title: '원본 데이터 타입',
-                  field: 'OGDataType',
+                  field: 'OGDataTypeName',
+                  cellStyle: { width: '40%', textAlign: 'left' },
                 },
-                { title: '제출한 파일 수', field: 'submitCnt' },
+                {
+                  title: '제출한 파일 수',
+                  field: 'submittedDataCnt',
+                  align: 'right',
+                  cellStyle: { width: '20%', textAlign: 'right' },
+                },
+                {
+                  title: 'Pass된 파일 수',
+                  field: 'passedDataCnt',
+                  align: 'right',
+                  cellStyle: { width: '20%', textAlign: 'right' },
+                },
+                {
+                  title: 'Pass된 튜플 수',
+                  field: 'totalTupleCnt',
+                  align: 'right',
+                  cellStyle: { width: '20%', textAlign: 'right' },
+                },
               ]}
-              data={getOGDataType}
-              onRowClick={(event, towData, togglePanel) => togglePanel()}
+              data={getTaskDetail}
+              onRowClick={(event, rowData, togglePanel) => togglePanel()}
               detailPanel={[
                 {
                   tooltip: '제출한 파일 현황 보기',
-                  render: (rowData) => <TaskOGDataFile data={rowData.submitData} />,
+                  render: (rowData) => (
+                    <TaskOGDataFile data={rowData.submitData} />
+                  ),
                 },
               ]}
             />
           </>
         )}
         <DialogActions>
-          <Button onClick={handleClose} color="default" variant="contained">
+          <Button onClick={onClose} color="default" variant="contained">
             닫기
           </Button>
         </DialogActions>

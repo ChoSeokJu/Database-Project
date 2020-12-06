@@ -35,6 +35,7 @@ import {
   setAlertType,
   setMessage,
 } from '../../actions/message';
+import { postEval, downloadEval } from '../../services/user.service';
 
 const useStyle = makeStyles((theme) => ({
   downloadButton: {
@@ -55,7 +56,7 @@ const useStyle = makeStyles((theme) => ({
   },
 }));
 
-export default function AppendOGDataTypeDialog({ open, handleClose, Pid }) {
+export default function DataEvalDialog({ open, handleClose, Pid }) {
   const dispatch = useDispatch();
   const classes = useStyle();
   const [score, setScore] = useState(10);
@@ -75,8 +76,35 @@ export default function AppendOGDataTypeDialog({ open, handleClose, Pid }) {
   };
 
   const handleSubmit = () => {
-    // TODO: 평가 제출하기
-    handleClose();
+    // TODO: 완료! 평가 제출하기
+    postEval('/', {
+      Pid,
+      Score: score,
+      Desc: opinion,
+      PNP: PNP ? 'P' : 'NP',
+    }).then(
+      (response) => {
+        dispatch(setAlertType('success'));
+        dispatch(setMessage('평가가 완료되었습니다'));
+        dispatch(openAlert());
+        handleClose();
+      },
+      (error) => {
+        const message =
+          (error.response &&
+            error.response.data &&
+            error.response.data.message) ||
+          error.message ||
+          error.toString();
+        dispatch(setAlertType('error'));
+        dispatch(setMessage(message));
+        dispatch(openAlert());
+      }
+    );
+  };
+
+  const handleDownload = () => {
+    downloadEval('/parsed-data/download', { Pid });
   };
 
   return (
@@ -94,6 +122,7 @@ export default function AppendOGDataTypeDialog({ open, handleClose, Pid }) {
           variant="contained"
           endIcon={<GetAppIcon />}
           className={classes.downloadButton}
+          onClick={handleDownload}
         >
           데이터 다운로드
         </Button>

@@ -7,47 +7,60 @@ import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
+import { useDispatch } from 'react-redux';
+import download from 'downloadjs';
+import {
+  openAlert,
+  openDialog,
+  setAlertType,
+  setMessage,
+} from '../../actions/message';
+import { getAdmin, downloadAdmin } from '../../services/user.service';
 
-export default function UserSubmitTask({ open, handleClose, Uid, ID }) {
+export default function UserEvalTask({ open, handleClose, Uid, ID }) {
+  const dispatch = useDispatch();
   // TODO: 유저가 제출한 파싱 데이터 목록을 가져오기.
   const getParsedData = (query) =>
     new Promise((resolve, reject) => {
-      setTimeout(
-        () =>
+      getAdmin('/user-info/eval', {
+        Uid,
+        per_page: query.pageSize,
+        page: query.page + 1,
+      }).then(
+        (response) => {
+          const { data, page, totalCount } = response.data;
+          console.log(data);
+          const parsedData = data.map((row) => ({
+            Pid: row.Pid,
+            taskName: row.parsing_datum.TaskName,
+            date: row.TimeStamp.match(/\d{4}-\d{2}-\d{2}/g)[0],
+            score: row.Score,
+            PNP: row.Pass ? 'P' : 'NP',
+          }));
+          console.log(parsedData);
           resolve({
-            data: [
-              {
-                taskName: 'task1',
-                date: '2020-01-01',
-                OGDataType: '데이터타입1',
-                score: 10,
-                PNP: 'P',
-              },
-              {
-                taskName: 'task2',
-                date: '2020-01-01',
-                OGDataType: '데이터타입2',
-                score: 10,
-                PNP: 'P',
-              },
-              {
-                taskName: 'task3',
-                date: '2020-01-01',
-                OGDataType: '데이터타입3',
-                score: 10,
-                PNP: 'P',
-              },
-            ],
-            page: query.page,
-            totalCount: 100,
-          }),
-        500
+            data: parsedData,
+            page: page - 1,
+            totalCount,
+          });
+        },
+        (error) => {
+          const message =
+            (error.response &&
+              error.response.data &&
+              error.response.data.message) ||
+            error.message ||
+            error.toString();
+          reject(message);
+        }
       );
     });
 
   const handleParsedDataDownload = (event, rowData) => {
-    // TODO: 파싱된 데이터 다운로드 Pid를 요청에 넣어야함.
-    alert(`${rowData.ID}가 올린 파싱된 데이터를 다운`);
+    // TODO: 완료! 파싱된 데이터 다운로드 Pid를 요청에 넣어야함.
+    downloadAdmin('/task/parsed-data/download', {
+      Pid: rowData.Pid,
+    });
   };
 
   return (
@@ -80,11 +93,13 @@ export default function UserSubmitTask({ open, handleClose, Uid, ID }) {
               header: {
                 actions: '',
               },
+              body: {
+                emptyDataSourceMessage: '평가한 데이터가 없습니다',
+              },
             }}
             columns={[
               { title: '태스크 이름', field: 'taskName' },
               { title: '제출일자', field: 'date' },
-              { title: '원본 데이터 타입', field: 'OGDataType' },
               { title: '평가 점수', field: 'score' },
               { title: 'P/NP', field: 'PNP' },
             ]}

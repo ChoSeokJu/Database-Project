@@ -19,6 +19,7 @@ import UserInfo from './UserInfo';
 import { openAlert, setAlertType, setMessage } from '../../actions/message';
 import UserEvalTask from './UserEvalTask';
 import UserSubmitTask from './UserSubmitTask';
+import { getAdmin } from '../../services/user.service';
 
 const parseUType = { admin: '관리자', eval: '평가자', submit: '제출자' };
 
@@ -28,12 +29,11 @@ const searchCriteria = [
   { label: '전체', value: 'all' },
   { label: '아이디', value: 'ID' },
   { label: '참여중인 태스크', value: 'task' },
+  { label: '나이대', value: 'age' },
   { label: '성별', value: 'Gender' },
 ];
 
-const parseUser = ({
-  Uid, ID, UType, Bdate, Gender,
-}) => ({
+const parseUser = ({ Uid, ID, UType, Bdate, Gender }) => ({
   Uid,
   ID,
   UType,
@@ -45,7 +45,6 @@ const parseUser = ({
 const parseUserList = (data) => data.map((user) => parseUser(user));
 
 export default function TaskTableAdmin(props) {
-  const tableRef = React.createRef();
   const dispatch = useDispatch();
 
   const [openUserInfo, setOpenUserInfo] = useState({
@@ -63,7 +62,7 @@ export default function TaskTableAdmin(props) {
     ID: '',
   });
   const [searchCriterion, setSearchCriterion] = useState(
-    searchCriteria[0].value,
+    searchCriteria[0].value
   );
 
   const handleUserInfo = (rowData) => () => {
@@ -97,96 +96,67 @@ export default function TaskTableAdmin(props) {
     setOpenSubmitTask({ open: false, Uid: '', ID: '' });
   };
 
-  // TODO: 유저 목록 불러오기
-  const getUsers = (query) => new Promise((resolve, reject) => {
-    if (!query.search) {
-      // TODO: 검색 문구가 없을 경우
-      setTimeout(
-        () => resolve({
-          data: parseUserList([
-            {
-              Uid: '1',
-              ID: 'babo1',
-              UType: 'admin',
-              Bdate: 12,
-              Gender: 'female',
-            },
-            {
-              Uid: '2',
-              ID: 'babo2',
-              UType: 'eval',
-              Bdate: 12,
-              Gender: 'male',
-            },
-            {
-              Uid: '3',
-              ID: 'babo3',
-              UType: 'submit',
-              Bdate: 12,
-              Gender: 'female',
-            },
-            {
-              Uid: '4',
-              ID: 'babo4',
-              UType: 'eval',
-              Bdate: 12,
-              Gender: 'male',
-            },
-            {
-              Uid: '5',
-              ID: 'babo5',
-              UType: 'submit',
-              Bdate: 12,
-              Gender: 'female',
-            },
-            {
-              Uid: '6',
-              ID: 'babo6',
-              UType: 'submit',
-              Bdate: 12,
-              Gender: 'female',
-            },
-            {
-              Uid: '7',
-              ID: 'babo7',
-              UType: 'submit',
-              Bdate: 12,
-              Gender: 'male',
-            },
-          ]),
-          page: query.page,
-          totalCount: 100,
-        }),
-
-        500,
-      );
-    } else {
-      // TODO: 검색 문구가 있을 경우. searchCriterion까지 같이 보내야 한다
-      setTimeout(
-        () => resolve({
-          data: parseUserList([
-            {
-              Uid: '1',
-              ID: 'babo1',
-              UType: 'admin',
-              Bdate: 12,
-              Gender: 'male',
-            },
-          ]),
-          page: query.page,
-          totalCount: 1,
-        }),
-        200,
-      );
-    }
-  });
+  // TODO: 완료! 유저 목록 불러오기
+  const getUsers = (query) =>
+    new Promise((resolve, reject) => {
+      if (!query.search) {
+        // TODO: 완료! 검색 문구가 없을 경우
+        getAdmin('/user-info/all', {
+          per_page: query.pageSize,
+          page: query.page + 1,
+        }).then(
+          (response) => {
+            const { data, page, totalCount } = response.data;
+            resolve({
+              data: parseUserList(data),
+              page: page - 1,
+              totalCount,
+            });
+          },
+          (error) => {
+            const message =
+              (error.response &&
+                error.response.data &&
+                error.response.data.message) ||
+              error.message ||
+              error.toString();
+            reject(message);
+          }
+        );
+      } else {
+        // TODO: 완료! 검색 문구가 있을 경우. searchCriterion까지 같이 보내야 한다
+        getAdmin('/user-info/search', {
+          search: query.search,
+          searchCriterion,
+          per_page: query.pageSize,
+          page: query.page + 1,
+        }).then(
+          (response) => {
+            const { data, page, totalCount } = response.data;
+            resolve({
+              data: parseUserList(data),
+              page: page - 1,
+              totalCount,
+            });
+          },
+          (error) => {
+            const message =
+              (error.response &&
+                error.response.data &&
+                error.response.data.message) ||
+              error.message ||
+              error.toString();
+            reject(message);
+          }
+        );
+      }
+    });
 
   return (
     <>
       <Container maxWidth="md">
         <MaterialTable
           title="회원 관리"
-          tableRef={tableRef}
           options={{
             pageSize: 8,
             pageSizeOptions: [],

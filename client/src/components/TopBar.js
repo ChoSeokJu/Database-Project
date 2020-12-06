@@ -12,7 +12,8 @@ import Menu from '@material-ui/core/Menu';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import Divider from '@material-ui/core/Divider';
 import SupervisorAccountIcon from '@material-ui/icons/SupervisorAccount';
-
+import CreateIcon from '@material-ui/icons/Create';
+import BackupIcon from '@material-ui/icons/Backup';
 import { useHistory } from 'react-router-dom';
 import { logout } from '../actions/authentication';
 
@@ -33,7 +34,7 @@ const useStyles = makeStyles((theme) => ({
     marginRight: theme.spacing(1),
     marginLeft: theme.spacing(2),
   },
-  adminIcon: {
+  icon: {
     marginRight: theme.spacing(1),
   },
 }));
@@ -105,7 +106,7 @@ export default function TopBar(props) {
 
   const adminBoard = (
     <>
-      <SupervisorAccountIcon className={classes.adminIcon} />
+      <SupervisorAccountIcon className={classes.icon} />
       <Typography color="inherit">관리자</Typography>
       <Divider orientation="vertical" flexItem className={classes.divider} />
       <Button size="large" color="inherit" onClick={() => history.push('/')}>
@@ -131,12 +132,17 @@ export default function TopBar(props) {
 
   const evalBoard = (
     <>
+      <CreateIcon className={classes.icon} />
       <Typography color="inherit">평가자</Typography>
       <Divider orientation="vertical" flexItem className={classes.divider} />
       <Button size="large" color="inherit" onClick={() => history.push('/')}>
         태스크 목록
       </Button>
-      <Button size="large" color="inherit" onClick={() => history.push('/eval/task')}>
+      <Button
+        size="large"
+        color="inherit"
+        onClick={() => history.push('/eval/task')}
+      >
         태스크 요청
       </Button>
     </>
@@ -144,12 +150,17 @@ export default function TopBar(props) {
 
   const submitBoard = (
     <>
+      <BackupIcon className={classes.icon} />
       <Typography color="inherit">제출자</Typography>
       <Divider orientation="vertical" flexItem className={classes.divider} />
       <Button size="large" color="inherit" onClick={() => history.push('/')}>
         태스크 목록
       </Button>
-      <Button size="large" color="inherit" onClick={() => history.push('/submit/task')}>
+      <Button
+        size="large"
+        color="inherit"
+        onClick={() => history.push('/submit/task')}
+      >
         태스크 요청
       </Button>
     </>
@@ -159,8 +170,8 @@ export default function TopBar(props) {
     <div className={classes.grow}>
       <AppBar position="fixed" color="primary">
         <Toolbar>
-          <Button size="large" color="inherit" onClick={onLogoClick}>
-            FREESWOT
+          <Button size="small" color="inherit" onClick={onLogoClick}>
+            <Typography variant="h5">FREESWOT</Typography>
           </Button>
           <div className={classes.grow} />
           {showAdminBoard && adminBoard}
