@@ -141,7 +141,7 @@ export default function TaskTableSubmit() {
       <Container component="main" maxWidth="md">
         <MaterialTable
           tableRef={tableRef}
-          title="태스크 목록"
+          title="데이터 목록"
           data={getTask}
           options={{
             pageSize: 8,
