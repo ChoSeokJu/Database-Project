@@ -52,14 +52,23 @@ exports.getUserInfo = (req, res) => {
 exports.handleWithdrawal = (req, res) => {
   const { Uid } = req.query;
   User.findByPk(Uid).then((user) => {
-    if (user.get('UType') === 2) {
+    if (user.get('UType') === "admin") {
       return res
         .status(400)
         .json({ message: 'Admin 계정은 탈퇴할 수 없습니다' });
     }
-    user
-      .destroy()
-      .then(() => res.json({ message: '회원탈퇴가 완료되었습니다' }));
+    
+    user.set('ID', "탈퇴한회원")
+    user.set('Gender', "")
+    user.set('Name', "")
+    user.set('Addr', "")
+    user.set('PhoneNo', "")
+    user.set('Bdate', "")
+    user.set('Password', "")
+    user.save()
+    return res
+      .status(200)
+      .json({ message: '회원 탈퇴가 완료되었습니다' });
   });
 };
 
