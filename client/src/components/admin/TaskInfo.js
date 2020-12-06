@@ -60,6 +60,7 @@ export default function TaskInfo({ open, handleClose, taskName }) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const [taskInfos, setTaskInfos] = useState({});
+  const [OGDataTypes, setOGDataTypes] = useState([]);
 
   useEffect(() => {
     if (open) {
@@ -86,12 +87,26 @@ export default function TaskInfo({ open, handleClose, taskName }) {
           PassCriteria,
         });
       });
+
+      getAdmin('/task/og-data', {
+        taskName,
+      }).then((response) => {
+        const { data } = response.data;
+        console.log(data);
+        const parsedData = data.map((row) => ({
+          OGDataType: row.Name,
+          schema: row.Schema.join(', '),
+          mapping: Object.entries(row.Mapping)
+            .map(([key, value]) => `${value}: ${key}`)
+            .join(', '),
+        }));
+        setOGDataTypes(parsedData);
+      });
     } else {
-      setTaskInfos({});
+      setTaskInfos([]);
     }
   }, [open]);
 
-  // TODO: 파싱된 데이터 목록 얻어오기
   const getParsedData = (query) =>
     new Promise((resolve, reject) => {
       getAdmin('/task/parsed-data', {
@@ -159,6 +174,7 @@ export default function TaskInfo({ open, handleClose, taskName }) {
       onClose={handleClose}
       maxWidth="md"
       fullWidth
+      scroll="body"
       aria-labelledby="form-dialog-title"
     >
       <DialogTitle id="form-dialog-title">
@@ -178,7 +194,6 @@ export default function TaskInfo({ open, handleClose, taskName }) {
           <List className={classes.info}>
             {[
               ['태스크 이름', taskInfos.TaskName],
-              ['최소 업로드 주기', taskInfos.MinTerm],
               ['패스 기준', `${taskInfos.PassCriteria}점`],
               ['설명', taskInfos.Desc],
             ].map(([key, value]) => (
@@ -217,7 +232,7 @@ export default function TaskInfo({ open, handleClose, taskName }) {
             Container: (props) => <Paper {...props} elevation={0} />,
           }}
           options={{
-            pageSize: 3,
+            pageSize: 5,
             pageSizeOptions: [],
             actionsColumnIndex: -1,
             paginationType: 'stepped',
@@ -228,6 +243,9 @@ export default function TaskInfo({ open, handleClose, taskName }) {
           localization={{
             header: {
               actions: '',
+            },
+            body: {
+              emptyDataSourceMessage: '제출된 데이터가 없습니다',
             },
           }}
           columns={[
@@ -244,6 +262,43 @@ export default function TaskInfo({ open, handleClose, taskName }) {
             },
           ]}
           data={getParsedData}
+        />
+        <MaterialTable
+          components={{
+            Container: (props) => <Paper {...props} elevation={0} />,
+          }}
+          options={{
+            pageSize: 5,
+            pageSizeOptions: [],
+            paginationType: 'stepped',
+            search: false,
+            toolbar: false,
+            sorting: false,
+          }}
+          localization={{
+            header: {
+              actions: '',
+            },
+            body: {
+              emptyDataSourceMessage: '추가된 원본 데이터 스키마가 없습니다',
+            },
+          }}
+          columns={[
+            {
+              title: '원본 데이터 타입 이름',
+              field: 'OGDataType',
+              cellStyle: {
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+                overflow: 'hidden',
+                maxWidth: 200,
+                width: '20%',
+              },
+            },
+            { title: '원본 데이터 스키마', field: 'schema' },
+            { title: '태스크 칼럼과 매핑', field: 'mapping' },
+          ]}
+          data={OGDataTypes}
         />
       </DialogContent>
       <DialogActions>
