@@ -55,14 +55,12 @@ exports.upload = multer({
 exports.finalScore = function (x) {
   const { SubmitCnt, TotalTupleCnt, DuplicatedTupleCnt, NullRatio } = x;
   const { Score, Pass } = x.evaluates[0];
-
+  var NullRatioVal = Object.values(NullRatio)
   return {
     totalScore:
-      SubmitCnt +
-      TotalTupleCnt +
-      DuplicatedTupleCnt +
-      Object.values(NullRatio).reduce((a, b) => a + b, 0) +
-      Score,
+      Score -
+      (NullRatioVal.reduce((a, b) => a + b, 0)) / (NullRatioVal.length) +
+      DuplicatedTupleCnt/TotalTupleCnt,
     Pass,
   };
 };
