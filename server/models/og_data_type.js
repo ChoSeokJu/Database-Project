@@ -69,7 +69,7 @@ module.exports = function(sequelize, DataTypes) {
         ]
       },
       {
-        name: "NAME_UNIQUE",
+        name: "Name_UNIQUE",
         unique: true,
         using: "BTREE",
         fields: [
