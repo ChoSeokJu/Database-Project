@@ -281,7 +281,7 @@ exports.assignEvaluator = function (req, res) {
 
 exports.submitApply = function (req, res) {
   const { taskName } = req.body;
-  const Uid = req.Uid || req.query.Uid;
+  const Uid = req.query.Uid || req.Uid;
   user.findByPk(Uid).then((user_id) => {
     works_on
       .create({
@@ -304,7 +304,7 @@ exports.submitApply = function (req, res) {
 
 exports.getTaskList = function (req, res, next) {
   const { per_page, page } = req.query;
-  const Uid = req.Uid || req.query.Uid;
+  const Uid = req.query.Uid || req.Uid;
   user.findByPk(Uid).then((user_id) => {
     if (user_id) {
       works_on
@@ -374,7 +374,7 @@ exports.getTaskList = function (req, res, next) {
 
 exports.getTaskListApproved = function (req, res, next) {
   const { per_page, page } = req.query;
-  const Uid = req.Uid || req.query.Uid;
+  const Uid = req.query.Uid || req.Uid;
   user.findByPk(Uid).then((user_id) => {
     if (user_id) {
       works_on
@@ -403,9 +403,9 @@ exports.getTaskListApproved = function (req, res, next) {
               right: true,
             },
           ],
-          where:{
-            Permit: "approved"
-          }
+          where: {
+            Permit: 'approved',
+          },
         })
         .then((w_results) => {
           if (w_results) {
@@ -446,7 +446,7 @@ exports.getTaskListApproved = function (req, res, next) {
 
 exports.getAvgScore = function (req, res) {
   /* get average score and total tuple cnt */
-  const Uid = req.Uid || req.query.Uid;
+  const Uid = req.query.Uid || req.Uid;
   user.findByPk(Uid).then((user_id) => {
     if (user_id) {
       parsing_data
