@@ -66,7 +66,7 @@ exports.finalScore = function (x) {
     totalScore:
       Score -
       (NullRatioVal.reduce((a, b) => a + b, 0)) / (NullRatioVal.length) +
-      DuplicatedTupleCnt/TotalTupleCnt,
+      DuplicatedTupleCnt/(TotalTupleCnt+1),
     Pass,
   };
 };

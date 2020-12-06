@@ -96,8 +96,16 @@ exports.quantAssess = async function (req, res, next) {
     (await csv({ noheader: true }).fromFile(taskDataTableRef))[0]
   );
   taskCol.pop(); // pop "Sid" from task data columns
-
-  const dataHeader = Object.keys(data[0]);
+  const dataHeader
+  try{
+    dataHeader = Object.keys(data[0]);
+  } catch(err){
+    return res.status(200).json({
+      message:
+      "You have submitted an empty csv file"
+    })
+  }
+  
 
   if (JSON.stringify(dataHeader.sort()) != JSON.stringify(ogSchema.sort())) {
     // reject if ogSchema keys do not match submitted data columns (order does not matter)
