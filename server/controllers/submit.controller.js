@@ -102,7 +102,7 @@ exports.quantAssess = async function (req, res, next) {
   } catch(err){
     return res.status(200).json({
       message:
-      "You have submitted an empty csv file"
+      "빈 csv파일을 제출했습니다. 다시 제출해주세요."
     })
   }
   
