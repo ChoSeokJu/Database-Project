@@ -550,7 +550,7 @@ exports.getSubmitterList = (req, res, next) => {
     if (user_id) {
       parsing_data
         .findAll({
-          attributes: ['SubmitCnt', 'TotalTupleCnt', 'FinalScore', 'TimeStamp'],
+          attributes: ['SubmitCnt', 'TotalTupleCnt', 'FinalScore', 'TimeStamp', 'Appended'],
           include: [
             {
               model: og_data_type,
@@ -621,6 +621,7 @@ exports.groupSubmitterList = async (req, res) => {
     where: {
       TaskName: taskName,
       Sid: Uid,
+      Appended: 1,
     },
   });
 
@@ -638,11 +639,12 @@ exports.groupSubmitterList = async (req, res) => {
         TotalTupleCnt: x.TotalTupleCnt,
         score: x.FinalScore,
         date: x.TimeStamp,
-        PNP: returnPass(x.evaluates[0]),
+        PNP: x.Appended,
       });
     } else {
       if (newOGDataType != undefined) {
         newOGDataType.submittedDataCnt = newOGDataType.submitData.length;
+        newOGDataType.passedDataCnt = (newOGDataType.submitData.filter((item) => item.PNP === 1)).length;
         console.log();
         OGDataTypeList.push(newOGDataType);
       }
@@ -654,7 +656,7 @@ exports.groupSubmitterList = async (req, res) => {
         TotalTupleCnt: x.TotalTupleCnt,
         score: x.FinalScore,
         date: x.TimeStamp,
-        PNP: returnPass(x.evaluates[0]),
+        PNP: x.Appended,
       });
     }
   }
@@ -664,11 +666,13 @@ exports.groupSubmitterList = async (req, res) => {
       data: [],
       score: null,
       submittedDataCnt: null,
+      passedDataCnt: null,
       taskDataTableTupleCnt: null,
       taskDesc: Desc,
     });
   }
   newOGDataType.submittedDataCnt = newOGDataType.submitData.length;
+  newOGDataType.passedDataCnt = (newOGDataType.submitData.filter((item) => item.PNP === 1)).length;
   OGDataTypeList.push(newOGDataType);
   const offset = parseInt(per_page) * (parseInt(page) - 1);
   return res.status(200).json({
