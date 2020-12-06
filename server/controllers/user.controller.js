@@ -21,7 +21,7 @@ exports.changeUserInfo = (req, res) => {
 exports.changePassword = (req, res) => {
   const { Uid } = req;
   User.findByPk(Uid).then((user) => {
-    if (user.get('UType') === 2) {
+    if (user.get('UType') === "admin") {
       return res.status(400).json({
         message: '관리자는 비밀번호를 변경할 수 없습니다',
       });
