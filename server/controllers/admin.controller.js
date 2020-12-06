@@ -79,7 +79,7 @@ exports.makeTask = (req, res) => {
         .then((new_task) => {
           if (new_task) {
             columns = Object.keys(tableSchema[0]);
-            columns.push('Sid');
+            columns.push('ID');
             fs.writeFile(tableRef, columns, 'utf8', function (err) {
               if (err) {
                 return res.status(400).json({
