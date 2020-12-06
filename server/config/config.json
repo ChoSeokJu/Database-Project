@@ -11,7 +11,7 @@
   },
   "test": {
     "username": "team13",
-    "password": "team13",
+    "password": "933159",
     "database": "team13",
     "host": "165.132.105.46",
     "dialect": "mariadb",
@@ -21,7 +21,7 @@
   },
   "production": {
     "username": "team13",
-    "password": "team13",
+    "password": "933159",
     "database": "team13",
     "host": "165.132.105.46",
     "dialect": "mariadb",
