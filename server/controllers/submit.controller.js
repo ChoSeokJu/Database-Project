@@ -751,19 +751,19 @@ exports.getSubmitterTaskDetails = (req, res) => {
                         score: p_data.score,
                         submittedDataCnt: parsing_count,
                         taskDataTableTupleCnt: p_data.taskDataTableTupleCnt,
-                                    j;lkfsad                        passedDataCnt: count_append,
+                        passedDataCnt: count_append,
                         taskDesc: task.Desc,
                       });
                     }
                     return res.status(200).json({
-                      message: 'no task found using the given taskname',
+                      message: '지정된 태스크 이름을 사용하여 태스크를 찾을 수 없습니다',
                     });
                   });
               });
           });
       } else {
         return res.status(200).json({
-          message: 'no parsing_data found with the given taskname and Uid',
+          message: '지정된 태스크 이름 및 Uid와 함께 parsing_data를 찾을 수 없습니다',
         });
       }
     });
