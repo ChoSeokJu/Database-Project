@@ -48,6 +48,12 @@ const useStyles = makeStyles((theme) => ({
   divider: {
     marginTop: theme.spacing(2),
   },
+  ellipsis: {
+    maxHeight: theme.spacing(10),
+    textOverflow: 'ellipsis',
+    overflow: 'hidden',
+    wordWrap: 'break-word',
+  },
 }));
 
 export default function TaskInfo({ open, handleClose, taskName }) {
@@ -67,12 +73,15 @@ export default function TaskInfo({ open, handleClose, taskName }) {
           TimeStamp,
           PassCriteria,
         } = response.data.task;
+        console.log(response.data.task);
         setTaskInfos({
           TaskName,
           Desc,
           MinTerm,
           TableName,
-          TableSchema: Object.keys(TableSchema[0]).join(', '),
+          TableSchema: Object.entries(TableSchema[0])
+            .map(([key, value]) => `${key}: ${value}`)
+            .join(', '),
           TimeStamp: TimeStamp.match(/\d{4}-\d{2}-\d{2}/g)[0],
           PassCriteria,
         });
@@ -170,15 +179,13 @@ export default function TaskInfo({ open, handleClose, taskName }) {
             {[
               ['태스크 이름', taskInfos.TaskName],
               ['최소 업로드 주기', taskInfos.MinTerm],
-              ['패스 기준', taskInfos.PassCriteria],
+              ['패스 기준', `${taskInfos.PassCriteria}점`],
+              ['설명', taskInfos.Desc],
             ].map(([key, value]) => (
               <ListItem>
                 <ListItemText
                   secondaryTypographyProps={{
-                    style: {
-                      textOverflow: 'ellipsis',
-                      overflow: 'hidden',
-                    },
+                    className: classes.ellipsis,
                   }}
                   primary={key}
                   secondary={value}
@@ -195,10 +202,7 @@ export default function TaskInfo({ open, handleClose, taskName }) {
               <ListItem>
                 <ListItemText
                   secondaryTypographyProps={{
-                    style: {
-                      textOverflow: 'ellipsis',
-                      overflow: 'hidden',
-                    },
+                    className: classes.ellipsis,
                   }}
                   primary={key}
                   secondary={value}
