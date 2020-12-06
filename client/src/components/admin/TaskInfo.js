@@ -264,6 +264,7 @@ export default function TaskInfo({ open, handleClose, taskName }) {
           data={getParsedData}
         />
         <MaterialTable
+          title="원본 데이터 스키마 목록"
           components={{
             Container: (props) => <Paper {...props} elevation={0} />,
           }}
@@ -272,7 +273,6 @@ export default function TaskInfo({ open, handleClose, taskName }) {
             pageSizeOptions: [],
             paginationType: 'stepped',
             search: false,
-            toolbar: false,
             sorting: false,
           }}
           localization={{

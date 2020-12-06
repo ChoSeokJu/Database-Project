@@ -9,7 +9,7 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import IconButton from '@material-ui/core/IconButton';
 import InfoIcon from '@material-ui/icons/Info';
-import { getSubmit } from '../../services/user.service';
+import { getAdmin } from '../../services/user.service';
 
 export default function UserEvalTask({ open, handleClose, Uid, ID }) {
   const [openInfo, setOpenInfo] = useState({
@@ -20,7 +20,8 @@ export default function UserEvalTask({ open, handleClose, Uid, ID }) {
   // TODO: 유저가 제출한 파싱 데이터 목록을 가져오기.
   const getParsedData = (query) =>
     new Promise((resolve, reject) => {
-      getSubmit('/submitter-list', {
+      getAdmin('/submitter/task-list', {
+        Uid,
         per_page: query.pageSize,
         page: query.page + 1,
       }).then(

@@ -45,8 +45,9 @@ export default function OGDataSubmit({ open, handleClose, taskName }) {
   const [dataFile, setDataFile] = useState(null);
   const [ogDataType, setOgDataType] = useState('');
   const [ogDataTypes, setOgDataTypes] = useState([]);
-  const [ogDataSchema, setOgDataSchema] = useState([]);
-  const [ogDataMapping, setOgDataMapping] = useState({});
+  const [ogDataTypeId, setOgDataTypeId] = useState('');
+  const [ogDataSchema, setOgDataSchema] = useState('');
+  const [ogDataMapping, setOgDataMapping] = useState('');
   const [submitCnt, setSubmitCnt] = useState('');
   const [submitTermStart, setSubmitTermStart] = useState('');
   const [submitTermEnd, setSubmitTermEnd] = useState('');
@@ -57,6 +58,7 @@ export default function OGDataSubmit({ open, handleClose, taskName }) {
     setDataFile(null);
     setOgDataType('');
     setOgDataTypes([]);
+    setOgDataTypeId('');
     setOgDataSchema('');
     setOgDataMapping('');
     setSubmitCnt('');
@@ -85,11 +87,13 @@ export default function OGDataSubmit({ open, handleClose, taskName }) {
   }, [open]);
 
   const onOgDataTypeChange = (e) => {
-    setOgDataType(e.target.value);
-    const og = ogDataTypes.find((item) => item.Name === e.target.value);
-    console.log(og);
-    setOgDataSchema(og.Schema);
-    setOgDataMapping(og.Mapping);
+    let og = ogDataTypes.find((item) => item.Did === e.target.value);
+    setOgDataType(og.Name);
+    setOgDataTypeId(e.target.value);
+    setOgDataSchema(og.Schema.join(', '));
+    setOgDataMapping(Object.entries(og.Mapping)
+      .map(([key, value]) => `${key}: ${value}`)
+      .join(', '));
   };
 
   const onDataFileChange = (e) => {
@@ -180,7 +184,7 @@ export default function OGDataSubmit({ open, handleClose, taskName }) {
             <Select
               labelId="ogdatatype"
               id="ogdatatype"
-              value={ogDataType}
+              value={ogDataTypeId}
               onChange={onOgDataTypeChange}
               displayEmpty
               fullWidth
@@ -190,22 +194,15 @@ export default function OGDataSubmit({ open, handleClose, taskName }) {
                 선택
               </MenuItem>
               {ogDataTypes.map((type, index) => (
-                <MenuItem value={type.Name} key={type.Did}>
+                <MenuItem value={type.Did} key={type.Did}>
                   {type.Name}
                 </MenuItem>
               ))}
             </Select>
-            {ogDataType && (
+            {ogDataTypeId && (
               <>
-                <Typography variant="body2">
-                  스키마: {ogDataSchema.join(', ')}
-                </Typography>
-                <Typography variant="body2">
-                  매핑:{' '}
-                  {Object.entries(ogDataMapping)
-                    .map(([key, value]) => `${key}: ${value}`)
-                    .join(', ')}
-                </Typography>
+                <Typography variant="body2">스키마: {ogDataSchema}</Typography>
+                <Typography variant="body2">매핑: {ogDataMapping}</Typography>
               </>
             )}
           </Grid>
