@@ -42,6 +42,8 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
+const sum = (accumulator, currentValue) => accumulator + currentValue;
+
 function DividedList({ items, direction, onlyDesc }) {
   const classes = useStyles();
   const [more, setMore] = useState(true);
@@ -143,10 +145,21 @@ export default function TaskDetail({
     handleClose();
   }
 
+  const getOgPassedCnt = (submits) => {
+    let passed = submits.filter((submit) => submit.PNP === 'P');
+    return (passed.length);
+  }
+
+  const getTotalPassedCnt = (items) => {
+    let counts = items.map((item) => getOgPassedCnt(item));
+    return counts.reduce(sum);
+  }
+
   return (
     <Dialog
       open={open}
       onClose={handleClose}
+      scroll='body'
       maxWidth="md"
       fullWidth
       aria-labelledby="form-dialog-title"
@@ -186,13 +199,15 @@ export default function TaskDetail({
                 columns={[
                   {
                     title: '원본 데이터 타입',
-                    field: 'OGDataTypeName'
+                    field: 'OGDataTypeName',
+                    cellStyle: { width: '50%', textAlign: 'left' }
                   },
                   {
-                    title: '제출한 파일 수', field: 'submittedCnt', align: 'right', cellStyle: { width: '20%', textAlign: 'right' }
+                    title: '제출한 파일 수', field: 'submittedDataCnt', align: 'right', cellStyle: { width: '20%', textAlign: 'right' }
                   },
                   {
-                    title: 'Pass된 파일 수', field: 'passedCnt', align: 'right', cellStyle: { width: '20%', textAlign: 'right' }
+                    title: 'Pass된 파일 수', align: 'right', cellStyle: { width: '20%', textAlign: 'right' },
+                    render: (rowData) => getOgPassedCnt(rowData.submitData)
                   },
                 ]}
                 data={getTaskDetail}
@@ -200,7 +215,7 @@ export default function TaskDetail({
                 detailPanel={[
                   {
                     tooltip: '제출한 파일 현황 보기',
-                    render: (rowData) => <TaskOGDataFile data={rowData.data} />,
+                    render: (rowData) => <TaskOGDataFile data={rowData.submitData} />,
                   },
                 ]}
               />

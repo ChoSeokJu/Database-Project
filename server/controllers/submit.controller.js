@@ -281,7 +281,7 @@ exports.assignEvaluator = function (req, res) {
 
 exports.submitApply = function (req, res) {
   const { taskName } = req.body;
-  const { Uid } = req;
+  const Uid = req.Uid || req.query.Uid;
   user.findByPk(Uid).then((user_id) => {
     works_on
       .create({
@@ -303,10 +303,8 @@ exports.submitApply = function (req, res) {
 };
 
 exports.getTaskList = function (req, res, next) {
-  const { Uid, per_page, page } = req.query;
-  if (Uid == undefined) {
-    Uid = req.Uid;
-  }
+  const { per_page, page } = req.query;
+  const Uid = req.Uid || req.query.Uid;
   user.findByPk(Uid).then((user_id) => {
     if (user_id) {
       works_on
@@ -376,10 +374,7 @@ exports.getTaskList = function (req, res, next) {
 
 exports.getAvgScore = function (req, res) {
   /* get average score and total tuple cnt */
-  const { Uid } = req.query;
-  if (Uid == undefined) {
-    Uid = req.Uid;
-  }
+  const Uid = req.Uid || req.query.Uid;
   user.findByPk(Uid).then((user_id) => {
     if (user_id) {
       parsing_data
@@ -453,7 +448,7 @@ exports.getOgData = (req, res) => {
 
 exports.getSubmitterList = (req, res, next) => {
   const { taskName } = req.query;
-  const { Uid } = req;
+  const Uid = req.Uid || req.query.Uid;
   user.findByPk(Uid).then((user_id) => {
     if (user_id) {
       parsing_data
@@ -498,7 +493,7 @@ exports.groupSubmitterList = async (req, res) => {
   const OGDataTypeList = [];
   const { p_data } = req.body;
   const { taskName, per_page, page } = req.query;
-  const { Uid } = req;
+  const Uid = req.Uid || req.query.Uid;
 
   const { TotalSubmitCnt } = await parsing_data.findOne({
     where: {
@@ -590,10 +585,8 @@ exports.groupSubmitterList = async (req, res) => {
 };
 
 exports.getSubmitterTaskDetails = (req, res) => {
-  const { Uid, taskName } = req.query;
-  if (Uid == undefined) {
-    Uid = req.Uid;
-  }
+  const { taskName } = req.query;
+  const Uid = req.Uid || req.query.Uid;
   parsing_data
     .findOne({
       where: {
@@ -639,7 +632,7 @@ exports.getSubmitterTaskDetails = (req, res) => {
                       return res.status(200).json({
                         score: p_data.score,
                         submittedDataCnt: parsing_count,
-                        passedCnt: count_append,
+                        passedDataCnt: count_append,
                         taskDesc: task.Desc,
                       });
                     }
