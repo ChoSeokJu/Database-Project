@@ -12,7 +12,8 @@ import Menu from '@material-ui/core/Menu';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import Divider from '@material-ui/core/Divider';
 import SupervisorAccountIcon from '@material-ui/icons/SupervisorAccount';
-
+import CreateIcon from '@material-ui/icons/Create';
+import BackupIcon from '@material-ui/icons/Backup';
 import { useHistory } from 'react-router-dom';
 import { logout } from '../actions/authentication';
 
@@ -33,7 +34,7 @@ const useStyles = makeStyles((theme) => ({
     marginRight: theme.spacing(1),
     marginLeft: theme.spacing(2),
   },
-  adminIcon: {
+  icon: {
     marginRight: theme.spacing(1),
   },
 }));
@@ -105,7 +106,7 @@ export default function TopBar(props) {
 
   const adminBoard = (
     <>
-      <SupervisorAccountIcon className={classes.adminIcon} />
+      <SupervisorAccountIcon className={classes.icon} />
       <Typography color="inherit">관리자</Typography>
       <Divider orientation="vertical" flexItem className={classes.divider} />
       <Button size="large" color="inherit" onClick={() => history.push('/')}>
@@ -131,6 +132,7 @@ export default function TopBar(props) {
 
   const evalBoard = (
     <>
+      <CreateIcon className={classes.icon} />
       <Typography color="inherit">평가자</Typography>
       <Divider orientation="vertical" flexItem className={classes.divider} />
       <Button size="large" color="inherit" onClick={() => history.push('/')}>
@@ -148,6 +150,7 @@ export default function TopBar(props) {
 
   const submitBoard = (
     <>
+      <BackupIcon className={classes.icon} />
       <Typography color="inherit">제출자</Typography>
       <Divider orientation="vertical" flexItem className={classes.divider} />
       <Button size="large" color="inherit" onClick={() => history.push('/')}>
