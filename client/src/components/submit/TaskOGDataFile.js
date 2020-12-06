@@ -10,8 +10,11 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const renderNull = (value) => {
-  return value || '-';
+const renderPNP = (rowData) => {
+  if (!rowData.score) {
+    return '-';
+  }
+  return rowData.PNP && 'P' || 'NP';
 }
 
 const renderDate = (value) => {
@@ -35,8 +38,8 @@ export default function TaskOGDataFile({ data }) {
         columns={[
           { title: '회차', field: 'submitCnt' },
           { title: '제출일자', render: (rowData) => renderDate(rowData.date) },
-          { title: '점수', render: (rowData) => renderNull(rowData.score) },
-          { title: 'P/NP', render: (rowData) => renderNull(rowData.PNP) },
+          { title: '점수', render: (rowData) => rowData.score || '-' },
+          { title: 'P/NP', render: (rowData) => renderPNP(rowData) },
         ]}
         data={data}
         style={{}}
