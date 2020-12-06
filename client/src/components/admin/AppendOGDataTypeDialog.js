@@ -48,10 +48,6 @@ export default function AppendOGDataTypeDialog({
       dispatch(openAlert());
       return;
     }
-    if (isNullExist()) {
-      dispatch(setMessage('비어있는 데이터 스키마는 전부 NULL로 들어갑니다'));
-      dispatch(openDialog());
-    }
 
     childRef.current.submitOGDataType(taskName).then(
       () => {
