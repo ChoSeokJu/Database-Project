@@ -2,11 +2,44 @@ import React, { useState } from 'react';
 import MaterialTable from 'material-table';
 import Button from '@material-ui/core/Button';
 import Container from '@material-ui/core/Container';
+import Rating from '@material-ui/lab/Rating';
+import Box from '@material-ui/core/Box';
+import { makeStyles } from '@material-ui/core/styles';
+import CheckIcon from '@material-ui/icons/Check';
+import CloseIcon from '@material-ui/icons/Close';
+import { green, red, grey } from '@material-ui/core/colors';
+import Tooltip from '@material-ui/core/Tooltip';
+import { useDispatch } from 'react-redux';
 import DataEvalDialog from './DataEvalDialog';
 import { getEval } from '../../services/user.service';
+import {
+  openAlert,
+  openDialog,
+  setAlertType,
+  setMessage,
+} from '../../actions/message';
+
+const useStyles = makeStyles((theme) => ({
+  button: {
+    whiteSpace: 'nowrap',
+    marginLeft: theme.spacing(2),
+  },
+  check: {
+    color: green[500],
+    fontSize: 35,
+    marginRight: theme.spacing(1),
+  },
+  close: {
+    color: red[500],
+    fontSize: 35,
+    marginRight: theme.spacing(1),
+  },
+}));
 
 export default function TaskTableSubmit() {
   const tableRef = React.createRef();
+  const classes = useStyles();
+  const dispatch = useDispatch();
   const [openEvalDialog, setOpenEvalDialog] = useState({
     open: false,
     Pid: null,
@@ -24,6 +57,11 @@ export default function TaskTableSubmit() {
     });
   };
 
+  const handleDialog = (message) => () => {
+    dispatch(setMessage(message));
+    dispatch(openDialog());
+  };
+
   const renderButton = (rowData) => {
     if (!rowData.isEvaluated) {
       return (
@@ -37,9 +75,27 @@ export default function TaskTableSubmit() {
       );
     }
     return (
-      <Button variant="contained" disabled>
-        평가완료
-      </Button>
+      <>
+        <Box display="flex" flexDirection="row" alignItems="center">
+          {rowData.evalContent.Pass ? (
+            <Tooltip title="Pass">
+              <CheckIcon className={classes.check} />
+            </Tooltip>
+          ) : (
+            <Tooltip title="Non-Pass">
+              <CloseIcon className={classes.close} />
+            </Tooltip>
+          )}
+          <Rating value={rowData.evalContent.Score} readOnly />
+          <Button
+            variant="contained"
+            className={classes.button}
+            onClick={handleDialog(rowData.evalContent.Desc)}
+          >
+            상세의견
+          </Button>
+        </Box>
+      </>
     );
   };
 
@@ -60,6 +116,7 @@ export default function TaskTableSubmit() {
             submitDate: row.TimeStamp.match(/\d{4}-\d{2}-\d{2}/g)[0],
             Pid: row.Pid,
             isEvaluated: row.isEvaluated,
+            evalContent: row.evalContent,
           }));
           resolve({
             data: dataParsed,

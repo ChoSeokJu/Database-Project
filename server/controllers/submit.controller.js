@@ -372,6 +372,78 @@ exports.getTaskList = function (req, res, next) {
   });
 };
 
+exports.getTaskListApproved = function (req, res, next) {
+  const { per_page, page } = req.query;
+  const Uid = req.Uid || req.query.Uid;
+  user.findByPk(Uid).then((user_id) => {
+    if (user_id) {
+      works_on
+        .findAll({
+          attributes: [],
+          include: [
+            {
+              model: user,
+              attributes: [],
+              required: true,
+              where: {
+                [Op.or]: [
+                  {
+                    Uid: { [Op.eq]: Uid },
+                  },
+                  {
+                    Uid: { [Op.is]: null },
+                  },
+                ],
+              },
+            },
+            {
+              model: task,
+              attributes: ['TaskName', 'Desc'],
+              required: false,
+              right: true,
+            },
+          ],
+          where:{
+            Permit: "approved"
+          }
+        })
+        .then((w_results) => {
+          if (w_results) {
+            const offset = parseInt(per_page) * parseInt(page - 1);
+            const counts = w_results.length;
+            const results = w_results.slice(
+              offset,
+              offset + parseInt(per_page)
+            );
+            console.log(results);
+            const amendedResults = [];
+            results.forEach((result) => {
+              amendedResults.push({
+                taskName: result.task.TaskName,
+                taskDesc: result.task.Desc,
+                permit: result.Permit,
+              });
+            });
+            req.body.response = {
+              data: amendedResults,
+              page: parseInt(page),
+              totalCount: counts,
+            };
+            next();
+          } else {
+            return res.status(404).json({
+              message: '아무것도 찾을 수 없습니다',
+            });
+          }
+        });
+    } else {
+      return res.status(404).json({
+        message: '아무것도 찾을 수 없습니다',
+      });
+    }
+  });
+};
+
 exports.getAvgScore = function (req, res) {
   /* get average score and total tuple cnt */
   const Uid = req.Uid || req.query.Uid;
@@ -440,20 +512,51 @@ exports.getOgData = (req, res) => {
       where: { TaskName: taskName },
     })
     .then((result) => {
-      res.status(200).json({
-        data: result,
-      });
+      if (result.length != 0) {
+        const output = [];
+        task.findOne({ where: { TaskName: taskName } }).then((og_task) => {
+          if (og_task) {
+            const tableSchema = og_task.TableSchema;
+            for (let i = 0; i < result.length; i++) {
+              const temp = {};
+              const output_temp = result[i];
+              for (const key in result[i].Mapping) {
+                temp[result[i].Mapping[key]] = tableSchema[0][key];
+              }
+              output_temp.dataValues.Og_type = temp;
+              output.push(output_temp);
+            }
+            res.status(200).json({
+              data: output,
+            });
+          } else {
+            res.status(400).json({
+              message: 'Task에서 해당되는 태스크 이름을 찾을 수 없습니다',
+            });
+          }
+        });
+      } else {
+        res.status(400).json({
+          message: 'og_data type에서 해당되는 태스크 이름을 찾을 수 없습니다',
+        });
+      }
     });
 };
 
 exports.getSubmitterList = (req, res, next) => {
   const { taskName } = req.query;
-  const Uid = req.Uid || req.query.Uid;
+  const Uid = req.query.Uid || req.Uid;
   user.findByPk(Uid).then((user_id) => {
     if (user_id) {
       parsing_data
         .findAll({
-          attributes: ['SubmitCnt', 'TotalTupleCnt', 'FinalScore', 'TimeStamp'],
+          attributes: [
+            'SubmitCnt',
+            'TotalTupleCnt',
+            'FinalScore',
+            'TimeStamp',
+            'Appended',
+          ],
           include: [
             {
               model: og_data_type,
@@ -493,7 +596,7 @@ exports.groupSubmitterList = async (req, res) => {
   const OGDataTypeList = [];
   const { p_data } = req.body;
   const { taskName, per_page, page } = req.query;
-  const Uid = req.Uid || req.query.Uid;
+  const Uid = req.query.Uid || req.Uid;
 
   const { TotalSubmitCnt } = await parsing_data.findOne({
     where: {
@@ -524,6 +627,7 @@ exports.groupSubmitterList = async (req, res) => {
     where: {
       TaskName: taskName,
       Sid: Uid,
+      Appended: 1,
     },
   });
 
@@ -541,11 +645,14 @@ exports.groupSubmitterList = async (req, res) => {
         TotalTupleCnt: x.TotalTupleCnt,
         score: x.FinalScore,
         date: x.TimeStamp,
-        PNP: returnPass(x.evaluates[0]),
+        PNP: x.Appended,
       });
     } else {
       if (newOGDataType != undefined) {
         newOGDataType.submittedDataCnt = newOGDataType.submitData.length;
+        newOGDataType.passedDataCnt = newOGDataType.submitData.filter(
+          (item) => item.PNP === 1
+        ).length;
         console.log();
         OGDataTypeList.push(newOGDataType);
       }
@@ -557,7 +664,7 @@ exports.groupSubmitterList = async (req, res) => {
         TotalTupleCnt: x.TotalTupleCnt,
         score: x.FinalScore,
         date: x.TimeStamp,
-        PNP: returnPass(x.evaluates[0]),
+        PNP: x.Appended,
       });
     }
   }
@@ -567,11 +674,15 @@ exports.groupSubmitterList = async (req, res) => {
       data: [],
       score: null,
       submittedDataCnt: null,
+      passedDataCnt: null,
       taskDataTableTupleCnt: null,
       taskDesc: Desc,
     });
   }
   newOGDataType.submittedDataCnt = newOGDataType.submitData.length;
+  newOGDataType.passedDataCnt = newOGDataType.submitData.filter(
+    (item) => item.PNP === 1
+  ).length;
   OGDataTypeList.push(newOGDataType);
   const offset = parseInt(per_page) * (parseInt(page) - 1);
   return res.status(200).json({
@@ -586,7 +697,7 @@ exports.groupSubmitterList = async (req, res) => {
 
 exports.getSubmitterTaskDetails = (req, res) => {
   const { taskName } = req.query;
-  const Uid = req.Uid || req.query.Uid;
+  const Uid = req.query.Uid || req.Uid;
   parsing_data
     .findOne({
       where: {

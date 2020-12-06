@@ -64,7 +64,7 @@ export default function AppendOGDataTypeDialog({
           error.message ||
           error.toString();
         dispatch(setAlertType('error'));
-        dispatch(setMessage(error));
+        dispatch(setMessage(message));
         dispatch(openAlert());
       }
     );

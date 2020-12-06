@@ -37,6 +37,9 @@ const useStyles = makeStyles((theme) => ({
   text: {
     marginLeft: theme.spacing(1),
   },
+  ogData: {
+    margin: theme.spacing(0.5),
+  },
 }));
 
 export default function OGDataSubmit({ open, handleClose, taskName }) {
@@ -87,13 +90,20 @@ export default function OGDataSubmit({ open, handleClose, taskName }) {
   }, [open]);
 
   const onOgDataTypeChange = (e) => {
-    let og = ogDataTypes.find((item) => item.Did === e.target.value);
+    const og = ogDataTypes.find((item) => item.Did === e.target.value);
     setOgDataType(og.Name);
     setOgDataTypeId(e.target.value);
-    setOgDataSchema(og.Schema.join(', '));
-    setOgDataMapping(Object.entries(og.Mapping)
-      .map(([key, value]) => `${key}: ${value}`)
-      .join(', '));
+    console.log(og);
+    setOgDataSchema(
+      Object.entries(og.Og_type)
+        .map(([key, value]) => `${key}: ${value}`)
+        .join(', ')
+    );
+    setOgDataMapping(
+      Object.entries(og.Mapping)
+        .map(([key, value]) => `${value}: ${key}`)
+        .join(', ')
+    );
   };
 
   const onDataFileChange = (e) => {
@@ -201,8 +211,12 @@ export default function OGDataSubmit({ open, handleClose, taskName }) {
             </Select>
             {ogDataTypeId && (
               <>
-                <Typography variant="body2">스키마: {ogDataSchema}</Typography>
-                <Typography variant="body2">매핑: {ogDataMapping}</Typography>
+                <Typography variant="body2" className={classes.ogData}>
+                  스키마: {ogDataSchema}
+                </Typography>
+                <Typography variant="body2" className={classes.ogData}>
+                  매핑: {ogDataMapping}
+                </Typography>
               </>
             )}
           </Grid>

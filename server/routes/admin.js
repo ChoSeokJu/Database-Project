@@ -93,7 +93,7 @@ router.get(
 
 router.get(
   '/task/parsed-data',
-  // [authJwt.verifyToken, authJwt.isAdmin],
+  [authJwt.verifyToken, authJwt.isAdmin],
   adminController.parsedDataList
 );
 
@@ -124,14 +124,8 @@ router.get(
 router.get(
   '/submitter/task-list',
   [authJwt.verifyToken, authJwt.isAdmin],
-  submitController.getTaskList,
+  submitController.getTaskListApproved,
   submitController.getAvgScore
-)
-
-router.get(
-  '/submitter/task-details',
-  [authJwt.verifyToken, authJwt.isAdmin],
-  submitController.getSubmitterTaskDetails
 );
 
 module.exports = router;

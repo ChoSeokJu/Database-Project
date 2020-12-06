@@ -133,9 +133,8 @@ exports.saveToTaskTable = async function (req, res) {
     // ! make sure that they are written in order when they are saved
     rows = json2csv(data, { header: false });
     const newRows = rows.replace(/[\\"]/g, '');
-
-    await fs.appendFileSync(fileName, newRows);
     await fs.appendFileSync(fileName, '\r\n');
+    await fs.appendFileSync(fileName, newRows);    
   };
 
   await write(TableRef, parsedHeader, parsedData); // this is for deployment
@@ -159,7 +158,6 @@ exports.evalContent = (req, res) => {
         attributes: ['Pid', 'TaskName', 'FinalScore', 'TimeStamp', 'Appended'],
         include: [{
           model: evaluate,
-          attributes: [],
           required: true,
           where: { Eid: user_id.Uid },
         }, {
@@ -190,13 +188,15 @@ exports.evalContent = (req, res) => {
             "Appended": p_data.appended,
             "ID": p_data.user.ID,
             "OGDataTypeName": p_data.og_data_type.Name,
-            "isEvaluated": !((p_data.FinalScore == null) && (p_data.Appended == null))
+            "isEvaluated": !((p_data.FinalScore == null) && (p_data.Appended == null)),
+            "Appended": p_data.Appended,
+            "evalContent": p_data.evaluates[0]
           })
         })
         res.status(200).json({
           data: ammendedResults,
           page: page,
-          totalCount: parsing_data.length
+          totalCount: parsing_data.length,
         });
       });
     } else {

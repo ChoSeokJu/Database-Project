@@ -10,21 +10,21 @@
     }
   },
   "test": {
-    "username": "root",
-    "password": null,
-    "database": "database_test",
-    "host": "34.82.229.163",
-    "dialect": "mysql",
+    "username": "team13",
+    "password": "933159",
+    "database": "team13",
+    "host": "165.132.105.46",
+    "dialect": "mariadb",
     "define": {
       "timestamps": false
     }
   },
   "production": {
-    "username": "root",
-    "password": null,
-    "database": "database_production",
-    "host": "34.105.109.90",
-    "dialect": "mysql",
+    "username": "team13",
+    "password": "933159",
+    "database": "team13",
+    "host": "165.132.105.46",
+    "dialect": "mariadb",
     "define": {
       "timestamps": false
     }

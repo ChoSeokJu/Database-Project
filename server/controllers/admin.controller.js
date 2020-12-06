@@ -304,7 +304,6 @@ exports.addOgData = (req, res) => {
     });
   });
 };
-
 exports.getOgData = (req, res) => {
   const { taskName } = req.query;
   og_data_type
@@ -536,14 +535,14 @@ exports.infoSearch = (req, res) => {
     }
     User.findAndCountAll({
       where: {
-        Gender: { [Op.substring]: value },
+        Gender: value ,
       },
       offset: parseInt(per_page) * parseInt(page - 1),
       limit: parseInt(per_page),
     }).then((result) => {
       User.findAndCountAll({
         where: {
-          Gender: { [Op.substring]: value },
+          Gender: value,
         },
       }).then((count) => {
         if (result.rows.length !== 0) {
@@ -711,8 +710,8 @@ exports.downloadTaskData = (req, res) => {
   const { taskName } = req.query;
   Task.findByPk(taskName).then((Task) => {
     if (Task) {
-      fileRef = Task.TableRef;
-      res.download(fileRef, `${Task.TableName}.csv`, (err) => {
+      console.log(Task.TableName)
+      res.download(Task.TableRef, `${Task.TableName}.csv`, (err) => {
         if (err) {
           return res.status(404).json({
             message: '파일을 다운로드 할 수 없습니다',
