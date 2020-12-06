@@ -585,7 +585,7 @@ exports.groupSubmitterList = async (req, res) => {
 
 exports.getSubmitterTaskDetails = (req, res) => {
   const { taskName } = req.query;
-  const { Uid } = req;
+  const { Uid } = req.query;
   parsing_data
     .findOne({
       where: {
@@ -610,19 +610,27 @@ exports.getSubmitterTaskDetails = (req, res) => {
               Sid: Uid,
             },
           })
-          .then((parsing_data) => {
-            task
+          .then((parsing_count) => {
+            parsing_data.count({
+              where: {
+                TaskName: taskName,
+                Sid: Uid,
+                Appended: 1
+              }
+            })
+            .then((count_append) => {
+              task
               .findOne({
                 where: {
                   TaskName: taskName,
                 },
               })
-              .then((task) => {
+              .then((task) => { 
                 if (task) {
                   return res.status(200).json({
                     score: p_data.score,
-                    submittedDataCnt: parsing_data,
-                    taskDataTableTupleCnt: p_data.taskDataTableTupleCnt,
+                    submittedDataCnt: parsing_count,
+                    passedCnt: count_append,
                     taskDesc: task.Desc,
                   });
                 }
@@ -630,6 +638,7 @@ exports.getSubmitterTaskDetails = (req, res) => {
                   message: 'no task found using the given taskname',
                 });
               });
+            });
           });
       } else {
         return res.status(200).json({
@@ -638,3 +647,4 @@ exports.getSubmitterTaskDetails = (req, res) => {
       }
     });
 };
+
