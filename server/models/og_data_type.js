@@ -69,14 +69,6 @@ module.exports = function(sequelize, DataTypes) {
         ]
       },
       {
-        name: "Name_UNIQUE",
-        unique: true,
-        using: "BTREE",
-        fields: [
-          { name: "Name" }
-        ]
-      },
-      {
         name: "fk_OG_DATA_TYPE_TASK1_idx",
         using: "BTREE",
         fields: [

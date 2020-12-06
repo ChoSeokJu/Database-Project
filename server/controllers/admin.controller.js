@@ -266,6 +266,17 @@ exports.addOgData = (req, res) => {
   Task.findOne({
     where: { TaskName: taskName },
   }).then((task) => {
+    ogData.count({
+      where : {
+        TaskName: taskName,
+        Name: OGDataType
+      }
+    }).then((duplicated_count) => {
+      if (duplicated_count != 0) {
+        return res.status(400).json({
+          message: '동일한 데이터가 존재합니다'
+        })
+      }
     if (task) {
       ogData
         .create({
@@ -288,8 +299,9 @@ exports.addOgData = (req, res) => {
     } else {
       return res.status(400).json({
         message: '해당 Task가 없습니다',
-      });
-    }
+        });
+      }
+    });
   });
 };
 
