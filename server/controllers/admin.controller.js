@@ -5,6 +5,7 @@ const csv = require('csvtojson');
 const { response } = require('express');
 const createCsvWriter = require('csv-writer').createObjectCsvWriter;
 const { v4: uuidv4 } = require('uuid');
+var fs = require('fs');
 
 
 const User = db.user;
@@ -78,20 +79,20 @@ exports.makeTask = (req, res) => {
       })
         .then((new_task) => {
           if (new_task) {
-            const csvHead = [];
             columns = Object.keys(tableSchema[0]);
             columns.push('Sid');
-            for (let i = 0; i < columns.length; i++) {
-              csvHead.push({ id: columns[i], title: columns[i] });
-            }
-            const csvWriter = createCsvWriter({
-              path: tableRef,
-              header: csvHead,
-            });
-            csvWriter.writeRecords([]);
-            return res.status(200).json({
-              message: '테스크가 생성되었습니다.',
-            });
+            fs.writeFile(tableRef, columns, 'utf8', function (err) {
+              if (err) {
+                return res.status(400).json({
+                  message: '테스크 생성 과정에서 오류가 발생하였습니다.',
+                });
+              } else{
+                return res.status(200).json({
+                  message: '테스크가 생성되었습니다.',
+                });
+              }
+            });         
+            
           }
         })
         .catch((err) => {
